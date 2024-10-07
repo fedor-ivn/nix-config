@@ -5,7 +5,7 @@
     enable = true;
     enableCompletion = true;
     syntaxHighlighting.enable = true;
-    
+
     # historyControl = [ "ignoredups" "ignorespace" ];
     # initExtra = ''
     #   GIT_PS1_SHOWDIRTYSTATE=1
