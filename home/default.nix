@@ -38,7 +38,8 @@
       # transmission
       obsidian
       jetbrains-mono
-      hoppscotch
+      # hoppscotch
+      postman
 
       raycast
       monitorcontrol
