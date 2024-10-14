@@ -67,6 +67,7 @@
           ./system/default.nix
           home-manager.darwinModules.home-manager
           ./home/default.nix
+          ./home/homebrew.nix
           nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {

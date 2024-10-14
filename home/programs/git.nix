@@ -38,7 +38,7 @@
       p = "push";
       pf = "push --force";
       # Show the diff between the latest commit and the current state.
-      d = "!\"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat\"";
+      d = ''!"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"'';
       # List aliases.
       aliases = "config --get-regexp alias";
       # Amend the currently staged files to the latest commit.
