@@ -9,6 +9,7 @@
       "vlc"
       "telegram"
       "altserver"
+      "beekeeper-studio"
     ];
 
     global.autoUpdate = false;
