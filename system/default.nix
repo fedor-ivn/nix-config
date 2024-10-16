@@ -23,7 +23,6 @@
 
   security.pam.enableSudoTouchIdAuth = true;
   system.defaults.WindowManager.EnableStandardClickToShowDesktop = false;
-  system.defaults.dock.autohide = true;
   # system.defaults.dock.autohide-delay = 0.24;
   # system.defaults.dock.autohide-time-modifier = 1.0;
 
@@ -54,6 +53,10 @@
 
   system.defaults = {
     finder.CreateDesktop = false;
+    dock = {
+      mru-spaces = false;
+      autohide = true;
+    };
     NSGlobalDomain = {
       AppleInterfaceStyle = "Dark";
       AppleScrollerPagingBehavior = true;
