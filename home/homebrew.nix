@@ -10,6 +10,10 @@
       "telegram"
       "altserver"
       "beekeeper-studio"
+      # Touch ID unlock support on macOS isn't working for nixpkgs build of
+      # KeePassXC, so the Homebrew version is used instead.
+      # TODO: Track this issue - https://github.com/NixOS/nixpkgs/issues/241103
+      "keepassxc"
     ];
 
     global.autoUpdate = false;
