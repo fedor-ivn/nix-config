@@ -14,6 +14,7 @@
       # KeePassXC, so the Homebrew version is used instead.
       # TODO: Track this issue - https://github.com/NixOS/nixpkgs/issues/241103
       "keepassxc"
+      "chromium"
     ];
 
     global.autoUpdate = false;
