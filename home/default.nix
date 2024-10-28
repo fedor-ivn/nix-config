@@ -48,6 +48,7 @@
       raycast
       monitorcontrol
       stats
+      spotify
 
       tealdeer
       dig
