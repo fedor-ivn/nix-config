@@ -134,6 +134,6 @@
   ];
   "window.zoomLevel" = 1;
   "workbench.activityBar.location" = "top";
-  "workbench.colorTheme" = "Solarized Light";
-  # "workbench.colorTheme" = "GitHub Dark";
+  # "workbench.colorTheme" = "Solarized Light";
+  "workbench.colorTheme" = "GitHub Dark";
 }
