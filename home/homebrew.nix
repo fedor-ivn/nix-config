@@ -4,22 +4,26 @@
     # Homebrew is *installed* via the flake input nix-homebrew
     enable = true;
 
-    casks = map (name: {
-      name = name;
-      greedy = true;
-    }) [
-      "firefox"
-      "vlc"
-      "telegram"
-      "altserver"
-      "beekeeper-studio"
-      "chromium"
-    ] ++ [
-      # Touch ID unlock support on macOS isn't working for nixpkgs build of
-      # KeePassXC, so the Homebrew version is used instead.
-      # TODO: Track this issue - https://github.com/NixOS/nixpkgs/issues/241103
-      "keepassxc"
-    ];
+    casks =
+      map
+        (name: {
+          name = name;
+          greedy = true;
+        })
+        [
+          "firefox"
+          "vlc"
+          "telegram"
+          "altserver"
+          "beekeeper-studio"
+          "chromium"
+        ]
+      ++ [
+        # Touch ID unlock support on macOS isn't working for nixpkgs build of
+        # KeePassXC, so the Homebrew version is used instead.
+        # TODO: Track this issue - https://github.com/NixOS/nixpkgs/issues/241103
+        "keepassxc"
+      ];
 
     caskArgs.no_quarantine = true;
 
