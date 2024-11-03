@@ -41,7 +41,7 @@
     let
       system = "aarch64-darwin";
       username = "fedorivn";
-      hostname = "${username}s-macbook-pro";
+      hostname = "${username}s-mbp";
       pkgs-stable = import nixpkgs-stable {
         inherit system;
         config.allowUnfree = true;
