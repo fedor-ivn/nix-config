@@ -122,6 +122,20 @@
   networking = {
     hostName = hostname;
     computerName = hostname;
+    knownNetworkServices = [
+      "USB Controls 2"
+      "USB Controls"
+      "Thunderbolt Bridge"
+      "Wi-Fi"
+    ];
+    dns = [
+      "8.8.8.8"
+      "8.8.4.4"
+      "1.1.1.1"
+      "1.0.0.1"
+      "2001:4860:4860::8888"
+      "2001:4860:4860::8844"
+    ];
   };
 
   # Create /etc/zshrc that loads the nix-darwin environment.
