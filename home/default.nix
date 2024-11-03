@@ -16,6 +16,7 @@
       ./programs/git.nix
       ./programs/vscode.nix
       ./programs/alacritty.nix
+      ./programs/taskwarrior.nix
     ];
 
     programs.home-manager.enable = true;
