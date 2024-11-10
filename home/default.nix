@@ -59,6 +59,8 @@
       podman
       dust
 
+      zoom-us
+
       syncthing
     ];
   };
