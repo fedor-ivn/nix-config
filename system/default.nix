@@ -110,6 +110,7 @@
   services.nix-daemon.enable = true;
   nix = {
     gc.automatic = true;
+    optimise.automatic = true;
     settings = {
       experimental-features = [
         "nix-command"
