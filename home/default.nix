@@ -35,7 +35,7 @@
 
     home.packages = with pkgs; [
       slack
-      # transmission
+      transmission_4-qt6
       obsidian
       jetbrains-mono
       # hoppscotch
@@ -67,13 +67,15 @@
 
   # services.syncthing is not available for darwin, so syncthing is started via
   # launchd instead.
-  launchd.user.agents.syncthing = {
-    command = "${pkgs.syncthing}/bin/syncthing";
-    serviceConfig = {
-      KeepAlive = true;
-      RunAtLoad = true;
-      StandardOutPath = "/tmp/syncthing_fedorivn.out.log";
-      StandardErrorPath = "/tmp/syncthing_fedorivn.err.log";
+  launchd.user.agents = {
+    syncthing = {
+      command = "${pkgs.syncthing}/bin/syncthing";
+      serviceConfig = {
+        KeepAlive = true;
+        RunAtLoad = true;
+        StandardOutPath = "/tmp/syncthing.out.log";
+        StandardErrorPath = "/tmp/syncthing.err.log";
+      };
     };
   };
 }
