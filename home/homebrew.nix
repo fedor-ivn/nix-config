@@ -16,7 +16,8 @@
           "telegram"
           "altserver"
           "beekeeper-studio"
-          "chromium"
+          "google-chrome"
+          "libreoffice"
         ]
       ++ [
         # Touch ID unlock support on macOS isn't working for nixpkgs build of
