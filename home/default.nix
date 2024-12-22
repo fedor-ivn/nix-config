@@ -35,7 +35,7 @@
 
     home.packages = with pkgs; [
       slack
-      transmission_4-qt6
+      qbittorrent
       obsidian
       jetbrains-mono
       # hoppscotch
