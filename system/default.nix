@@ -6,6 +6,10 @@
   hostname,
   ...
 }:
+
+let
+  privateNetworkServices = import ../secrets/network-services.nix;
+in
 {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
@@ -127,7 +131,7 @@
       "USB Controls"
       "Thunderbolt Bridge"
       "Wi-Fi"
-    ];
+    ] ++ privateNetworkServices;
     dns = [
       "8.8.8.8"
       "8.8.4.4"
