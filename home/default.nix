@@ -11,12 +11,13 @@
   home-manager.useUserPackages = true;
   home-manager.users.${username} = {
     imports = [
-      ./programs/zsh.nix
+      ./programs/alacritty.nix
       ./programs/direnv.nix
       ./programs/git.nix
-      ./programs/vscode.nix
-      ./programs/alacritty.nix
       ./programs/taskwarrior.nix
+      ./programs/vscode.nix
+      ./programs/zoxide.nix
+      ./programs/zsh.nix
     ];
 
     programs.home-manager.enable = true;
