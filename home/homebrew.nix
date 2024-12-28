@@ -12,6 +12,7 @@
         })
         [
           "firefox"
+          "thunderbird"
           "vlc"
           "telegram"
           "altserver"

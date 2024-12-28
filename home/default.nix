@@ -6,16 +6,17 @@
 }:
 {
   nixpkgs.config.allowUnfree = true;
-
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.users.${username} = {
     imports = [
+      ./email.nix
       ./programs/alacritty.nix
       ./programs/bat.nix
       ./programs/direnv.nix
       ./programs/git.nix
       ./programs/taskwarrior.nix
+      ./programs/thunderbird.nix
       ./programs/vscode.nix
       ./programs/zoxide.nix
       ./programs/zsh.nix
@@ -23,11 +24,6 @@
 
     programs.home-manager.enable = true;
     programs.tmux.enable = true;
-    # programs.thunderbird = {
-    #     profiles.fedorivn = {
-    #       isDefault = true;
-    #     };
-    # };
 
     home = {
       inherit username;
