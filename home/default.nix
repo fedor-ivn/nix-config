@@ -14,6 +14,7 @@
       ./programs/alacritty.nix
       ./programs/bat.nix
       ./programs/direnv.nix
+      ./programs/fzf.nix
       ./programs/git.nix
       ./programs/taskwarrior.nix
       ./programs/thunderbird.nix
