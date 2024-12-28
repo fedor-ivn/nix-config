@@ -34,6 +34,13 @@
         };
         option_as_alt = "Both";
       };
+      keyboard.bindings = [
+        {
+          action = "ToggleViMode";
+          key = "Space";
+          mods = "Command|Shift";
+        }
+      ];
     };
     # settings = {
     #   bell = {
@@ -59,13 +66,5 @@
     #   };
     #   mouse.hide_when_typing = true;
     #   shell.program = "tmux";
-    #   keyboard.bindings = [
-    #     {
-    #       action = "ToggleFullScreen";
-    #       key = "F11";
-    #       mods = "Shift|Control";
-    #     }
-    #   ];
-    # };
-  };
+    };
 }

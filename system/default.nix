@@ -4,6 +4,7 @@
   pkgs,
   username,
   hostname,
+  lib,
   ...
 }:
 
@@ -39,13 +40,11 @@ in
   # services.netbird.enable
   #  services.nextdns.enable
   #  services.sketchybar.enable
-  #  services.skhd.enable 
   #  services.spacebar.enable 
   #  services.spotifyd.enable 
   #  services.synapse-bt.enable 
   #  services.synergy.package 
   #  services.telegraf.enable 
-  #  services.yabai.enable 
 
   #  system.defaults.".GlobalPreferences"."com.apple.sound.beep.sound" 
   #  system.defaults.ActivityMonitor.SortColumn
@@ -161,4 +160,28 @@ in
   system.activationScripts.extraActivation.text = ''
     softwareupdate --install-rosetta --agree-to-license
   '';
+
+  services.yabai = {
+    enable = true;
+    config = {
+      layout = "bsp";
+      window_placement = "second_child";
+      mouse_follows_focus = "on";
+      mouse_modifier = "fn";
+      mouse_action1 = "move";
+      mouse_action2 = "resize";
+    };
+    extraConfig = ''
+    yabai -m mouse_drop_action swap
+    yabai -m rule --add app="^System Settings$" manage=off
+    yabai -m rule --add app="^Calculator$" manage=off
+    yabai -m rule --add app="^MonitorControl$" manage=off
+    yabai -m rule --add app="^Raycast$" manage=off
+    '';
+  };
+
+  services.skhd = {
+    enable = true;
+    skhdConfig = import ./services/skhd.nix { inherit lib; };
+  };
 }
