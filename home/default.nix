@@ -12,6 +12,7 @@
   home-manager.users.${username} = {
     imports = [
       ./programs/alacritty.nix
+      ./programs/bat.nix
       ./programs/direnv.nix
       ./programs/git.nix
       ./programs/taskwarrior.nix
