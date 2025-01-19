@@ -64,11 +64,11 @@
             ;
         };
         modules = [
-          ./system/default.nix
           home-manager.darwinModules.home-manager
+          nix-homebrew.darwinModules.nix-homebrew
+          ./system/default.nix
           ./home/default.nix
           ./home/homebrew.nix
-          nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {
               user = username;
