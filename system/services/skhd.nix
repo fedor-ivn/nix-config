@@ -98,6 +98,6 @@ in
   ctrl + ${modifier} - r : yabai --restart-service
 
   # -- Change the input source --
-  # ${modifier} - 1 : macism com.apple.keylayout.ABC
-  # ${modifier} - 2 : macism com.apple.keylayout.Russian
+  ${modifier} - 1 : macism com.apple.keylayout.ABC
+  ${modifier} - 2 : macism com.apple.keylayout.Russian
 ''

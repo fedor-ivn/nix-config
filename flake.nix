@@ -24,6 +24,10 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+    homebrew-macism = {
+      url = "github:laishulu/homebrew-homebrew";
+      flake = false;
+    };
   };
 
   outputs =
@@ -37,6 +41,7 @@
       homebrew-bundle,
       homebrew-core,
       homebrew-cask,
+      homebrew-macism
     }:
     let
       system = "aarch64-darwin";
@@ -77,6 +82,7 @@
                 "homebrew/homebrew-core" = homebrew-core;
                 "homebrew/homebrew-cask" = homebrew-cask;
                 "homebrew/homebrew-bundle" = homebrew-bundle;
+                "laishulu/homebrew-homebrew" = homebrew-macism;
               };
               mutableTaps = false;
             };
