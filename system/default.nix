@@ -157,9 +157,9 @@ in
   services.tailscale.enable = true;
 
   # https://github.com/LnL7/nix-darwin/issues/786
-  system.activationScripts.extraActivation.text = ''
-    softwareupdate --install-rosetta --agree-to-license
-  '';
+  # system.activationScripts.extraActivation.text = ''
+  #   softwareupdate --install-rosetta --agree-to-license
+  # '';
 
   services.yabai = {
     enable = true;
