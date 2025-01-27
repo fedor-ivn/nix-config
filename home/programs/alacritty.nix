@@ -66,5 +66,5 @@
     #   };
     #   mouse.hide_when_typing = true;
     #   shell.program = "tmux";
-    };
+  };
 }

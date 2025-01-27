@@ -5,9 +5,11 @@
 
 let
   modifier = "alt";
-  mkSpaceShortcut = num: "shift + ${modifier} - ${toString num} : yabai -m window --space ${toString num};\n";
+  mkSpaceShortcut =
+    num: "shift + ${modifier} - ${toString num} : yabai -m window --space ${toString num};\n";
   spaceShortcuts = lib.strings.concatStrings (map mkSpaceShortcut (lib.lists.range 1 9));
-in ''
+in
+''
   # Having troubles finding hotkey? Just type `skhd --observe` in a terminal and
   # type a key. Pretty cool! Or just check the wiki.
 
@@ -74,7 +76,7 @@ in ''
   # shift + ${modifier} - f : yabai -m window --display north; yabai -m display --focus north;
   # shift + ${modifier} - s : yabai -m window --display west; yabai -m display --focus west;
   # shift + ${modifier} - g : yabai -m window --display east; yabai -m display --focus east;
-  
+
   # Since shift + alt + f conflicts with formatter in VSCode and I have my
   # laptop placed right below the external monitor, I only need two keys to 
   # control them.

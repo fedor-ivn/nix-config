@@ -8,7 +8,7 @@ in
       address = "ivnfedor@gmail.com";
       flavor = "gmail.com";
       inherit realName;
-      primary = true;  # Mark as primary account
+      primary = true; # Mark as primary account
 
       thunderbird = {
         enable = true;

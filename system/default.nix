@@ -40,18 +40,18 @@ in
   # services.netbird.enable
   #  services.nextdns.enable
   #  services.sketchybar.enable
-  #  services.spacebar.enable 
-  #  services.spotifyd.enable 
-  #  services.synapse-bt.enable 
-  #  services.synergy.package 
-  #  services.telegraf.enable 
+  #  services.spacebar.enable
+  #  services.spotifyd.enable
+  #  services.synapse-bt.enable
+  #  services.synergy.package
+  #  services.telegraf.enable
 
-  #  system.defaults.".GlobalPreferences"."com.apple.sound.beep.sound" 
+  #  system.defaults.".GlobalPreferences"."com.apple.sound.beep.sound"
   #  system.defaults.ActivityMonitor.SortColumn
 
-  # !!! 
-  #  system.defaults.CustomSystemPreferences 
-  #  system.defaults.CustomUserPreferences 
+  # !!!
+  #  system.defaults.CustomSystemPreferences
+  #  system.defaults.CustomUserPreferences
   #  system.defaults.NSGlobalDomain.
 
   system.defaults = {
@@ -85,29 +85,29 @@ in
 
       # system.defaults.NSGlobalDomain."com.apple.sound.beep.volume"
 
-      # TODO: what is that? 
-      #  system.defaults.WindowManager.AppWindowGroupingBehavior 
+      # TODO: what is that?
+      #  system.defaults.WindowManager.AppWindowGroupingBehavior
 
       # system.defaults.dock.autohide-delay
-      # system.defaults.dock.autohide 
+      # system.defaults.dock.autohide
       # system.defaults.dock.autohide-time-modifier
-      # system.defaults.dock.expose-animation-duration 
-      # system.defaults.dock.expose-group-by-app 
-      # system.defaults.dock.mineffect 
+      # system.defaults.dock.expose-animation-duration
+      # system.defaults.dock.expose-group-by-app
+      # system.defaults.dock.mineffect
       # system.defaults.dock.minimize-to-application = true;
-      # system.defaults.dock.persistent-apps 
-      # system.defaults.dock.show-recents 
+      # system.defaults.dock.persistent-apps
+      # system.defaults.dock.show-recents
       # system.defaults.dock.tilesize = 64
       # system.defaults.dock.wvous-br-corner = 1;
       # system.defaults.finder.ShowPathbar = true;
       # system.defaults.finder._FXShowPosixPathInTitle = true;
       # system.defaults.screensaver.askForPassword = true;
       # system.defaults.spaces.spans-displays = true;
-      # system.keyboard.enableKeyMapping 
+      # system.keyboard.enableKeyMapping
     };
 
-    #  time.timeZone 
-    #  users.users 
+    #  time.timeZone
+    #  users.users
   };
 
   services.nix-daemon.enable = true;
@@ -172,11 +172,11 @@ in
       mouse_action2 = "resize";
     };
     extraConfig = ''
-    yabai -m mouse_drop_action swap
-    yabai -m rule --add app="^System Settings$" manage=off
-    yabai -m rule --add app="^Calculator$" manage=off
-    yabai -m rule --add app="^MonitorControl$" manage=off
-    yabai -m rule --add app="^Raycast$" manage=off
+      yabai -m mouse_drop_action swap
+      yabai -m rule --add app="^System Settings$" manage=off
+      yabai -m rule --add app="^Calculator$" manage=off
+      yabai -m rule --add app="^MonitorControl$" manage=off
+      yabai -m rule --add app="^Raycast$" manage=off
     '';
   };
 
