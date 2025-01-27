@@ -21,10 +21,16 @@ in ''
   ${modifier} - l : yabai -m window --focus east
 
   # change focus between external displays (left and right)
-  ${modifier} - d : yabai -m display --focus south
-  ${modifier} - f : yabai -m display --focus north
-  ${modifier} - s : yabai -m display --focus west
-  ${modifier} - g : yabai -m display --focus east
+  # ${modifier} - d : yabai -m display --focus south
+  # ${modifier} - f : yabai -m display --focus north
+  # ${modifier} - s : yabai -m display --focus west
+  # ${modifier} - g : yabai -m display --focus east
+
+  # Since shift + alt + f conflicts with formatter in VSCode and I have my
+  # laptop placed right below the external monitor, I only need two keys to 
+  # control them.
+  ${modifier} - s : yabai -m display --focus south
+  ${modifier} - d : yabai -m display --focus north
 
   # -- Modifying the Layout --
 
@@ -52,23 +58,28 @@ in ''
   # -- Moving Windows Around --
 
   # swap windows
+  shift + ${modifier} - h : yabai -m window --swap west
   shift + ${modifier} - j : yabai -m window --swap south
   shift + ${modifier} - k : yabai -m window --swap north
-  shift + ${modifier} - h : yabai -m window --swap west
   shift + ${modifier} - l : yabai -m window --swap east
 
   # move window and split
+  ctrl + ${modifier} - h : yabai -m window --warp west
   ctrl + ${modifier} - j : yabai -m window --warp south
   ctrl + ${modifier} - k : yabai -m window --warp north
-  ctrl + ${modifier} - h : yabai -m window --warp west
   ctrl + ${modifier} - l : yabai -m window --warp east
 
-  # move window to display left and right
-  shift + ${modifier} - d : yabai -m window --display south; yabai -m display --focus south;
-  shift + ${modifier} - f : yabai -m window --display north; yabai -m display --focus north;
-  shift + ${modifier} - s : yabai -m window --display west; yabai -m display --focus west;
-  shift + ${modifier} - g : yabai -m window --display east; yabai -m display --focus east;
-
+  # move window to display
+  # shift + ${modifier} - d : yabai -m window --display south; yabai -m display --focus south;
+  # shift + ${modifier} - f : yabai -m window --display north; yabai -m display --focus north;
+  # shift + ${modifier} - s : yabai -m window --display west; yabai -m display --focus west;
+  # shift + ${modifier} - g : yabai -m window --display east; yabai -m display --focus east;
+  
+  # Since shift + alt + f conflicts with formatter in VSCode and I have my
+  # laptop placed right below the external monitor, I only need two keys to 
+  # control them.
+  shift + ${modifier} - s : yabai -m window --display south; yabai -m display --focus south;
+  shift + ${modifier} - d : yabai -m window --display north; yabai -m display --focus north;
 
   # move window to prev and next space
   shift + ${modifier} - p : yabai -m window --space prev;
