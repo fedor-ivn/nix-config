@@ -1,4 +1,5 @@
 {
+  config,
   self,
   system,
   pkgs,
@@ -180,8 +181,8 @@ in
     '';
   };
 
-  services.skhd = {
+  services.skhd = let brewPrefix = config.homebrew.brewPrefix; in {
     enable = true;
-    skhdConfig = import ./services/skhd.nix { inherit lib; };
+    skhdConfig = import ./services/skhd.nix { inherit lib brewPrefix; };
   };
 }

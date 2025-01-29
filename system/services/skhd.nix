@@ -1,5 +1,6 @@
 {
   lib,
+  brewPrefix,
   ...
 }:
 
@@ -90,14 +91,14 @@ in
   # move window to space #
   ${spaceShortcuts}
 
-  # -- Starting/Stopping/Restarting Yabai --no
+  # -- Starting/Stopping/Restarting Yabai --
 
   # stop/start/restart yabai
-  ctrl + ${modifier} - q : yabai --stop-service
-  ctrl + ${modifier} - s : yabai --start-service
-  ctrl + ${modifier} - r : yabai --restart-service
+  ctrl + ${modifier} - q : yabai --stop-service;
+  ctrl + ${modifier} - s : yabai --start-service;
+  ctrl + ${modifier} - r : yabai --restart-service;
 
   # -- Change the input source --
-  ${modifier} - 1 : macism com.apple.keylayout.ABC
-  ${modifier} - 2 : macism com.apple.keylayout.Russian
+  ${modifier} - 1 : ${brewPrefix}/macism com.apple.keylayout.ABC;
+  ${modifier} - 2 : ${brewPrefix}/macism com.apple.keylayout.RussianWin;
 ''
