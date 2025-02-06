@@ -60,6 +60,7 @@
   "editor.unicodeHighlight.allowedLocales" = {
     ru = true;
   };
+  "editor.inlayHints.enabled" = "offUnlessPressed";
   "explorer.confirmDragAndDrop" = false;
   "files.autoSave" = "onFocusChange";
   "files.insertFinalNewline" = true;
