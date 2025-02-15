@@ -61,6 +61,8 @@
       zoom-us
 
       syncthing
+
+      prismlauncher
     ];
   };
 
