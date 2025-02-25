@@ -111,7 +111,6 @@ in
     #  users.users
   };
 
-  services.nix-daemon.enable = true;
   nix = {
     gc.automatic = true;
     optimise.automatic = true;

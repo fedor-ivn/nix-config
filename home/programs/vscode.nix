@@ -2,8 +2,10 @@
 {
   programs.vscode = {
     enable = true;
-    userSettings = import ./vscode/settings.nix;
-    extensions = import ./vscode/extensions.nix pkgs;
-    keybindings = import ./vscode/keybindings.nix;
+    profiles.default = {
+      userSettings = import ./vscode/settings.nix;
+      extensions = import ./vscode/extensions.nix pkgs;
+      keybindings = import ./vscode/keybindings.nix;
+    };
   };
 }
