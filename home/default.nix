@@ -30,6 +30,10 @@
       inherit username;
       homeDirectory = "/Users/${username}";
       stateVersion = "24.05";
+      shellAliases = {
+        t = "task";
+        tt = "taskwarrior-tui";
+      };
     };
 
     home.packages = with pkgs; [
