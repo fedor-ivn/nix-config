@@ -57,6 +57,7 @@
       gh
       podman
       dust
+      taskwarrior-tui
 
       zoom-us
 
