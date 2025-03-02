@@ -27,7 +27,7 @@ in
     home = "/Users/fedorivn";
   };
 
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
   system.defaults.WindowManager.EnableStandardClickToShowDesktop = false;
   # system.defaults.dock.autohide-delay = 0.24;
   # system.defaults.dock.autohide-time-modifier = 1.0;
