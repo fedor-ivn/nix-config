@@ -138,4 +138,5 @@
   "workbench.activityBar.location" = "top";
   # "workbench.colorTheme" = "Solarized Light";
   "workbench.colorTheme" = "GitHub Dark";
+  "editor.accessibilitySupport" = "off";
 }
