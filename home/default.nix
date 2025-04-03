@@ -2,14 +2,19 @@
   pkgs,
   username,
   pkgs-stable,
+  spicetify-nix,
   ...
 }:
+let
+  spicetifyPkgs = spicetify-nix.legacyPackages.${pkgs.stdenv.system};
+in 
 {
   nixpkgs.config.allowUnfree = true;
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.users.${username} = {
     imports = [
+      spicetify-nix.homeManagerModules.default
       ./email.nix
       ./programs/alacritty.nix
       ./programs/bat.nix
@@ -25,6 +30,15 @@
 
     programs.home-manager.enable = true;
     programs.tmux.enable = true;
+
+    programs.spicetify = {
+      enable = true;
+      enabledExtensions = with spicetifyPkgs.extensions; [
+        adblockify
+        hidePodcasts
+        shuffle
+      ];
+    };
 
     home = {
       inherit username;
@@ -52,7 +66,6 @@
       raycast
       monitorcontrol
       stats
-      spotify
 
       tealdeer
       dig

@@ -8,6 +8,10 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nix-homebrew = {
       url = "github:zhaofengli-wip/nix-homebrew";
@@ -41,7 +45,8 @@
       homebrew-bundle,
       homebrew-core,
       homebrew-cask,
-      homebrew-macism
+      homebrew-macism,
+      spicetify-nix
     }:
     let
       system = "aarch64-darwin";
@@ -54,7 +59,7 @@
     in
     {
       # Build darwin flake using:
-      # $ darwin-rebuild build --flake .#Fedors-MacBook-Pro
+      # $ darwin-rebuild build --flake path:.#fedorivns-mbp
       darwinConfigurations.${hostname} = nix-darwin.lib.darwinSystem {
         inherit system;
 
@@ -66,6 +71,7 @@
             username
             pkgs-stable
             hostname
+            spicetify-nix
             ;
         };
         modules = [
