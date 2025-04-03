@@ -22,7 +22,7 @@
           "telegram"
           "altserver"
           "beekeeper-studio"
-          "google-chrome"
+          # "google-chrome"
           "libreoffice"
           "keyboardcleantool"
           "logi-options+"
