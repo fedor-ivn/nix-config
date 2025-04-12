@@ -26,6 +26,7 @@ in
       ./programs/vscode.nix
       ./programs/zoxide.nix
       ./programs/zsh.nix
+      ./programs/gh-task.nix
     ];
 
     programs.home-manager.enable = true;
