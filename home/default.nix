@@ -77,12 +77,13 @@ in
       dust
       taskwarrior-tui
 
-      zoom-us
-
       syncthing
 
+    ] ++ (with pkgs-stable; [
       prismlauncher
-    ];
+      zoom-us
+    ]);
+
   };
 
   # services.syncthing is not available for darwin, so syncthing is started via
