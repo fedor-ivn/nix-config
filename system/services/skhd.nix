@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   brewPrefix,
   ...
 }:
@@ -9,6 +10,55 @@ let
   mkSpaceShortcut =
     num: "shift + ${modifier} - ${toString num} : yabai -m window --space ${toString num};\n";
   spaceShortcuts = lib.strings.concatStrings (map mkSpaceShortcut (lib.lists.range 1 9));
+  toggleLayoutScript = pkgs.writeShellScriptBin "toggle-layout" ''
+    #!/usr/bin/env bash
+
+    # Get the current space
+    CURRENT_SPACE=$(yabai -m query --spaces --space | jq '.index')
+    
+    # Get the current layout of the space
+    CURRENT_LAYOUT=$(yabai -m query --spaces --space | jq -r '.type')
+    
+    # Determine the next layout
+    # Toggle the layout
+    if [ "$CURRENT_LAYOUT" = "bsp" ]; then
+      NEW_LAYOUT="stack"
+    else
+      NEW_LAYOUT="bsp"
+    fi
+    
+    # Apply the new layout to current space
+    yabai -m space --layout "$NEW_LAYOUT"
+  '';
+
+  # Script to cycle through stacked windows
+  cycleStackedWindowsScript = pkgs.writeShellScriptBin "cycle-stacked-window" ''
+    #!/usr/bin/env bash
+    
+    # Get the current space layout
+    CURRENT_LAYOUT=$(yabai -m query --spaces --space | jq -r '.type')
+    
+    # Only cycle windows if we're in stack layout
+    if [ "$CURRENT_LAYOUT" = "stack" ]; then
+      # Get all windows in the current stack
+      WINDOWS=$(yabai -m query --windows --space | jq -r '.[] | select(.["stack-index"] > 0) | .id')
+      WINDOW_COUNT=$(echo "$WINDOWS" | wc -l | tr -d ' ')
+      
+      # If we have multiple windows in the stack
+      if [ "$WINDOW_COUNT" -gt 1 ]; then
+        # Get the current focused window's stack index
+        FOCUSED_WINDOW=$(yabai -m query --windows --window | jq -r '.id')
+        CURRENT_INDEX=$(yabai -m query --windows --window | jq -r '.["stack-index"]')
+        
+        # Focus the next window in the stack (if we're at the end, wrap to the first one)
+        yabai -m window --focus stack.next || yabai -m window --focus stack.first
+      fi
+    else
+      # Notify if we're not in stack layout
+      osascript -e "display notification \"Stack cycling only works in stack layout\" with title \"Yabai\""
+    fi
+  '';
+  
 in
 ''
   # Having troubles finding hotkey? Just type `skhd --observe` in a terminal and
@@ -28,6 +78,9 @@ in
   # ${modifier} - f : yabai -m display --focus north
   # ${modifier} - s : yabai -m display --focus west
   # ${modifier} - g : yabai -m display --focus east
+
+  # cycle through stacked windows (when in stack layout)
+  ${modifier} - tab : ${cycleStackedWindowsScript}/bin/cycle-stacked-window
 
   # Since shift + alt + f conflicts with formatter in VSCode and I have my
   # laptop placed right below the external monitor, I only need two keys to 
@@ -49,6 +102,9 @@ in
   # toggle window float
   shift + ${modifier} - t : yabai -m window --toggle float --grid 8:8:1:1:6:6
 
+  # toggle bsp/stack space layout
+
+  shift + ${modifier} - space : ${toggleLayoutScript}/bin/toggle-layout
 
   # -- Modifying Window Size --
 

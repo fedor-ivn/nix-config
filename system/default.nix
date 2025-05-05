@@ -182,6 +182,6 @@ in
 
   services.skhd = let brewPrefix = config.homebrew.brewPrefix; in {
     enable = true;
-    skhdConfig = import ./services/skhd.nix { inherit lib brewPrefix; };
+    skhdConfig = import ./services/skhd.nix { inherit lib pkgs brewPrefix; };
   };
 }
