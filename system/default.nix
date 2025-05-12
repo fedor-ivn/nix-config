@@ -69,8 +69,8 @@ in
       AppleShowScrollBars = "WhenScrolling";
       # TODO: try this setting
       # AppleSpacesSwitchOnActivate = false;
-      # InitialKeyRepeat = 1;
-      # KeyRepeat = 1;
+      InitialKeyRepeat = 12;
+      KeyRepeat = 2;
 
       # NSAutomaticCapitalizationEnabled = true;
       # NSAutomaticDashSubstitutionEnabled = true;
