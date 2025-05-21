@@ -35,6 +35,8 @@ let
   cycleStackedWindowsScript = pkgs.writeShellScriptBin "cycle-stacked-window" ''
     #!/usr/bin/env bash
     
+    DIRECTION="''${1:-forward}"
+    
     # Get the current space layout
     CURRENT_LAYOUT=$(yabai -m query --spaces --space | jq -r '.type')
     
@@ -46,12 +48,13 @@ let
       
       # If we have multiple windows in the stack
       if [ "$WINDOW_COUNT" -gt 1 ]; then
-        # Get the current focused window's stack index
-        FOCUSED_WINDOW=$(yabai -m query --windows --window | jq -r '.id')
-        CURRENT_INDEX=$(yabai -m query --windows --window | jq -r '.["stack-index"]')
-        
-        # Focus the next window in the stack (if we're at the end, wrap to the first one)
-        yabai -m window --focus stack.next || yabai -m window --focus stack.first
+        if [ "$DIRECTION" = "backward" ]; then
+          # Focus the previous window in the stack (if we're at the beginning, wrap to the last one)
+          yabai -m window --focus stack.prev || yabai -m window --focus stack.last
+        else
+          # Focus the next window in the stack (if we're at the end, wrap to the first one)
+          yabai -m window --focus stack.next || yabai -m window --focus stack.first
+        fi
       fi
     else
       # Notify if we're not in stack layout
@@ -80,7 +83,8 @@ in
   # ${modifier} - g : yabai -m display --focus east
 
   # cycle through stacked windows (when in stack layout)
-  ${modifier} - tab : ${cycleStackedWindowsScript}/bin/cycle-stacked-window
+  ${modifier} - tab : ${cycleStackedWindowsScript}/bin/cycle-stacked-window forward
+  shift + ${modifier} - tab : ${cycleStackedWindowsScript}/bin/cycle-stacked-window backward
 
   # Since shift + alt + f conflicts with formatter in VSCode and I have my
   # laptop placed right below the external monitor, I only need two keys to 
