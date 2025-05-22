@@ -58,7 +58,7 @@ let
       fi
     else
       # Notify if we're not in stack layout
-      osascript -e "display notification \"Stack cycling only works in stack layout\" with title \"Yabai\""
+      osascript -e 'beep'
     fi
   '';
   
