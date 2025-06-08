@@ -55,6 +55,8 @@ in
   #  system.defaults.CustomUserPreferences
   #  system.defaults.NSGlobalDomain.
 
+  system.primaryUser = "fedorivn";
+
   system.defaults = {
     finder.CreateDesktop = false;
     dock = {
