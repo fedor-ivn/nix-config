@@ -74,6 +74,7 @@ in
       python313
       gh
       podman
+      podman-compose
       dust
       taskwarrior-tui
 
