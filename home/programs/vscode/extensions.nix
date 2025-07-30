@@ -3,7 +3,6 @@ pkgs:
 with pkgs.vscode-extensions;
 [
   stkb.rewrap
-  genieai.chatgpt-vscode
 ]
 ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
   # {

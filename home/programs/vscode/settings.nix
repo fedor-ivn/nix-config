@@ -139,4 +139,5 @@
   # "workbench.colorTheme" = "Solarized Light";
   "workbench.colorTheme" = "GitHub Dark";
   "editor.accessibilitySupport" = "off";
+  "update.mode" = "none";
 }
