@@ -21,12 +21,12 @@ in
       ./programs/direnv.nix
       ./programs/fzf.nix
       ./programs/git.nix
+      ./programs/shell-applications.nix
       ./programs/taskwarrior.nix
       ./programs/thunderbird.nix
       ./programs/vscode.nix
       ./programs/zoxide.nix
       ./programs/zsh.nix
-      ./programs/shell-applications.nix
     ];
 
     programs.home-manager.enable = true;
