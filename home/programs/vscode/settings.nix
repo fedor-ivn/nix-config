@@ -139,5 +139,6 @@
   # "workbench.colorTheme" = "Solarized Light";
   "workbench.colorTheme" = "GitHub Dark";
   "editor.accessibilitySupport" = "off";
+  "accessibility.voice.speechTimeout" = 0;
   "update.mode" = "none";
 }
