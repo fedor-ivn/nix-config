@@ -68,6 +68,8 @@ in
       monitorcontrol
       stats
 
+      alt-tab-macos
+
       tealdeer
       dig
       jq
