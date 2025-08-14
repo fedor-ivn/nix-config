@@ -31,6 +31,7 @@ in
 
     programs.home-manager.enable = true;
     programs.tmux.enable = true;
+    programs.ripgrep.enable = true;
 
     programs.spicetify = {
       enable = true;
