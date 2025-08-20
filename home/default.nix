@@ -80,6 +80,7 @@ in
       podman-compose
       dust
       taskwarrior-tui
+      atac
 
       syncthing
 
