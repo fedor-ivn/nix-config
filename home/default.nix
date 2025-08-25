@@ -59,6 +59,7 @@ in
       jetbrains-mono
       # hoppscotch
       postman
+      zoom-us
 
       # Touch ID unlock support on macOS isn't working for nixpkgs build of
       # KeePassXC, so the Homebrew version is used instead.
@@ -68,6 +69,7 @@ in
       raycast
       monitorcontrol
       stats
+      syncthing
 
       alt-tab-macos
 
@@ -81,12 +83,8 @@ in
       dust
       taskwarrior-tui
       atac
-
-      syncthing
-
     ] ++ (with pkgs-stable; [
       prismlauncher
-      zoom-us
     ]);
 
   };

@@ -19,7 +19,6 @@ in
     # darwin.xcode
     htop
     neovim
-    neofetch
   ];
 
   users.users.fedorivn = {
