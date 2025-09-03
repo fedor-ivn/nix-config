@@ -13,6 +13,12 @@ in
       recurrence = "on";
       uda.taskwarrior-tui.shortcuts."1" = "task-open-urls";
       uda.taskwarrior-tui.shortcuts."2" = "task-sync";
+      context = {
+        main = "project.not:shopping";
+        personal = "project.not:shopping project.not:blockscout";
+        blockscout = "project:blockscout";
+        shop = "project:shopping";
+      };
     };
   };
 }
