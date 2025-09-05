@@ -82,7 +82,6 @@ in
       podman-compose
       dust
       taskwarrior-tui
-      atac
     ] ++ (with pkgs-stable; [
       prismlauncher
     ]);
