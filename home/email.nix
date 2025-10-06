@@ -32,23 +32,5 @@ in
         };
       };
     };
-
-    "Innopolis University" = {
-      address = "f.ivanov@innopolis.university";
-      userName = "f.ivanov@innopolis.university";
-      inherit realName;
-
-      thunderbird.enable = true;
-      imap = {
-        host = "mail.innopolis.ru";
-        port = 993;
-        tls.enable = true;
-      };
-      smtp = {
-        host = "mail.innopolis.ru";
-        port = 587;
-        tls.enable = true;
-      };
-    };
   };
 }
