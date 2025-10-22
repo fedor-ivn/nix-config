@@ -18,6 +18,7 @@ in
         };
         quick-tag.name = "today";
       };
+      urgency.user.tag.today.coefficient = 6;
       context = {
         upcoming = "project.not:shopping project.not:wishlist";
         personal = "project.not:shopping project.not:wishlist project.not:blockscout";
