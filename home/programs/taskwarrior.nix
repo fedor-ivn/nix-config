@@ -19,10 +19,11 @@ in
         quick-tag.name = "today";
       };
       context = {
-        main = "project.not:shopping";
-        personal = "project.not:shopping project.not:blockscout";
+        upcoming = "project.not:shopping project.not:wishlist";
+        personal = "project.not:shopping project.not:wishlist project.not:blockscout";
         blockscout = "project:blockscout";
         shop = "project:shopping";
+        someday = "(project:wishlist or +someday)";
         today = "(scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
       };
     };
