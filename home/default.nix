@@ -1,8 +1,10 @@
 {
+  config,
   pkgs,
   username,
   pkgs-stable,
   spicetify-nix,
+  sops-nix,
   ...
 }:
 let
@@ -12,9 +14,10 @@ in
   nixpkgs.config.allowUnfree = true;
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.${username} = {
+  home-manager.users.${username} = { config, ... }: {
     imports = [
       spicetify-nix.homeManagerModules.default
+      sops-nix.homeManagerModules.sops
       ./email.nix
       ./programs/alacritty.nix
       ./programs/bat.nix
@@ -52,6 +55,12 @@ in
       };
     };
 
+    sops = {
+      age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+      defaultSopsFile = ../secrets.yaml;
+      defaultSopsFormat = "yaml";
+    };
+
     home.packages = with pkgs; [
       slack
       qbittorrent
@@ -82,6 +91,8 @@ in
       podman-compose
       dust
       taskwarrior-tui
+
+      sops
     ] ++ (with pkgs-stable; [
       prismlauncher
     ]);

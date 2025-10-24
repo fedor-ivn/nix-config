@@ -32,6 +32,10 @@
       url = "github:laishulu/homebrew-homebrew";
       flake = false;
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -46,7 +50,8 @@
       homebrew-core,
       homebrew-cask,
       homebrew-macism,
-      spicetify-nix
+      spicetify-nix,
+      sops-nix
     }:
     let
       system = "aarch64-darwin";
@@ -72,6 +77,7 @@
             pkgs-stable
             hostname
             spicetify-nix
+            sops-nix
             ;
         };
         modules = [

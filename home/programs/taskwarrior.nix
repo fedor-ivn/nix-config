@@ -1,15 +1,23 @@
-{ pkgs, ... }:
-let
-  secrets = import ../../secrets/taskwarrior-sync.nix;
-in
+{ config, pkgs, lib, ... }:
+
 {
+  sops.secrets = { 
+    "taskwarrior-sync/server-url" = { };
+    "taskwarrior-sync/client-id" = { };
+    "taskwarrior-sync/encryption-secret" = { };
+  };
+  
+  sops.templates."taskwarrior-sync.rc".content = ''
+    sync.server.url=${config.sops.placeholder."taskwarrior-sync/server-url"}
+    sync.server.client_id=${config.sops.placeholder."taskwarrior-sync/client-id"}
+    sync.encryption_secret=${config.sops.placeholder."taskwarrior-sync/encryption-secret"}
+  '';
+  
   programs.taskwarrior = {
     enable = true;
     package = pkgs.taskwarrior3;
+    extraConfig = "include ${config.sops.templates."taskwarrior-sync.rc".path}";
     config = {
-      sync.server.url = secrets.syncUrl;
-      sync.server.client_id = secrets.clientId;
-      sync.encryption_secret = secrets.encryptionSecret;
       recurrence = "on";
       uda.taskwarrior-tui = {
         shortcuts = {
