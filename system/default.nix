@@ -6,12 +6,10 @@
   username,
   hostname,
   lib,
+  secrets,
   ...
 }:
 
-let
-  privateNetworkServices = import ../secrets/network-services.nix;
-in
 {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
@@ -131,7 +129,7 @@ in
       "USB Controls"
       "Thunderbolt Bridge"
       "Wi-Fi"
-    ] ++ privateNetworkServices;
+    ] ++ secrets.knownNetworkServices;
     dns = [
       "8.8.8.8"
       "8.8.4.4"
@@ -142,7 +140,6 @@ in
     ];
   };
 
-  # Create /etc/zshrc that loads the nix-darwin environment.
   programs.zsh.enable = true;
 
   # Set Git commit hash for darwin-version.

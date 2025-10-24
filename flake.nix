@@ -61,6 +61,7 @@
         inherit system;
         config.allowUnfree = true;
       };
+      secrets = import ./secrets.nix;
     in
     {
       # Build darwin flake using:
@@ -78,6 +79,7 @@
             hostname
             spicetify-nix
             sops-nix
+            secrets
             ;
         };
         modules = [

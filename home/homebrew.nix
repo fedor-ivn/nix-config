@@ -1,3 +1,5 @@
+{ secrets, ... }:
+
 {
   homebrew = {
     # This is a module from nix-darwin
@@ -35,7 +37,8 @@
         # KeePassXC, so the Homebrew version is used instead.
         # TODO: Track this issue - https://github.com/NixOS/nixpkgs/issues/241103
         "keepassxc"
-      ];
+      ]
+      ++ secrets.homebrewCasks;
 
     caskArgs.no_quarantine = true;
 
