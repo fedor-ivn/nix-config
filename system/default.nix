@@ -55,6 +55,24 @@
   system.primaryUser = "fedorivn";
 
   system.defaults = {
+    CustomUserPreferences = {
+      GlobalPreferences = {
+        NSUserDictionaryReplacementItems = map (item: {on = 1;} // item) [
+          { replace = ">="; "with" = "≥"; }
+          { replace = "<="; "with" = "≤"; }
+          { replace = "!="; "with" = "≠"; }
+          { replace = "->"; "with" = "→"; }
+          { replace = "дy"; "with" = "доброе утро"; }
+          { replace = "есчо"; "with" = "если что"; }
+          { replace = "кмк"; "with" = "как мне кажется"; }
+          { replace = "мб"; "with" = "может быть"; }
+          { replace = "плз"; "with" = "пожалуйста"; }
+          { replace = "сн"; "with" = "спокойной ночи"; }
+          { replace = "спс"; "with" = "спасибо"; }
+        ];
+      };
+    };
+
     finder.CreateDesktop = false;
     dock = {
       mru-spaces = false;
