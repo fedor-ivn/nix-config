@@ -66,7 +66,7 @@ in
       qbittorrent
       obsidian
       jetbrains-mono
-      # hoppscotch
+      hoppscotch
       postman
       zoom-us
 
