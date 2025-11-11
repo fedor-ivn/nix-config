@@ -19,4 +19,9 @@
     command = "workbench.action.createTerminalEditor";
     when = "terminalProcessSupported || terminalWebExtensionContributedProfile";
   }
+  {
+    key = "cmd+k cmd+a";
+    command = "workbench.action.chat.attachSelection";
+    when = "editorTextFocus && editorHasSelection";
+  }
 ]
