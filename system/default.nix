@@ -73,11 +73,22 @@
       };
     };
 
-    finder.CreateDesktop = false;
+    finder = {
+      CreateDesktop = false;
+      FXPreferredViewStyle = "Nlsv";
+      ShowPathbar = true;
+      ShowStatusBar = true;
+      FXEnableExtensionChangeWarning = false;
+      _FXShowPosixPathInTitle = true;
+      # Options: "SCev" = Search This Mac, "SCcf" = Search Current Folder, "SCsp" = Use Previous Search Scope
+      FXDefaultSearchScope = "SCcf"; # Search current folder by default
+    };
+
     dock = {
       mru-spaces = false;
       autohide = true;
     };
+
     NSGlobalDomain = {
       AppleInterfaceStyle = "Dark";
       AppleScrollerPagingBehavior = true;
