@@ -16,7 +16,6 @@
   environment.systemPackages = with pkgs; [
     # darwin.xcode
     htop
-    neovim
   ];
 
   users.users.fedorivn = {

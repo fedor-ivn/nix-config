@@ -24,6 +24,7 @@ in
       ./programs/direnv.nix
       ./programs/fzf.nix
       ./programs/git.nix
+      ./programs/neovim.nix
       ./programs/shell-applications.nix
       ./programs/taskwarrior.nix
       ./programs/thunderbird.nix
