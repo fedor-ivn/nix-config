@@ -33,6 +33,10 @@
         };
         option_as_alt = "Both";
       };
+      terminal.shell = {
+        program = "${pkgs.zsh}/bin/zsh";
+        args = [ "-l" ];
+      };
       keyboard.bindings = [
         {
           action = "ToggleViMode";

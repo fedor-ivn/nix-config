@@ -86,6 +86,7 @@
   "rewrap.autoWrap.enabled" = true;
   "security.workspace.trust.untrustedFiles" = "open";
   "terminal.integrated.defaultProfile.osx" = "zsh";
+  "terminal.integrated.defaultProfile.linux" = "zsh";
   "terminal.integrated.enableMultiLinePasteWarning" = false;
   "terminal.integrated.fontFamily" = "MesloLGS NF";
   "terminal.integrated.fontWeight" = "normal";

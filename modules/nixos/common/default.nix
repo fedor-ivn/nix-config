@@ -69,6 +69,9 @@
   programs.ssh.startAgent = true;
   services.fwupd.enable = true;
 
+  programs.zsh.enable = true;
+  users.defaultUserShell = pkgs.zsh;
+
   nix = {
     gc.automatic = true;
     settings = {
