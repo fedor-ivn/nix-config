@@ -151,22 +151,22 @@ in
     };
 
     # Taskwarrior configuration from old taskwarrior.nix
-    # sops.secrets = { 
-    #   "taskwarrior-sync/server-url" = { };
-    #   "taskwarrior-sync/client-id" = { };
-    #   "taskwarrior-sync/encryption-secret" = { };
-    # };
+    sops.secrets = { 
+      "taskwarrior-sync/server-url" = { };
+      "taskwarrior-sync/client-id" = { };
+      "taskwarrior-sync/encryption-secret" = { };
+    };
     
-    # sops.templates."taskwarrior-sync.rc".content = ''
-    #   sync.server.url=${config.sops.placeholder."taskwarrior-sync/server-url"}
-    #   sync.server.client_id=${config.sops.placeholder."taskwarrior-sync/client-id"}
-    #   sync.encryption_secret=${config.sops.placeholder."taskwarrior-sync/encryption-secret"}
-    # '';
+    sops.templates."taskwarrior-sync.rc".content = ''
+      sync.server.url=${config.sops.placeholder."taskwarrior-sync/server-url"}
+      sync.server.client_id=${config.sops.placeholder."taskwarrior-sync/client-id"}
+      sync.encryption_secret=${config.sops.placeholder."taskwarrior-sync/encryption-secret"}
+    '';
     
     programs.taskwarrior = {
       enable = true;
       package = pkgs.taskwarrior3;
-      # extraConfig = "include ${config.sops.templates."taskwarrior-sync.rc".path}";
+      extraConfig = "include ${config.sops.templates."taskwarrior-sync.rc".path}";
       config =
         {
           uda.taskwarrior-tui = {
@@ -185,17 +185,6 @@ in
             someday = "(project:wishlist or +someday)";
             today = "(scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
           };
-          # !!!!!!!!!!!!!!!!!!!!!
-          # !!!!!!!!!!!!!!!!!!!!!
-          # !!!!!!!!!!!!!!!!!!!!!
-          # !!!!!!!!!!!!!!!!!!!!!
-          sync.server.url="https://tws.snejugal.ru";
-          sync.server.client_id="62d7f62d-8924-4fe2-8485-5bcdf24ae37c";
-          sync.encryption_secret="19D05B20-1A98-4452-9FBF-39993C2D2F1A";
-          # !!!!!!!!!!!!!!!!!!!!!
-          # !!!!!!!!!!!!!!!!!!!!!
-          # !!!!!!!!!!!!!!!!!!!!!
-          # !!!!!!!!!!!!!!!!!!!!!
         };
         # // (mkIf config.taskwarrior.enableRecurrence {
         #   recurrence = "on";

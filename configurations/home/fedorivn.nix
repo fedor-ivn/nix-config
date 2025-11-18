@@ -1,4 +1,4 @@
-{ flake, config, pkgs, ... }:
+{ flake, config, pkgs, inputs, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
@@ -6,7 +6,7 @@ in
 {
   imports = [
     self.homeModules.default
-    # sops-nix.homeManagerModules.sops
+    inputs.sops-nix.homeManagerModules.sops
   ];
 
   me = {
@@ -15,12 +15,11 @@ in
     email = "ivnfedor@gmail.com";
   };
 
-  # SOPS configuration ported from old nix-darwin setup
-  # sops = {
-  #   age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-  #   defaultSopsFile = ../../secrets.yaml;
-  #   defaultSopsFormat = "yaml";
-  # };
+  sops = {
+    age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+    defaultSopsFile = ../../secrets.yaml;
+    defaultSopsFormat = "yaml";
+  };
 
   # Use same state version as system unless you want to bump independently
   home.stateVersion = "23.11";
