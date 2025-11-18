@@ -9,12 +9,10 @@ in
   home.packages =
     let
       base = with pkgs; [
-        # Unix tools
-        ripgrep # Better `grep`
-        fd
-        sd
+        # CLI tools
         tree
         dig
+        sops
 
         # Nix dev
         cachix
@@ -22,19 +20,14 @@ in
         nix-info
         nixpkgs-fmt
 
-        sops
-
         # Cross-platform GUI / CLI apps (Linux via Nix; macOS via Homebrew where noted)
         slack
         qbittorrent
-        obsidian
         jetbrains-mono
         hoppscotch
         zoom-us
 
-        tealdeer
         python313
-        gh
         dust
       ];
 
@@ -63,10 +56,15 @@ in
   # Programs natively supported by home-manager.
   # They can be configured in `programs.*` instead of using home.packages.
   programs = {
-    # Better `cat` (from old bat.nix)
+    ripgrep.enable = true;
     bat.enable = true;
+    tealdeer.enable = true;
 
-    # Fuzzy finder (from old fzf.nix)
+    fd = {
+      enable = true;
+      hidden = true;
+    };
+
     fzf = {
       enable = true;
       enableZshIntegration = true;
