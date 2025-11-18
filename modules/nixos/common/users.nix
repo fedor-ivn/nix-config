@@ -7,7 +7,7 @@ let
 in
 {
   options = {
-    myUsers = lib.mkOption {
+    managedUsers = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       description = "List of usernames";
       defaultText = "All users under ./configuration/users are included by default";
@@ -19,17 +19,13 @@ in
           baseNames = map (name: builtins.replaceStrings [ ".nix" ] [ "" ] name) regularFiles; # Removes .nix extension
         in
         baseNames;
-
-      # Restrict to explicitly listed users instead of auto-discovering from configurations/home
-      # defaultText = "Usernames to manage with home-manager";
-      # default = [ "fedorivn" ];
     };
   };
 
   config = {
     # For home-manager to work.
     # https://github.com/nix-community/home-manager/issues/4026#issuecomment-1565487545
-    users.users = mapListToAttrs config.myUsers (name:
+    users.users = mapListToAttrs config.managedUsers (name:
       lib.optionalAttrs pkgs.stdenv.isDarwin {
         home = "/Users/${name}";
       } // lib.optionalAttrs pkgs.stdenv.isLinux {
@@ -39,13 +35,13 @@ in
     );
 
     # Enable home-manager for our user
-    home-manager.users = mapListToAttrs config.myUsers (name: {
+    home-manager.users = mapListToAttrs config.managedUsers (name: {
       imports = [ (self + /configurations/home/${name}.nix) ];
     });
 
     # All users can add Nix caches.
     nix.settings.trusted-users = [
       "root"
-    ] ++ config.myUsers;
+    ] ++ config.managedUsers;
   };
 }

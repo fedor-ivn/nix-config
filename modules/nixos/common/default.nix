@@ -1,7 +1,7 @@
 { config, pkgs, lib, flake, ... }:
 {
   imports = [
-    ./my-users.nix
+    ./users.nix
   ];
 
   networking = {
