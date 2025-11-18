@@ -22,10 +22,6 @@ in
         nix-info
         nixpkgs-fmt
 
-        # On ubuntu, we need this less for `man home-configuration.nix`'s pager to
-        # work.
-        less
-
         sops
 
         # Cross-platform GUI / CLI apps (Linux via Nix; macOS via Homebrew where noted)
@@ -34,7 +30,6 @@ in
         obsidian
         jetbrains-mono
         hoppscotch
-        # postman
         zoom-us
 
         tealdeer
@@ -49,7 +44,6 @@ in
         vlc
         google-chrome
         telegram-desktop
-        # beekeeper-studio
       ];
 
       darwinOnly = with pkgs; [
