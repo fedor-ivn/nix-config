@@ -3,7 +3,7 @@
   programs.alacritty = {
     enable = true;
     # Ported from old nix-darwin config.
-    theme  = "miasma";
+    theme = "miasma";
     settings = {
       colors = {
         normal.black = "#565C63";

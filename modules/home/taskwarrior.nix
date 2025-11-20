@@ -151,18 +151,18 @@ in
     };
 
     # Taskwarrior configuration from old taskwarrior.nix
-    sops.secrets = { 
+    sops.secrets = {
       "taskwarrior-sync/server-url" = { };
       "taskwarrior-sync/client-id" = { };
       "taskwarrior-sync/encryption-secret" = { };
     };
-    
+
     sops.templates."taskwarrior-sync.rc".content = ''
       sync.server.url=${config.sops.placeholder."taskwarrior-sync/server-url"}
       sync.server.client_id=${config.sops.placeholder."taskwarrior-sync/client-id"}
       sync.encryption_secret=${config.sops.placeholder."taskwarrior-sync/encryption-secret"}
     '';
-    
+
     programs.taskwarrior = {
       enable = true;
       package = pkgs.taskwarrior3;
@@ -186,9 +186,9 @@ in
             today = "(scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
           };
         };
-        # // (mkIf config.taskwarrior.enableRecurrence {
-        #   recurrence = "on";
-        # });
+      # // (mkIf config.taskwarrior.enableRecurrence {
+      #   recurrence = "on";
+      # });
     };
   };
 }
