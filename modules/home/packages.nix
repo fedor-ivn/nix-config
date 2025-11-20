@@ -72,12 +72,8 @@ in
 
     jq.enable = true;
 
-    firefox = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      enable = true;
-    };
-
-    keepassxc = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      enable = true;
-    };
+  } // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+    firefox.enable = true;
+    keepassxc.enable = true;
   };
 }
