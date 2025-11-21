@@ -33,7 +33,7 @@
         blockscout = "project:blockscout";
         shop = "project:shopping";
         someday = "(project:wishlist or +someday)";
-        today = "(scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
+        today = "(scheduled.before:today or scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
       };
     };
   };
