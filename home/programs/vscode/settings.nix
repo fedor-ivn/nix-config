@@ -52,7 +52,7 @@
   # "editor.fontFamily" = "'Monaspace Neon', monospace";
   # "editor.fontLigatures" = "'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08'";
   "editor.fontFamily" = "'JetBrains Mono', monospace";
-  "editor.fontSize" = 12;
+  # "editor.fontSize" = 12;
   "editor.fontLigatures" = true;
   "editor.inlineSuggest.enabled" = true;
   "editor.minimap.enabled" = false;
