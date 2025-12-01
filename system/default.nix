@@ -11,6 +11,10 @@
 }:
 
 {
+  imports = [
+    ./services/yabai.nix
+    ./services/skhd.nix
+  ];
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
@@ -56,18 +60,51 @@
   system.defaults = {
     CustomUserPreferences = {
       GlobalPreferences = {
-        NSUserDictionaryReplacementItems = map (item: {on = 1;} // item) [
-          { replace = ">="; "with" = "≥"; }
-          { replace = "<="; "with" = "≤"; }
-          { replace = "!="; "with" = "≠"; }
-          { replace = "->"; "with" = "→"; }
-          { replace = "дy"; "with" = "доброе утро"; }
-          { replace = "есчо"; "with" = "если что"; }
-          { replace = "кмк"; "with" = "как мне кажется"; }
-          { replace = "мб"; "with" = "может быть"; }
-          { replace = "плз"; "with" = "пожалуйста"; }
-          { replace = "сн"; "with" = "спокойной ночи"; }
-          { replace = "спс"; "with" = "спасибо"; }
+        NSUserDictionaryReplacementItems = map (item: { on = 1; } // item) [
+          {
+            replace = ">=";
+            "with" = "≥";
+          }
+          {
+            replace = "<=";
+            "with" = "≤";
+          }
+          {
+            replace = "!=";
+            "with" = "≠";
+          }
+          {
+            replace = "->";
+            "with" = "→";
+          }
+          {
+            replace = "дy";
+            "with" = "доброе утро";
+          }
+          {
+            replace = "есчо";
+            "with" = "если что";
+          }
+          {
+            replace = "кмк";
+            "with" = "как мне кажется";
+          }
+          {
+            replace = "мб";
+            "with" = "может быть";
+          }
+          {
+            replace = "плз";
+            "with" = "пожалуйста";
+          }
+          {
+            replace = "сн";
+            "with" = "спокойной ночи";
+          }
+          {
+            replace = "спс";
+            "with" = "спасибо";
+          }
         ];
       };
     };
@@ -157,7 +194,8 @@
       "USB Controls"
       "Thunderbolt Bridge"
       "Wi-Fi"
-    ] ++ secrets.knownNetworkServices;
+    ]
+    ++ secrets.knownNetworkServices;
     dns = [
       "8.8.8.8"
       "8.8.4.4"
@@ -186,28 +224,4 @@
   # system.activationScripts.extraActivation.text = ''
   #   softwareupdate --install-rosetta --agree-to-license
   # '';
-
-  services.yabai = {
-    enable = true;
-    config = {
-      layout = "bsp";
-      window_placement = "second_child";
-      mouse_follows_focus = "on";
-      mouse_modifier = "fn";
-      mouse_action1 = "move";
-      mouse_action2 = "resize";
-    };
-    extraConfig = ''
-      yabai -m mouse_drop_action swap
-      yabai -m rule --add app="^System Settings$" manage=off
-      yabai -m rule --add app="^Calculator$" manage=off
-      yabai -m rule --add app="^MonitorControl$" manage=off
-      yabai -m rule --add app="^Raycast$" manage=off
-    '';
-  };
-
-  services.skhd = let brewPrefix = config.homebrew.brewPrefix; in {
-    enable = true;
-    skhdConfig = import ./services/skhd.nix { inherit lib pkgs brewPrefix; };
-  };
 }
