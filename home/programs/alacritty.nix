@@ -6,7 +6,7 @@
   programs.alacritty = {
     enable = true;
     # theme  = "github_dark";
-    theme  = "miasma";
+    theme = "miasma";
     settings = {
       colors = {
         normal.black = "#565C63";

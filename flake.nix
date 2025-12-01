@@ -51,7 +51,7 @@
       homebrew-cask,
       homebrew-macism,
       spicetify-nix,
-      sops-nix
+      sops-nix,
     }:
     let
       system = "aarch64-darwin";

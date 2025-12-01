@@ -9,7 +9,10 @@ let
 
   taskImportGh = pkgs.writeShellApplication {
     name = "gh-task";
-    runtimeInputs = with pkgs; [ gh jq ];
+    runtimeInputs = with pkgs; [
+      gh
+      jq
+    ];
     text = ''
       # A script to convert GitHub PRs to Taskwarrior tasks using task import
 
@@ -86,7 +89,10 @@ let
 
   taskOpenUrls = pkgs.writeShellApplication {
     name = "task-open-urls";
-    runtimeInputs = with pkgs; [ jq pkgs.taskwarrior3 ];
+    runtimeInputs = with pkgs; [
+      jq
+      pkgs.taskwarrior3
+    ];
     text = ''
       #!/usr/bin/env bash
       #
@@ -135,8 +141,11 @@ let
     '';
   };
 
-
 in
 {
-  home.packages = [ taskSync taskImportGh taskOpenUrls ];
+  home.packages = [
+    taskSync
+    taskImportGh
+    taskOpenUrls
+  ];
 }
