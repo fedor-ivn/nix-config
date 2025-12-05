@@ -94,6 +94,7 @@ in
           gh
           podman
           podman-compose
+          docker-client
           dust
           taskwarrior-tui
 
