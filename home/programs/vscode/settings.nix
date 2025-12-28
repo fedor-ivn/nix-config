@@ -141,4 +141,5 @@
   "editor.accessibilitySupport" = "off";
   "accessibility.voice.speechTimeout" = 0;
   "update.mode" = "none";
+  "chat.viewSessions.orientation" = "stacked";
 }
