@@ -33,10 +33,10 @@
       };
       urgency.user.tag.today.coefficient = 6;
       context = {
-        upcoming = "project.not:shopping project.not:wishlist";
-        personal = "project.not:shopping project.not:wishlist project.not:blockscout";
-        blockscout = "project:blockscout";
-        shop = "project:shopping";
+        upcoming = "project.not:shopping project.not:wishlist -someday";
+        personal = "project.not:shopping project.not:wishlist project.not:blockscout -someday";
+        blockscout = "project:blockscout -someday";
+        shop = "project:shopping -someday";
         someday = "(project:wishlist or +someday)";
         today = "(scheduled.before:today or scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
       };
