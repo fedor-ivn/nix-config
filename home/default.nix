@@ -3,12 +3,12 @@
   pkgs,
   username,
   pkgs-stable,
-  # spicetify-nix,
+  spicetify-nix,
   sops-nix,
   ...
 }:
 let
-  # spicetifyPkgs = spicetify-nix.legacyPackages.${pkgs.stdenv.system};
+  spicetifyPkgs = spicetify-nix.legacyPackages.${pkgs.stdenv.system};
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -18,7 +18,7 @@ in
     { config, ... }:
     {
       imports = [
-        # spicetify-nix.homeManagerModules.default
+        spicetify-nix.homeManagerModules.default
         sops-nix.homeManagerModules.sops
         ./email.nix
         ./programs/alacritty.nix
@@ -39,14 +39,14 @@ in
       programs.tmux.enable = true;
       programs.ripgrep.enable = true;
 
-      # programs.spicetify = {
-      #   enable = true;
-      #   enabledExtensions = with spicetifyPkgs.extensions; [
-      #     adblockify
-      #     hidePodcasts
-      #     shuffle
-      #   ];
-      # };
+      programs.spicetify = {
+        enable = true;
+        enabledExtensions = with spicetifyPkgs.extensions; [
+          adblockify
+          hidePodcasts
+          shuffle
+        ];
+      };
 
       home = {
         inherit username;
