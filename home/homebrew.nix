@@ -26,11 +26,11 @@
           "google-chrome"
           "libreoffice"
           "keyboardcleantool"
-          "logi-options+"
           "chatgpt"
           "lm-studio"
           "tunnelblick"
           "obs"
+          "mac-mouse-fix"
         ]
       ++ [
         # Touch ID unlock support on macOS isn't working for nixpkgs build of
