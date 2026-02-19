@@ -33,6 +33,7 @@ in
         ./programs/vscode.nix
         ./programs/zoxide.nix
         ./programs/zsh.nix
+        ./programs/claude-code.nix
       ];
 
       programs.home-manager.enable = true;
