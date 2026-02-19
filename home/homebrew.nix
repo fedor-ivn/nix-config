@@ -31,6 +31,7 @@
           "tunnelblick"
           "obs"
           "mac-mouse-fix"
+          "handy"
         ]
       ++ [
         # Touch ID unlock support on macOS isn't working for nixpkgs build of
