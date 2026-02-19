@@ -19,7 +19,6 @@
   environment.systemPackages = with pkgs; [
     # darwin.xcode
     htop
-    fixAccessibilityScript
   ];
 
   users.users.fedorivn = {
