@@ -19,7 +19,6 @@
         [
           "firefox"
           "thunderbird"
-          "vlc"
           "telegram"
           "altserver"
           "beekeeper-studio"

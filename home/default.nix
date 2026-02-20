@@ -85,6 +85,7 @@ in
           monitorcontrol
           stats
           syncthing
+          iina
 
           alt-tab-macos
 
