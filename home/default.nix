@@ -34,6 +34,7 @@ in
         ./programs/zoxide.nix
         ./programs/zsh.nix
         ./programs/claude-code.nix
+        ./programs/codex.nix
       ];
 
       programs.home-manager.enable = true;
