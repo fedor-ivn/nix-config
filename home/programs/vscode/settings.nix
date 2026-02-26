@@ -142,7 +142,7 @@
   "accessibility.voice.speechTimeout" = 0;
   "update.mode" = "none";
   "chat.viewSessions.orientation" = "stacked";
-  "chat.useClaudeSkills" = true;
+  "chat.useAgentSkills" = true;
   "mermaid-chat.enabled" = true;
   "github.copilot.chat.anthropic.tools.websearch.enabled" = true;
   "chat.mcp.discovery.enabled" = {
