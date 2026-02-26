@@ -148,4 +148,5 @@
   "chat.mcp.discovery.enabled" = {
     "cursor-workspace" = true;
   };
+  "claudeCode.preferredLocation" = "panel";
 }
