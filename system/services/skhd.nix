@@ -6,7 +6,7 @@
 }:
 
 let
-  brewPrefix = config.homebrew.brewPrefix;
+  brewPrefix = config.homebrew.prefix;
   modifier = "alt";
   mkSpaceShortcut =
     num: "shift + ${modifier} - ${toString num} : yabai -m window --space ${toString num};\n";
@@ -127,8 +127,8 @@ in
       ctrl + ${modifier} - r : yabai --restart-service;
 
       # -- Change the input source --
-      ${modifier} - 1 : ${brewPrefix}/macism com.apple.keylayout.ABC;
-      ${modifier} - 2 : ${brewPrefix}/macism com.apple.keylayout.RussianWin;
+      ${modifier} - 1 : ${brewPrefix}/bin/macism com.apple.keylayout.ABC;
+      ${modifier} - 2 : ${brewPrefix}/bin/macism com.apple.keylayout.RussianWin;
     '';
   };
 }
