@@ -1,10 +1,6 @@
 pkgs:
 
-with pkgs.vscode-extensions;
-[
-  stkb.rewrap
-]
-++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+with pkgs.vscode-utils.extensionsFromVscodeMarketplace; [
   # {
   #   name = "ms-vscode";
   #   publisher = "remote-explorer";
