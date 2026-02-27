@@ -27,7 +27,6 @@
           "keyboardcleantool"
           "chatgpt"
           "lm-studio"
-          "tunnelblick"
           "obs"
           "mac-mouse-fix"
           "handy"
