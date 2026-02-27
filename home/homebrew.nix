@@ -31,6 +31,7 @@
           "obs"
           "mac-mouse-fix"
           "handy"
+          "claude"
         ]
       ++ [
         # Touch ID unlock support on macOS isn't working for nixpkgs build of
