@@ -86,22 +86,6 @@
         "type": "github"
       }
     },
-    "homebrew-macism": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1746716780,
-        "narHash": "sha256-NyXCe1ASsWD0UbeYQoY5/W9MIi8OgQG/EIGjQf8epJY=",
-        "owner": "laishulu",
-        "repo": "homebrew-homebrew",
-        "rev": "68b84d40274b9f3a6cc800261f324efca684131e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "laishulu",
-        "repo": "homebrew-homebrew",
-        "type": "github"
-      }
-    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -178,7 +162,6 @@
         "homebrew-bundle": "homebrew-bundle",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
-        "homebrew-macism": "homebrew-macism",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",

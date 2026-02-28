@@ -89,6 +89,7 @@ in
           iina
 
           alt-tab-macos
+          macism
 
           tealdeer
           dig

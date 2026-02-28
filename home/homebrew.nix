@@ -6,10 +6,6 @@
     # Homebrew is *installed* via the flake input nix-homebrew
     enable = true;
 
-    brews = [
-      { name = "laishulu/homebrew/macism"; }
-    ];
-
     casks =
       map
         (name: {

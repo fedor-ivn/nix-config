@@ -28,10 +28,6 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
-    homebrew-macism = {
-      url = "github:laishulu/homebrew-homebrew";
-      flake = false;
-    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -49,7 +45,6 @@
       homebrew-bundle,
       homebrew-core,
       homebrew-cask,
-      homebrew-macism,
       spicetify-nix,
       sops-nix,
     }:
@@ -96,7 +91,6 @@
                 "homebrew/homebrew-core" = homebrew-core;
                 "homebrew/homebrew-cask" = homebrew-cask;
                 "homebrew/homebrew-bundle" = homebrew-bundle;
-                "laishulu/homebrew-homebrew" = homebrew-macism;
               };
               mutableTaps = false;
             };
