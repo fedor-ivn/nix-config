@@ -88,8 +88,6 @@ in
           syncthing
           iina
 
-          alt-tab-macos
-
           tealdeer
           dig
           jq

@@ -1,3 +1,4 @@
 .DS_Store
 secrets
 secrets.nix
+.claude/settings.local.json
