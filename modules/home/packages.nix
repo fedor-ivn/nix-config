@@ -47,6 +47,9 @@ in
         syncthing
         podman
         podman-compose
+        docker-client
+        iina
+        postman
       ];
     in
     base
@@ -59,6 +62,8 @@ in
     ripgrep.enable = true;
     bat.enable = true;
     tealdeer.enable = true;
+    firefox.enable = true;
+    tmux.enable = true;
 
     fd = {
       enable = true;
@@ -73,7 +78,6 @@ in
     jq.enable = true;
 
   } // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-    firefox.enable = true;
     keepassxc.enable = true;
   };
 }

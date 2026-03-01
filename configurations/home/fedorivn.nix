@@ -21,6 +21,8 @@ in
     defaultSopsFormat = "yaml";
   };
 
+  taskwarrior.enableRecurrence = pkgs.stdenv.hostPlatform.isDarwin;
+
   # Use same state version as system unless you want to bump independently
   home.stateVersion = "23.11";
 

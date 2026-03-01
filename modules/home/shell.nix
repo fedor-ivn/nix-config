@@ -4,6 +4,7 @@
     # Zsh: merge old nix-darwin settings with new layout.
     zsh = {
       enable = true;
+      autocd = true;
       enableCompletion = true;
       autosuggestion.enable = true;
       history = {
@@ -15,8 +16,11 @@
       syntaxHighlighting.enable = true;
 
       # Keep hooks for extra config if needed.
-      envExtra = ''
-        # Custom ~/.zshenv goes here
+      envExtra = pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+        podman_socket_path="$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}' 2>/dev/null || true)"
+        if [ -n "$podman_socket_path" ]; then
+          export DOCKER_HOST="unix://$podman_socket_path"
+        fi
       '';
       profileExtra = ''
         # Custom ~/.zprofile goes here
