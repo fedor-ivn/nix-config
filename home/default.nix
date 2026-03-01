@@ -35,6 +35,7 @@ in
         ./programs/zsh.nix
         ./programs/claude-code.nix
         ./programs/codex.nix
+        ./programs/raycast-scripts.nix
       ];
 
       programs.home-manager.enable = true;
@@ -89,7 +90,6 @@ in
           iina
 
           alt-tab-macos
-          macism
 
           tealdeer
           dig
