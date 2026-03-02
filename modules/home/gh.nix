@@ -3,7 +3,7 @@
   programs.gh = {
     enable = true;
     extensions = [
-      pkgs.gh-copilot
+      pkgs.github-copilot-cli
       pkgs.gh-poi
     ];
   };

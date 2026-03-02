@@ -21,10 +21,12 @@ in
     defaultSopsFormat = "yaml";
   };
 
+  # TODO:  Should be true specifically for this mbp. If I one day add another darwin
+  # machine, it should not have recurrence enabled. 
   taskwarrior.enableRecurrence = pkgs.stdenv.hostPlatform.isDarwin;
 
   # Use same state version as system unless you want to bump independently
-  home.stateVersion = "23.11";
+  home.stateVersion = "24.05";
 
   # Extra user packages on top of modules/home/packages.nix
   # home.packages = with pkgs; [ htop neovim tmux ];

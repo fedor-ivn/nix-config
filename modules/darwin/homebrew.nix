@@ -1,0 +1,32 @@
+{ flake, ... }:
+let
+  secrets = flake.inputs.secrets.values;
+in
+{
+  homebrew = {
+    enable = true;
+    casks = map (name: {
+      inherit name;
+      greedy = true;
+    }) ([
+      "telegram"
+      "altserver"
+      "beekeeper-studio"
+      "google-chrome"
+      "libreoffice"
+      "keyboardcleantool"
+      "lm-studio"
+      "obs"
+      "mac-mouse-fix"
+      "chatgpt"
+      "claude"
+      "handy"
+    ] ++ secrets.homebrewCasks);
+    caskArgs.no_quarantine = true;
+    onActivation = {
+      cleanup = "zap";
+      autoUpdate = true;
+      upgrade = true;
+    };
+  };
+}

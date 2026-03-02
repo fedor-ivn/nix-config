@@ -29,4 +29,4 @@ dev:
 # Activate the configuration
 [group('Main')]
 run:
-  nix run
+  nix run .#activate

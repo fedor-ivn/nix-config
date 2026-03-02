@@ -62,7 +62,6 @@ in
     ripgrep.enable = true;
     bat.enable = true;
     tealdeer.enable = true;
-    firefox.enable = true;
     tmux.enable = true;
 
     fd = {
@@ -77,7 +76,7 @@ in
 
     jq.enable = true;
 
-  } // lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+  } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
     keepassxc.enable = true;
   };
 }

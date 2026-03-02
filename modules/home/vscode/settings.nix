@@ -91,7 +91,6 @@
   };
   "notebook.formatOnCellExecution" = true;
   "remote.autoForwardPortsSource" = "hybrid";
-  "rewrap.autoWrap.enabled" = true;
   "security.workspace.trust.untrustedFiles" = "open";
   "terminal.integrated.defaultProfile.osx" = "zsh";
   "terminal.integrated.defaultProfile.linux" = "zsh";

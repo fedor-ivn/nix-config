@@ -70,11 +70,28 @@ from Darwin modules too — it sets `users.users.*` (with `/Users/` home on Darw
 
 ### Secrets
 
-Secrets are managed with [SOPS](https://github.com/getsops/sops) +
-[sops-nix](https://github.com/Mic92/sops-nix). The encrypted file is `secrets.yaml`; the age key is expected
-at `~/.config/sops/age/keys.txt`.
+Two secrets sources are in use:
+
+- **`secrets.yaml`** — SOPS-encrypted YAML, managed by `sops-nix`; decrypted at activation time by
+  the sops-nix module. Contains taskwarrior sync credentials. The age key is expected at
+  `~/.config/sops/age/keys.txt`.
+
+- **`inputs.secrets` (private flake)** — Nix evaluation-time secrets (e.g. `homebrewCasks`,
+  `knownNetworkServices`) stored in the private `fedor-ivn/nix-secrets` GitHub repo and
+  referenced as a flake input:
+  ```nix
+  secrets.url = "git+ssh://git@github.com/fedor-ivn/nix-secrets";
+  ```
+  Local checkout: `~/projects/nix-secrets/`. Consumed via `flake.inputs.secrets.secrets`.
+  No decryption step needed — access is controlled by SSH key / repo visibility.
+
+The `secrets.yaml` age key (`age1tekqv95z...`) is configured in `.sops.yaml`.
 
 ### Cross-platform packages
 
 `modules/home/packages.nix` splits packages into `base`, `linuxOnly`, and `darwinOnly` lists and conditionally
 includes them using `pkgs.stdenv.hostPlatform.isLinux` / `isDarwin`.
+
+## Common Gotchas
+
+- **Untracked files are invisible to Nix** — always `git add` new files before building, or Nix may silently ignore them.
