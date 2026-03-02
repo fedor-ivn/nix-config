@@ -13,6 +13,7 @@ in
         tree
         dig
         sops
+        lima
 
         # Nix dev
         cachix

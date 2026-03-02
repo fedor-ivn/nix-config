@@ -15,6 +15,15 @@
         type = lib.types.str;
         description = "Your email for use in Git config";
       };
+      isMainMachine = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Whether this Home Manager config is evaluated for the main machine";
+      };
+      sshPublicKey = lib.mkOption {
+        type = lib.types.str;
+        description = "Your SSH public key for use in authorized_keys";
+      };
     };
   };
 

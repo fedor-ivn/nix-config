@@ -39,6 +39,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Private evaluation-time secrets
     secrets.url = "git+ssh://git@github.com/fedor-ivn/nix-secrets";

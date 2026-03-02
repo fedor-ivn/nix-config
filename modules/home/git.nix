@@ -15,7 +15,7 @@
           # Prefer dynamic values if available, fall back to literals from old config.
           email = config.me.email or "ivnfedor@gmail.com";
           name = config.me.fullname or "Fedor Ivanov";
-          signingkey = "key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILycRbR32YtN1cD0SkJOwwO1cZgpaKVjJs42nTNh2RCD ivnfedor@gmail.com";
+          signingkey = "key::${config.me.sshPublicKey}";
         };
 
         commit.gpgsign = true;

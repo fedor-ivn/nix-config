@@ -138,8 +138,6 @@ let
 
 in
 {
-  options.taskwarrior.enableRecurrence = mkEnableOption "Taskwarrior recurrence on this machine";
-
   config = {
     # Scripts from old shell-applications.nix
     home = {
@@ -185,10 +183,8 @@ in
             someday = "(project:wishlist or +someday)";
             today = "(scheduled.before:today or scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
           };
-        }
-        // (mkIf config.taskwarrior.enableRecurrence {
-          recurrence = "on";
-        });
+          recurrence = if config.me.isMainMachine then "on" else "off";
+        };
     };
   };
 }

@@ -1,0 +1,13 @@
+# Declarative Lima template for the `nixos-vm` instance.
+# Note: Lima reads this only at `limactl create` time.
+# Updating this file later does not mutate an existing VM.
+vmType: vz
+arch: aarch64
+cpus: 4
+memory: "4GiB"
+disk: "40GiB"
+images:
+  - location: "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-arm64.qcow2"
+mounts: []
+ssh:
+  localPort: 0
