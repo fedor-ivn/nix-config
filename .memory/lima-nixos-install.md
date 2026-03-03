@@ -72,6 +72,20 @@ Expected:
 - User is `fedorivn` in guest.
 - `/etc/os-release` shows Debian 12 (Bookworm).
 
+### Why the SSH command looks weird
+
+This setup uses Lima port forwarding and automation-friendly SSH flags:
+- `root@127.0.0.1 -p "$LIMA_PORT"`: Lima exposes guest SSH on localhost with a dynamic port.
+- `-i /Users/fedorivn/.lima/_config/user`: forces Lima's VM key.
+- `-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null`: avoids host-key mismatch failures after VM recreate/kexec.
+- Quoted command (`'...'`): runs verification commands remotely in one SSH call.
+
+Daily-use interactive variant (cleaner):
+
+```sh
+ssh -i /Users/fedorivn/.lima/_config/user -p "$LIMA_PORT" root@127.0.0.1
+```
+
 ---
 
 ## Step 3: First install attempt (failed path and reason)
