@@ -9,6 +9,7 @@ in
 
   networking.hostName = "fedorivns-vps";
   nixpkgs.hostPlatform = "aarch64-linux";
+  nixos-unified.sshTarget = "root@vps-lima";
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;

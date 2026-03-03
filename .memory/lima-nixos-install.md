@@ -10,7 +10,7 @@ This runbook documents the exact flow used to install NixOS in the `nixos-vm` Li
 - Flake host: `.#fedorivns-vps`
 - SSH key for Lima guest access: `/Users/fedorivn/.lima/_config/user`
 - VM name: `nixos-vm`
-- SSH forwarded port is dynamic (example from successful run: `58302`)
+- SSH forwarded port is fixed to `67676` via `modules/darwin/lima-nixos-vm.yaml`
 
 ---
 
@@ -49,13 +49,10 @@ limactl start nixos-vm
 limactl list
 ```
 
-Read the SSH forwarded port from `limactl list`, e.g.:
-- `nixos-vm Running 127.0.0.1:58302 ...`
-
-Set it for reuse:
+Use the fixed SSH forwarded port:
 
 ```sh
-LIMA_PORT=58302
+LIMA_PORT=31337
 ```
 
 ---
@@ -75,7 +72,7 @@ Expected:
 ### Why the SSH command looks weird
 
 This setup uses Lima port forwarding and automation-friendly SSH flags:
-- `root@127.0.0.1 -p "$LIMA_PORT"`: Lima exposes guest SSH on localhost with a dynamic port.
+- `root@127.0.0.1 -p "$LIMA_PORT"`: Lima exposes guest SSH on localhost with a fixed forwarded port.
 - `-i /Users/fedorivn/.lima/_config/user`: forces Lima's VM key.
 - `-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null`: avoids host-key mismatch failures after VM recreate/kexec.
 - Quoted command (`'...'`): runs verification commands remotely in one SSH call.
@@ -106,7 +103,7 @@ Observed behavior:
 
 Root cause:
 - `nixos-anywhere` defaults post-kexec reconnect port to `22`.
-- Lima forwards guest SSH to a random localhost port (for example `58302`), not fixed `22`.
+- Lima forwards guest SSH to a fixed localhost port (`31337`), not guest port `22`.
 
 ---
 
@@ -211,7 +208,7 @@ limactl list
 3. Set port and run one-pass install:
 
 ```sh
-LIMA_PORT=58302
+LIMA_PORT=31337
 
 nix run github:nix-community/nixos-anywhere -- \
   --flake /Users/fedorivn/projects/nix-config#fedorivns-vps \

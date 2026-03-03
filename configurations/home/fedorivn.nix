@@ -4,7 +4,9 @@ let
   inherit (inputs) self;
   identities = import ../../lib/identities.nix;
   identity = identities.fedorivn;
-  isMainMachine = osConfig.networking.hostName == "fedorivns-mbp";
+  isMainMachine =
+    osConfig != null
+    && (osConfig.networking.hostName or null) == "fedorivns-mbp";
 in
 {
   imports = [
