@@ -10,4 +10,4 @@ images:
   - location: "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-arm64.qcow2"
 mounts: []
 ssh:
-  localPort: 67676
+  localPort: 53555

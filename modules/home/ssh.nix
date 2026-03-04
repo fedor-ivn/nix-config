@@ -7,7 +7,7 @@
       vps-lima = {
         hostname = "127.0.0.1";
         user = "root";
-        port = 67676;
+        port = 53555;
       };
     };
   };

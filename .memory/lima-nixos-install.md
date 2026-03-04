@@ -10,7 +10,7 @@ This runbook documents the exact flow used to install NixOS in the `nixos-vm` Li
 - Flake host: `.#fedorivns-vps`
 - SSH key for Lima guest access: `/Users/fedorivn/.lima/_config/user`
 - VM name: `nixos-vm`
-- SSH forwarded port is fixed to `67676` via `modules/darwin/lima-nixos-vm.yaml`
+- SSH forwarded port is fixed to `53555` via `modules/darwin/lima-nixos-vm.yaml`
 
 ---
 
