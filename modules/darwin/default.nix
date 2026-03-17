@@ -25,14 +25,14 @@
       { pkgs, flake, ... }:
       {
         # TODO: There's some problems with spotify dmg, so I disabled it for now.
-        # programs.spicetify = {
-        #   enable = true;
-        #   enabledExtensions = with flake.inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.system}.extensions; [
-        #     adblockify
-        #     hidePodcasts
-        #     shuffle
-        #   ];
-        # };
+        programs.spicetify = {
+          enable = true;
+          enabledExtensions = with flake.inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.system}.extensions; [
+            adblockify
+            hidePodcasts
+            shuffle
+          ];
+        };
       }
     )
   ];
