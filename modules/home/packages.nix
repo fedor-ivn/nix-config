@@ -14,6 +14,7 @@ in
         dig
         sops
         lima
+        posting
 
         # Nix dev
         cachix
