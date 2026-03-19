@@ -12,7 +12,7 @@ in
       "telegram"
       "altserver"
       "beekeeper-studio"
-      "google-chrome"
+      "ungoogled-chromium"
       "libreoffice"
       "keyboardcleantool"
       "lm-studio"

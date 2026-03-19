@@ -37,7 +37,7 @@ in
         wl-clipboard-rs
         libreoffice
         vlc
-        google-chrome
+        ungoogled-chromium
         telegram-desktop
       ];
 
