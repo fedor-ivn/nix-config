@@ -23,10 +23,12 @@ let
   mkDirectionBindings =
     prefix: command:
     builtins.listToAttrs (
-      map (binding: {
-        name = "${prefix}${binding.key}";
-        value = "${command} ${binding.direction}";
-      }) directions
+      map
+        (binding: {
+          name = "${prefix}${binding.key}";
+          value = "${command} ${binding.direction}";
+        })
+        directions
     );
 
   workspaces = [
@@ -37,10 +39,12 @@ let
   mkWorkspaceBindings =
     prefix: command:
     builtins.listToAttrs (
-      map (n: {
-        name = "${prefix}${toString n}";
-        value = "${command} ${toString n}";
-      }) workspaces
+      map
+        (n: {
+          name = "${prefix}${toString n}";
+          value = "${command} ${toString n}";
+        })
+        workspaces
     );
 
   floatingApps = [
@@ -59,10 +63,12 @@ in
       default-root-container-orientation = "auto";
       accordion-padding = 0;
 
-      on-window-detected = map (app: {
-        "if"."app-name-regex-substring" = app;
-        run = "layout floating";
-      }) floatingApps;
+      on-window-detected = map
+        (app: {
+          "if"."app-name-regex-substring" = app;
+          run = "layout floating";
+        })
+        floatingApps;
 
       mode.main.binding =
         mkDirectionBindings "alt-" "focus"

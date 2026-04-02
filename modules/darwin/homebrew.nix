@@ -5,23 +5,25 @@ in
 {
   homebrew = {
     enable = true;
-    casks = map (name: {
-      inherit name;
-      greedy = true;
-    }) ([
-      "telegram"
-      "altserver"
-      "beekeeper-studio"
-      "ungoogled-chromium"
-      "libreoffice"
-      "keyboardcleantool"
-      "lm-studio"
-      "obs"
-      "mac-mouse-fix"
-      "chatgpt"
-      "claude"
-      "handy"
-    ] ++ secrets.homebrewCasks);
+    casks = map
+      (name: {
+        inherit name;
+        greedy = true;
+      })
+      ([
+        "telegram"
+        "altserver"
+        "beekeeper-studio"
+        "ungoogled-chromium"
+        "libreoffice"
+        "keyboardcleantool"
+        "lm-studio"
+        "obs"
+        "mac-mouse-fix"
+        "chatgpt"
+        "claude"
+        "handy"
+      ] ++ secrets.homebrewCasks);
     caskArgs.no_quarantine = true;
     onActivation = {
       cleanup = "zap";
