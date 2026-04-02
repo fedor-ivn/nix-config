@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, flake, ... }:
 let
   inherit (lib) optionals;
 in
@@ -15,6 +15,7 @@ in
         sops
         lima
         posting
+        flake.inputs.gws.packages.${pkgs.stdenv.system}.default
 
         # Nix dev
         cachix

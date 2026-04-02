@@ -17,6 +17,7 @@
     nixvim.url = "github:nix-community/nixvim";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.flake-parts.follows = "flake-parts";
+    gws.url = "github:googleworkspace/cli";
     vertex.url = "github:juspay/vertex";
     spicetify-nix = {
       url = "github:Gerg-L/spicetify-nix";
