@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, flake, ... }:
 let
   notion-plugin = pkgs.fetchFromGitHub {
     owner = "makenotion";
@@ -6,6 +6,38 @@ let
     rev = "main";
     hash = "sha256-/x5GXCKEwYSs2Wk5mGfKsR4oRdNjGDyYoGitEiX5oPw=";
   };
+
+  gws-skills = pkgs.runCommand "gws-skills" { } ''
+    mkdir -p $out/skills
+    for skill in \
+      gws-shared \
+      gws-drive \
+      gws-drive-upload \
+      gws-gmail \
+      gws-gmail-send \
+      gws-gmail-triage \
+      gws-gmail-reply \
+      gws-gmail-reply-all \
+      gws-gmail-forward \
+      gws-gmail-read \
+      gws-gmail-watch; do
+      ln -s ${flake.inputs.gws}/skills/$skill $out/skills/$skill
+    done
+  '';
+
+  skillSources = [ notion-plugin gws-skills ./agents ];
+
+  mergeSkillSources = subdir:
+    pkgs.runCommand "claude-${subdir}" { } ''
+      mkdir -p $out
+      for p in ${lib.concatMapStringsSep " " (p: "${p}") skillSources}; do
+        if [ -d "$p/${subdir}" ]; then
+          for f in "$p/${subdir}"/*; do
+            ln -s "$f" "$out/$(basename "$f")"
+          done
+        fi
+      done
+    '';
 in
 {
   programs.claude-code = {
@@ -16,7 +48,7 @@ in
       url = "https://mcp.notion.com/mcp";
     };
 
-    commandsDir = "${notion-plugin}/commands";
-    skillsDir = "${notion-plugin}/skills";
+    commandsDir = mergeSkillSources "commands";
+    skillsDir = mergeSkillSources "skills";
   };
 }
