@@ -9,17 +9,18 @@
     git = {
       enable = true;
 
-      # Prefer explicit settings structure from old config.
+      signing = {
+        format = "ssh";
+        key = "key::${config.me.sshPublicKey}";
+        signByDefault = true;
+      };
+
       settings = {
         user = {
           # Prefer dynamic values if available, fall back to literals from old config.
           email = config.me.email or "ivnfedor@gmail.com";
           name = config.me.fullname or "Fedor Ivanov";
-          signingkey = "key::${config.me.sshPublicKey}";
         };
-
-        commit.gpgsign = true;
-        gpg.format = "ssh";
 
         push = {
           followTags = true;

@@ -1,5 +1,10 @@
 { pkgs, lib, flake, ... }:
 let
+  pkgs-stable = import flake.inputs.nixpkgs-stable {
+    inherit (pkgs) system;
+    config.allowUnfree = true;
+  };
+
   notion-plugin = pkgs.fetchFromGitHub {
     owner = "makenotion";
     repo = "claude-code-notion-plugin";
@@ -42,6 +47,7 @@ in
 {
   programs.claude-code = {
     enable = true;
+    package = pkgs-stable.claude-code;
 
     mcpServers.notion = {
       type = "http";
