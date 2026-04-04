@@ -10,6 +10,7 @@ in
     let
       base = with pkgs; [
         # CLI tools
+        tokei
         tree
         dig
         sops
