@@ -35,6 +35,8 @@
 
         color.ui = "auto";
 
+        commit.aiMessageStyle = "simple";
+
         alias = {
           sw = "switch";
           # View abbreviated SHA, description, and history graph of the latest 20 commits.
