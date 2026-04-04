@@ -19,6 +19,10 @@
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.flake-parts.follows = "flake-parts";
     gws.url = "github:googleworkspace/cli";
+    agentic-kit = {
+      url = "git+ssh://git@github.com/amenocturne/agentic-kit";
+      flake = false;
+    };
     vertex.url = "github:juspay/vertex";
     spicetify-nix = {
       url = "github:Gerg-L/spicetify-nix";

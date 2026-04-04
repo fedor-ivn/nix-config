@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "agentic-kit": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775290005,
+        "narHash": "sha256-AMRPqGhXyJloXkPw6KAfsJX0j7GDj+OhykGkAqrYL+o=",
+        "ref": "refs/heads/main",
+        "rev": "6be66028e30089f977af114755816fb764f39a9f",
+        "revCount": 443,
+        "type": "git",
+        "url": "ssh://git@github.com/amenocturne/agentic-kit"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/amenocturne/agentic-kit"
+      }
+    },
     "brew-src": {
       "flake": false,
       "locked": {
@@ -371,6 +387,7 @@
     },
     "root": {
       "inputs": {
+        "agentic-kit": "agentic-kit",
         "disko": "disko",
         "flake-parts": "flake-parts",
         "gws": "gws",
