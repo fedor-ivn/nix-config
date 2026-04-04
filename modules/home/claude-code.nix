@@ -1,7 +1,7 @@
 { pkgs, lib, flake, ... }:
 let
   pkgs-stable = import flake.inputs.nixpkgs-stable {
-    inherit (pkgs) system;
+    system = pkgs.stdenv.hostPlatform.system;
     config.allowUnfree = true;
   };
 
