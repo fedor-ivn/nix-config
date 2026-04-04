@@ -1,7 +1,7 @@
 ---
 name: add-to-config
 description: Add a tool or configure something new in the nix-config. Triggers on phrases like "add package", "enable service", or "configure nix".
-user-invokable: true
+user-invocable: true
 ---
 
 # add-to-config
