@@ -25,7 +25,10 @@ let
       gws-gmail-reply-all \
       gws-gmail-forward \
       gws-gmail-read \
-      gws-gmail-watch; do
+      gws-gmail-watch \
+      gws-calendar \
+      gws-calendar-insert \
+      gws-calendar-agenda; do
       ln -s ${flake.inputs.gws}/skills/$skill $out/skills/$skill
     done
   '';

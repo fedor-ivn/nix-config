@@ -66,6 +66,12 @@ Agent decides format based on context. No strict template enforced. Include rele
 
 Use default calendar timezone.
 
+## Related skills
+
+- **gws-calendar-insert** — create calendar events (used in create mode)
+- **gws-calendar** — list, search, get, patch, delete events (used in restyle mode)
+- **gws-calendar-agenda** — view agenda
+
 ## Create mode workflow
 
 1. Accept input (user provides URL, file path, screenshot, or text)
@@ -76,7 +82,7 @@ Use default calendar timezone.
    a. Upload file via `gws drive +upload <file> --parent 1mwCs8JBvEoSjP0o3IU1LroCH9dOHSPTF`
    b. Note the Drive file URL from the response
 6. Compose event description (contextual format, include source links)
-7. Create event via `gcal_create_event` with:
+7. Create event via gws-calendar-insert with:
    - title (styled per conventions)
    - start/end time
    - location (if applicable)
@@ -88,8 +94,8 @@ Use default calendar timezone.
 ## Restyle mode workflow
 
 1. User specifies target: event name, date range, or "restyle my events for next week"
-2. Fetch events via `gcal_list_events` with appropriate time range
+2. Fetch events via gws-calendar with appropriate time range
 3. For each event, compare title against conventions
 4. Propose changes — show before → after for each event
-5. After user confirmation, apply via `gcal_update_event`
+5. After user confirmation, apply via gws-calendar (patch)
 6. Also fix reminders to match the category's reminder level
