@@ -133,6 +133,20 @@ Switch from Google Chrome to ungoogled-chromium
 1. Run `git diff --staged` to inspect the staged changes
 2. Resolve the style (see Style resolution above)
 3. Generate the commit message following the chosen style's rules
-4. Output **only** the commit message — no preamble, no explanation, no markdown formatting around it
+4. Propose the commit command to the user:
+
+   ```sh
+   git commit -m "<commit message>"
+   ```
+
+5. If the user approves, execute the command
+6. If the command fails with:
+
+   ```
+   error: Couldn't find key in agent?
+   fatal: failed to write commit object
+   ```
+
+   tell the user to resolve the issue themselves (e.g., check git signing configuration, GPG/SSH key setup). Do not attempt to fix it automatically.
 
 Only consider staged changes. If nothing is staged, tell the user to stage files first.
