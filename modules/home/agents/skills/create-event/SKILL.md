@@ -64,13 +64,16 @@ Agent decides format based on context. No strict template enforced. Include rele
 
 ### Timezone
 
-Use default calendar timezone.
+All datetimes must be RFC3339 with explicit timezone offset (e.g., `2026-04-05T11:00:00+03:00` for MSK, `2026-04-05T11:00:00-07:00` for PDT). Infer the offset from the event's location or user context.
 
 ## Related skills
+
+> **Before executing, read the relevant skill instructions:**
 
 - **gws-calendar-insert** — create calendar events (used in create mode)
 - **gws-calendar** — list, search, get, patch, delete events (used in restyle mode)
 - **gws-calendar-agenda** — view agenda
+- **gws-drive-upload** — upload attachments to Drive
 
 ## Create mode workflow
 
@@ -82,14 +85,24 @@ Use default calendar timezone.
    a. Upload file via `gws drive +upload <file> --parent 1mwCs8JBvEoSjP0o3IU1LroCH9dOHSPTF`
    b. Note the Drive file URL from the response
 6. Compose event description (contextual format, include source links)
-7. Create event via gws-calendar-insert with:
-   - title (styled per conventions)
-   - start/end time
-   - location (if applicable)
-   - description
-   - reminders (per level table, `useDefault: false` with `overrides`)
-   - attachments (Drive file links if any)
-8. Show confirmation to user
+7. Create event via `gws calendar +insert`:
+   ```bash
+   gws calendar +insert \
+     --summary 'Meet: Name' \
+     --start '2026-04-05T11:00:00+03:00' \
+     --end '2026-04-05T12:00:00+03:00' \
+     --location 'Place' \
+     --description 'Details here'
+   ```
+   Note the returned `id` for the next step.
+8. Set reminders via `gws calendar events patch`:
+   ```bash
+   gws calendar events patch \
+     --params '{"calendarId": "primary", "eventId": "<ID>"}' \
+     --json '{"reminders": {"useDefault": false, "overrides": [{"method": "popup", "minutes": 30}]}}'
+   ```
+   Use the reminder overrides per the level table above.
+9. Show confirmation to user
 
 ## Restyle mode workflow
 
