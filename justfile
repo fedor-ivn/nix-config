@@ -11,12 +11,17 @@ default:
 update:
   nix flake update
 
+# Commit flake.lock after update
+[group('Main')]
+commit-flake-lock:
+  git add flake.lock
+  git commit -m 'Update `flake.lock`'
+
 # Update nix flake and commit flake.lock
 [group('Main')]
 update-and-commit:
-  nix flake update
-  git add flake.lock
-  git commit -m 'Update `flake.lock`'
+  just update
+  just commit-flake-lock
 
 # Lint nix files
 [group('dev')]
