@@ -1,10 +1,5 @@
 { pkgs, lib, flake, ... }:
 let
-  pkgs-stable = import flake.inputs.nixpkgs-stable {
-    system = pkgs.stdenv.hostPlatform.system;
-    config.allowUnfree = true;
-  };
-
   notion-plugin = pkgs.fetchFromGitHub {
     owner = "makenotion";
     repo = "claude-code-notion-plugin";
