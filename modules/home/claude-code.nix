@@ -71,7 +71,6 @@ in
 {
   programs.claude-code = {
     enable = true;
-    package = pkgs-stable.claude-code;
 
     mcpServers.notion = {
       type = "http";
