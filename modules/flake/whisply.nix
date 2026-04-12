@@ -31,6 +31,18 @@ in
               docopt = addSetuptools "docopt";
               julius = addSetuptools "julius";
             })
+          # mlx ships core.cpython-*.so with rpath @loader_path/lib, but libmlx.dylib
+          # is in a sibling package (mlx-metal). In a normal pip install both land in
+          # the same site-packages/mlx/ directory; in Nix they are separate derivations.
+          # Symlink mlx-metal's lib/ into the mlx derivation so @loader_path resolves.
+          (final: prev: pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+            mlx = prev.mlx.overrideAttrs (old: {
+              postInstall = (old.postInstall or "") + ''
+                ln -s ${final.mlx-metal}/${python.sitePackages}/mlx/lib \
+                  "$out/${python.sitePackages}/mlx/lib"
+              '';
+            });
+          })
         ]
       );
     in
