@@ -29,6 +29,7 @@ in
             {
               antlr4-python3-runtime = addSetuptools "antlr4-python3-runtime";
               docopt = addSetuptools "docopt";
+              julius = addSetuptools "julius";
             })
         ]
       );
