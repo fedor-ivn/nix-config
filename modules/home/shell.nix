@@ -40,10 +40,10 @@
       '';
     };
 
-    # Type `z <pat>` to cd to some directory (from old zoxide.nix)
     zoxide = {
       enable = true;
       enableZshIntegration = true;
+      options = [ "--cmd" "cd" ];
     };
 
     # Better shell prompt!
