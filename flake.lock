@@ -455,7 +455,8 @@
         "spicetify-nix": "spicetify-nix",
         "telegram-mcp-src": "telegram-mcp-src",
         "uv2nix": "uv2nix",
-        "vertex": "vertex"
+        "vertex": "vertex",
+        "whisply-src": "whisply-src"
       }
     },
     "secrets": {
@@ -615,6 +616,23 @@
       "original": {
         "owner": "juspay",
         "repo": "vertex",
+        "type": "github"
+      }
+    },
+    "whisply-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775988392,
+        "narHash": "sha256-+ITQCw7V0nj5dmTUexUq6ENliCMVdsRgGAYS0vMlOUY=",
+        "owner": "fedor-ivn",
+        "repo": "whisply",
+        "rev": "30590a8f55f16685214d5b46d89192f42e5b9755",
+        "type": "github"
+      },
+      "original": {
+        "owner": "fedor-ivn",
+        "ref": "30590a8",
+        "repo": "whisply",
         "type": "github"
       }
     }
