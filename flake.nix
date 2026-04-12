@@ -50,7 +50,7 @@
       flake = false;
     };
     whisply-src = {
-      url = "github:fedor-ivn/whisply/a24559f";
+      url = "github:fedor-ivn/whisply/f917467";
       flake = false;
     };
     uv2nix = {
