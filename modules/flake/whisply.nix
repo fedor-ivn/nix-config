@@ -38,14 +38,11 @@ in
       venv = pythonSet.mkVirtualEnv "whisply-env" workspace.deps.default;
     in
     {
-      packages.whisply = pkgs.symlinkJoin {
-        name = "whisply";
-        paths = [ venv ];
+      packages.whisply = pkgs.runCommand "whisply" {
         nativeBuildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/whisply \
-            --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.ffmpeg ]}
-        '';
-      };
+      } ''
+        makeWrapper ${venv}/bin/whisply $out/bin/whisply \
+          --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.ffmpeg ]}
+      '';
     };
 }
