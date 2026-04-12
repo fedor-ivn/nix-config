@@ -16,6 +16,7 @@ in
         sops
         lima
         posting
+        ffmpeg
         flake.inputs.gws.packages.${pkgs.stdenv.system}.default
 
         # Nix dev
