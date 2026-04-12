@@ -26,6 +26,7 @@ in
         nixpkgs-fmt
 
         # Cross-platform GUI / CLI apps (Linux via Nix; macOS via Homebrew where noted)
+        flake.self.packages.${pkgs.stdenv.hostPlatform.system}.whisply
         slack
         qbittorrent
         jetbrains-mono

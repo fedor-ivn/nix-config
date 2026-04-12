@@ -22,14 +22,18 @@ in
         ]
       );
     in
+    let
+      venv = pythonSet.mkVirtualEnv "whisply-env" workspace.deps.default;
+    in
     {
-      packages.whisply = pkgs.writeShellApplication {
+      packages.whisply = pkgs.symlinkJoin {
         name = "whisply";
-        runtimeInputs = [
-          (pythonSet.mkVirtualEnv "whisply-env" workspace.deps.default)
-          pkgs.ffmpeg
-        ];
-        text = ''exec whisply "$@"'';
+        paths = [ venv ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/whisply \
+            --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.ffmpeg ]}
+        '';
       };
     };
 }
