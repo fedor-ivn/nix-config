@@ -622,16 +622,16 @@
     "whisply-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1775988392,
-        "narHash": "sha256-+ITQCw7V0nj5dmTUexUq6ENliCMVdsRgGAYS0vMlOUY=",
+        "lastModified": 1775992779,
+        "narHash": "sha256-ccRIr2wSqiqImOjgEcUXzww8TFraKK11KvZBc69UiJM=",
         "owner": "fedor-ivn",
         "repo": "whisply",
-        "rev": "30590a8f55f16685214d5b46d89192f42e5b9755",
+        "rev": "a24559f54e62e50e2129e6a86a0010f5169b3097",
         "type": "github"
       },
       "original": {
         "owner": "fedor-ivn",
-        "ref": "30590a8",
+        "ref": "a24559f",
         "repo": "whisply",
         "type": "github"
       }

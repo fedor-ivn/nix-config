@@ -35,7 +35,7 @@ in
       );
     in
     let
-      venv = pythonSet.mkVirtualEnv "whisply-env" workspace.deps.default;
+      venv = pythonSet.mkVirtualEnv "whisply-env" { whisply = [ "app" ]; };
     in
     {
       packages.whisply = pkgs.runCommand "whisply" {
