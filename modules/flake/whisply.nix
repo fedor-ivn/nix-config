@@ -35,7 +35,9 @@ in
       );
     in
     let
-      venv = pythonSet.mkVirtualEnv "whisply-env" { whisply = [ "app" ]; };
+      venv = pythonSet.mkVirtualEnv "whisply-env" {
+        whisply = [ "app" ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ "mlx" ];
+      };
     in
     {
       packages.whisply = pkgs.runCommand "whisply" {
