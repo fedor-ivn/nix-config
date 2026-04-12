@@ -4,7 +4,9 @@
     flake.inputs.nixvim.homeModules.nixvim
   ];
 
-  programs.nixvim = import ./nixvim.nix // {
+  programs.nixvim = {
     enable = true;
+    defaultEditor = true;
+    imports = [ ./nixvim.nix ];
   };
 }
