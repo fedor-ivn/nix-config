@@ -19,6 +19,12 @@ in
         pkgs.lib.composeManyExtensions [
           inputs.pyproject-build-systems.overlays.default
           overlay
+          # antlr4-python3-runtime uses setuptools but doesn't declare it
+          (final: prev: {
+            antlr4-python3-runtime = prev.antlr4-python3-runtime.overrideAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ final.setuptools ];
+            });
+          })
         ]
       );
     in
