@@ -23,6 +23,13 @@ in
       );
     in
     {
-      packages.whisply = pythonSet.mkVirtualEnv "whisply-env" workspace.deps.default;
+      packages.whisply = pkgs.writeShellApplication {
+        name = "whisply";
+        runtimeInputs = [
+          (pythonSet.mkVirtualEnv "whisply-env" workspace.deps.default)
+          pkgs.ffmpeg
+        ];
+        text = ''exec whisply "$@"'';
+      };
     };
 }
