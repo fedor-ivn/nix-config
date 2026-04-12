@@ -80,6 +80,7 @@ in
 
     jq.enable = true;
     yt-dlp.enable = true;
+    btop.enable = true;
 
   } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
     keepassxc.enable = true;
