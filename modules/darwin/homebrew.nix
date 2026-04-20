@@ -22,9 +22,10 @@ in
         "mac-mouse-fix"
         "chatgpt"
         "claude"
+        "ghostty"
         "handy"
       ] ++ secrets.homebrewCasks);
-    caskArgs.no_quarantine = true;
+    # caskArgs.no_quarantine = true; # Deprecated flag, removed by Homebrew
     onActivation = {
       cleanup = "zap";
       autoUpdate = true;
