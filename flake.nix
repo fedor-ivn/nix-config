@@ -23,6 +23,10 @@
       url = "git+ssh://git@github.com/amenocturne/agentic-kit";
       flake = false;
     };
+    # notion-plugin = {
+    #   url = "github:makenotion/claude-code-notion-plugin";
+    #   flake = false;
+    # };
     vertex.url = "github:juspay/vertex";
     spicetify-nix = {
       url = "github:Gerg-L/spicetify-nix";

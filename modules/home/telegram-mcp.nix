@@ -16,7 +16,7 @@ in
       TELEGRAM_SESSION_STRING=${config.sops.placeholder."telegram/session-string"}
     '';
 
-    programs.claude-code.mcpServers.telegram = {
+    programs.mcp.servers.telegram = {
       command = lib.getExe (pkgs.writeShellApplication {
         name = "telegram-mcp";
         excludeShellChecks = [ "SC1091" ];
