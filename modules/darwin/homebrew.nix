@@ -24,6 +24,7 @@ in
         "claude"
         "ghostty"
         "handy"
+        "swiftbar"
       ] ++ secrets.homebrewCasks);
     # caskArgs.no_quarantine = true; # Deprecated flag, removed by Homebrew
     onActivation = {
