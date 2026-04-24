@@ -17,6 +17,11 @@ commit-flake-lock:
   git add flake.lock
   git commit -m 'Update `flake.lock`'
 
+# Clean up old nix store paths and GC roots
+[group('Main')]
+clean:
+  sudo nix-collect-garbage -d
+
 # Update nix flake and commit flake.lock
 [group('Main')]
 update-and-commit:
