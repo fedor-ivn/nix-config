@@ -45,7 +45,6 @@ in
       ];
 
       darwinOnly = with pkgs; [
-        alt-tab-macos
         raycast
         monitorcontrol
         stats
