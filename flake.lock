@@ -33,6 +33,22 @@
         "type": "github"
       }
     },
+    "claude-plugins-official": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1776980748,
+        "narHash": "sha256-ywyOB23pJaOQHf2nPvis1fNqpNPVUM59upxETzl6KCw=",
+        "owner": "anthropics",
+        "repo": "claude-plugins-official",
+        "rev": "020446a4294f09d9c32e60bff0c4ae8fb39205cb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anthropics",
+        "repo": "claude-plugins-official",
+        "type": "github"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -454,6 +470,7 @@
     "root": {
       "inputs": {
         "agentic-kit": "agentic-kit",
+        "claude-plugins-official": "claude-plugins-official",
         "disko": "disko",
         "flake-parts": "flake-parts",
         "gws": "gws",

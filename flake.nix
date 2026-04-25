@@ -51,6 +51,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    claude-plugins-official = {
+      url = "github:anthropics/claude-plugins-official";
+      flake = false;
+    };
     telegram-mcp-src = {
       url = "github:chigwell/telegram-mcp/v2.0.37";
       flake = false;
