@@ -17,6 +17,7 @@ in
         lima
         posting
         ffmpeg
+        git-filter-repo
         flake.inputs.gws.packages.${pkgs.stdenv.system}.default
 
         # Nix dev
