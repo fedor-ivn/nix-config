@@ -96,3 +96,4 @@ includes them using `pkgs.stdenv.hostPlatform.isLinux` / `isDarwin`.
 
 - **Untracked files are invisible to Nix** — always `git add` new files before building, or Nix may silently ignore them.
 - **Home Manager host-specific toggles** — prefer `config.me.isMainMachine` for machine-specific HM settings instead of platform checks like `pkgs.stdenv.hostPlatform.isDarwin`.
+- **Disable RTK temporarily** — set `RTK_DISABLED=1` to bypass the PreToolUse rewrite when debugging weird tool output or RTK miscompression.

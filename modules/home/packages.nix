@@ -18,6 +18,7 @@ in
         posting
         ffmpeg
         git-filter-repo
+        rtk
         flake.inputs.gws.packages.${pkgs.stdenv.system}.default
 
         # Nix dev
