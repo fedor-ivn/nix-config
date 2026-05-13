@@ -33,6 +33,22 @@
         "type": "github"
       }
     },
+    "caveman": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1778615072,
+        "narHash": "sha256-Jlfas2MPoQx3pOw+yKCta8kYlOEY27SP5NXJtSL+GGI=",
+        "owner": "JuliusBrussee",
+        "repo": "caveman",
+        "rev": "63a91ecadbf4c4719a4602a5abb00883f9966034",
+        "type": "github"
+      },
+      "original": {
+        "owner": "JuliusBrussee",
+        "repo": "caveman",
+        "type": "github"
+      }
+    },
     "claude-plugins-official": {
       "flake": false,
       "locked": {
@@ -470,6 +486,7 @@
     "root": {
       "inputs": {
         "agentic-kit": "agentic-kit",
+        "caveman": "caveman",
         "claude-plugins-official": "claude-plugins-official",
         "disko": "disko",
         "flake-parts": "flake-parts",

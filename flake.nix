@@ -55,6 +55,10 @@
       url = "github:anthropics/claude-plugins-official";
       flake = false;
     };
+    caveman = {
+      url = "github:JuliusBrussee/caveman";
+      flake = false;
+    };
     telegram-mcp-src = {
       url = "github:chigwell/telegram-mcp/v2.0.37";
       flake = false;

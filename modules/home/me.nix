@@ -68,6 +68,9 @@
         # Agentic Kit
         "crazy" = "${flake.inputs.agentic-kit}/skills/crazy";
 
+        # Caveman
+        "caveman" = "${flake.inputs.caveman}/skills/caveman";
+
         # Local
         "commit-message" = ./agents/skills/commit-message;
         "create-event" = ./agents/skills/create-event;
