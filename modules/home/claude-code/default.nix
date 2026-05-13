@@ -14,8 +14,6 @@ in
     ];
 
     settings = {
-      model = "opus";
-      effortLevel = "xhigh";
       preferredNotifChannel = "notifications_disabled";
       remoteControlAtStartup = true;
       agentPushNotifEnabled = true;
