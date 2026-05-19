@@ -15,7 +15,7 @@ in
         "altserver"
         "beekeeper-studio"
         "ungoogled-chromium"
-        "libreoffice"
+        # "libreoffice"
         "keyboardcleantool"
         "lm-studio"
         "obs"
