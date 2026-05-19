@@ -26,7 +26,7 @@ in
   };
 
   # Use same state version as system unless you want to bump independently
-  home.stateVersion = "24.05";
+  home.stateVersion = "26.05";
 
   # Extra user packages on top of modules/home/packages.nix
   # home.packages = with pkgs; [ htop neovim tmux ];
