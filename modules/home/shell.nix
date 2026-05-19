@@ -43,7 +43,6 @@
     zoxide = {
       enable = true;
       enableZshIntegration = true;
-      options = [ "--cmd" "cd" ];
     };
 
     # Better shell prompt!
