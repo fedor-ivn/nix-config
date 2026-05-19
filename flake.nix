@@ -13,6 +13,8 @@
     nixos-unified.url = "github:srid/nixos-unified";
 
     # Software inputs
+    clamor.url = "github:amenocturne/clamor";
+    clamor.inputs.nixpkgs.follows = "nixpkgs";
     mcp-servers-nix.url = "github:natsukium/mcp-servers-nix";
     mcp-servers-nix.inputs.nixpkgs.follows = "nixpkgs";
     nix-index-database.url = "github:nix-community/nix-index-database";
