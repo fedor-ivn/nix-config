@@ -43,7 +43,9 @@ check:
 dev:
   nix develop
 
+alias a := activate
+
 # Activate the configuration
 [group('Main')]
-run:
+activate:
   nix run .#activate
