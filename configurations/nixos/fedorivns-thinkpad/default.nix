@@ -3,7 +3,9 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { flake, ... }:
-
+let
+  secrets = flake.inputs.secrets.values;
+in
 {
   imports = [
     ./hardware.nix
@@ -30,11 +32,11 @@
     settings = {
       devices = {
         "fedorivns-iphone" = {
-          id = "WOUHGDE-2HEAN3D-LQPSSCP-G5VVANF-KRNQHJA-KOXKCHG-WEPO7SM-VHHDZAR";
+          id = secrets.syncthingDevices.fedorivns-iphone;
         };
 
         "fedorivns-mbp" = {
-          id = "KYH5SK3-OGX2KTQ-XSJIEKQ-G6OCI3Q-U3Y6V4I-PKQ2JZ4-FYTVGBP-ZKN62Q3";
+          id = secrets.syncthingDevices.fedorivns-mbp;
         };
       };
 

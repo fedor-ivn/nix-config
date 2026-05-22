@@ -108,20 +108,6 @@
           };
         };
       };
-
-      Blockscout = {
-        address = "fedor@blockscout.com";
-        flavor = "gmail.com";
-        inherit realName;
-
-        thunderbird = {
-          enable = true;
-          settings = id: {
-            "mail.smtpserver.smtp_${id}.authMethod" = 10;
-            "mail.server.server_${id}.authMethod" = 10;
-          };
-        };
-      };
     };
   };
 }
