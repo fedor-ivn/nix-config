@@ -13,6 +13,7 @@ in
     self.homeModules.default
     inputs.sops-nix.homeManagerModules.sops
     inputs.mcp-servers-nix.homeManagerModules.default
+    inputs.clamor.homeManagerModules.default
   ];
 
   me = identity // {

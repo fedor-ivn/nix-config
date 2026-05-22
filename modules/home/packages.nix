@@ -20,7 +20,6 @@ in
         git-filter-repo
         rtk
         flake.inputs.gws.packages.${pkgs.stdenv.system}.default
-        flake.inputs.clamor.packages.${pkgs.stdenv.system}.default
 
         # Nix dev
         cachix
