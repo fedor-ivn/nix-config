@@ -5,8 +5,17 @@
     package = flake.inputs.clamor.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
     folders = {
-      nix-config = { path = "~/projects/nix-config"; backends = [ "claude-code" ]; };
-      clamor     = { path = "~/projects/clamor";     backends = [ "claude-code" ]; };
+      nix-config = { path = "~/projects/nix-config"; backends = [ "claude-code" "pi" ]; };
+      clamor     = { path = "~/projects/clamor";     backends = [ "claude-code" "pi" ]; };
+    };
+
+    backends.pi = {
+      display_name = "Pi";
+      spawn = {
+        cmd            = [ "direnv" "exec" "{{cwd}}" "pi" "{{prompt}}" ];
+        title_template = "{{title}}";
+      };
+      capabilities = { resume = false; sync_output_mode = true; };
     };
 
     backends.claude-code = {

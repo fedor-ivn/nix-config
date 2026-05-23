@@ -61,6 +61,10 @@
       url = "github:JuliusBrussee/caveman";
       flake = false;
     };
+    pi = {
+      url = "github:lukasl-dev/pi.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     telegram-mcp-src = {
       url = "github:chigwell/telegram-mcp/v2.0.37";
       flake = false;
