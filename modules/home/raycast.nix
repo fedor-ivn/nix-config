@@ -56,7 +56,7 @@ lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
 
       # Required parameters:
       # @raycast.schemaVersion 1
-      # @raycast.title Capture to Daily Note
+      # @raycast.title Capture
       # @raycast.mode silent
       # @raycast.packageName Obsidian
       # @raycast.icon 📝
@@ -65,28 +65,11 @@ lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
       set -euo pipefail
 
       VAULT="$HOME/obsidian"
-      TPL="$VAULT/_templates/daily.md"
-      TODAY=$(date +%Y-%m-%d)
-      NOW=$(date +%H:%M)
-      FILE="$VAULT/notes/$TODAY.md"
+      FILE="$VAULT/CAPTURES.md"
+      TIMESTAMP=$(date +%Y-%m-%d\ %H:%M)
       TEXT="$1"
 
-      if [ ! -f "$FILE" ]; then
-        sed "s/{{title}}/$TODAY/g" "$TPL" > "$FILE"
-      fi
-
-      LINE="- $NOW $TEXT"
-
-      if grep -q '^## Captures$' "$FILE"; then
-        awk -v line="$LINE" '
-          /^## Captures$/ { print; in_cap=1; next }
-          in_cap && /^## / { print line; in_cap=0 }
-          { print }
-          END { if (in_cap) print line }
-        ' "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
-      else
-        printf "\n## Captures\n\n%s\n" "$LINE" >> "$FILE"
-      fi
+      printf -- '- %s %s\n' "$TIMESTAMP" "$TEXT" >> "$FILE"
 
       echo "Captured: $TEXT"
     '';
