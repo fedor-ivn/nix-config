@@ -29,12 +29,12 @@
         skills = lib.mkOption {
           type = lib.types.attrsOf (lib.types.oneOf [ lib.types.path lib.types.str ]);
           readOnly = true;
-          description = "Shared AI assistant skills consumed by claude-code and opencode";
+          description = "Shared AI assistant skills";
         };
         commands = lib.mkOption {
           type = lib.types.attrsOf (lib.types.oneOf [ lib.types.path lib.types.str ]);
           readOnly = true;
-          description = "Shared AI assistant commands consumed by claude-code and opencode";
+          description = "Shared AI assistant commands";
         };
       };
     };

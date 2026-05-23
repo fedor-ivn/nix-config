@@ -64,7 +64,6 @@ Follow the [Conventional Commits 1.0.0 spec](https://www.conventionalcommits.org
 ### Examples
 
 ```
-feat: add opencode home manager module
 fix(nix): resolve build failure in me.nix
 refactor!: restructure modules/home directory layout
 chore(deps): update flake.lock
