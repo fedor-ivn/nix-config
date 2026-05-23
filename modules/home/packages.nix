@@ -47,7 +47,6 @@ in
       ];
 
       darwinOnly = with pkgs; [
-        raycast
         monitorcontrol
         stats
         syncthing
