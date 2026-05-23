@@ -22,7 +22,6 @@ in
     "Wi-Fi"
     "iPhone USB"
   ] ++ secrets.knownNetworkServices;
-  home-manager.users.fedorivn.programs.clamor.folders = secrets.clamorFolders;
 
   networking.dns = [
     "8.8.8.8"

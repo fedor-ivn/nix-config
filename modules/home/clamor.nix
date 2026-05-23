@@ -1,12 +1,17 @@
-{ pkgs, flake, ... }:
+{ pkgs, flake, lib, ... }:
+let
+  backends = [ "claude-code" "pi" ];
+  secretFolders = lib.mapAttrs (_: path: { inherit path backends; })
+    flake.inputs.secrets.values.clamorPaths;
+in
 {
   programs.clamor = {
     enable = true;
     package = flake.inputs.clamor.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
-    folders = {
-      nix-config = { path = "~/projects/nix-config"; backends = [ "claude-code" "pi" ]; };
-      clamor     = { path = "~/projects/clamor";     backends = [ "claude-code" "pi" ]; };
+    folders = secretFolders // {
+      nix-config = { path = "~/projects/nix-config"; inherit backends; };
+      clamor     = { path = "~/projects/clamor";     inherit backends; };
     };
 
     backends.pi = {
