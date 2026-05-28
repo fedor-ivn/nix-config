@@ -56,11 +56,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779451478,
-        "narHash": "sha256-9jm13MnRlp2uM5QxX4dqoAEwS7n4zMUByTpISPd64iQ=",
+        "lastModified": 1779951284,
+        "narHash": "sha256-AJnXX8WFRgto4MBpo8+qyRY3+5BjZE8ZsxP39nzQAZI=",
         "owner": "fedor-ivn",
         "repo": "clamor",
-        "rev": "904abe10a436695a6d1fecaa3be40c22aaee8f1a",
+        "rev": "148ed75dfbda4b93e80033a50e2ba30fa4973e9b",
         "type": "github"
       },
       "original": {

@@ -20,7 +20,11 @@ in
         cmd            = [ "direnv" "exec" "{{cwd}}" "pi" "{{prompt}}" ];
         title_template = "{{title}}";
       };
-      capabilities = { resume = false; sync_output_mode = true; };
+      resume = {
+        cmd            = [ "direnv" "exec" "{{cwd}}" "pi" "--session" "{{resume_token}}" ];
+        title_template = "{{title}}";
+      };
+      capabilities = { resume = true; sync_output_mode = true; };
     };
 
     backends.claude-code = {
