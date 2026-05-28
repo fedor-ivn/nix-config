@@ -20,6 +20,7 @@ in
         git-filter-repo
         rtk
         flake.inputs.gws.packages.${pkgs.stdenv.system}.default
+        timr-tui
 
         # Nix dev
         cachix

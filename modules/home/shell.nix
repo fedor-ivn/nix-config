@@ -1,5 +1,11 @@
 { pkgs, ... }:
 {
+  home.shellAliases = {
+    g = "git";
+    lg = "lazygit";
+    timr = "timr-tui";
+  };
+
   programs = {
     # Zsh: merge old nix-darwin settings with new layout.
     zsh = {
