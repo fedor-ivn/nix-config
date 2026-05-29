@@ -37,6 +37,7 @@ in
 
         python313
         dust
+        w3m
       ];
 
       linuxOnly = with pkgs; [
