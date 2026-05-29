@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  xdg.enable = true;
+
   home.shellAliases = {
     g = "git";
     lg = "lazygit";
