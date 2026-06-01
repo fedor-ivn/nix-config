@@ -4,6 +4,7 @@
   imports = [
     flake.inputs.self.nixosModules.common
     flake.inputs.self.nixosModules.gui
+    ./mail.nix
   ];
 
   # Common services

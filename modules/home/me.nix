@@ -1,5 +1,5 @@
 # User configuration module
-{ config, lib, flake, ... }:
+{ config, pkgs, lib, flake, ... }:
 {
   options = {
     me = {
@@ -96,15 +96,25 @@
     accounts.email.accounts = let realName = config.me.fullname; in {
       Gmail = {
         address = "ivnfedor@gmail.com";
+        userName = "fedorivn";
         flavor = "gmail.com";
         inherit realName;
-        primary = true; # Mark as primary account
+        primary = true;
+
+        # Both platforms: IMAP → local Stalwart (Linux: 143, macOS: 1143)
+        # mkForce overrides the host/port set by flavor = "gmail.com"
+        imap = {
+          host = lib.mkForce "127.0.0.1";
+          port = lib.mkForce (if pkgs.stdenv.isLinux then 143 else 1143);
+          tls.enable = lib.mkForce false;
+          tls.useStartTls = lib.mkForce false;
+        };
 
         thunderbird = {
           enable = true;
           settings = id: {
-            "mail.smtpserver.smtp_${id}.authMethod" = 10;
-            "mail.server.server_${id}.authMethod" = 10;
+            "mail.server.server_${id}.authMethod" = 3;    # plain to local Stalwart
+            "mail.smtpserver.smtp_${id}.authMethod" = 10; # OAuth2 for SMTP
           };
         };
       };
