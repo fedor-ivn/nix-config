@@ -14,7 +14,6 @@ in
         tree
         dig
         sops
-        lima
         posting
         ffmpeg
         git-filter-repo
