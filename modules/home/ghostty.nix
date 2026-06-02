@@ -5,6 +5,9 @@
     # On Darwin, Ghostty is installed via Homebrew cask (no nixpkgs support).
     # Use a dummy package so Home Manager still manages the config.
     package = if pkgs.stdenv.hostPlatform.isDarwin then null else pkgs.ghostty;
+    settings = {
+      shell-integration-features = "ssh-env,ssh-terminfo";
+    };
     # Migrated from Alacritty — try defaults first, uncomment to restore.
     # settings = {
     #   theme = "miasma";

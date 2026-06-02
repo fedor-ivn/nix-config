@@ -88,4 +88,6 @@
     enable = true;
     setSocketVariable = true;
   };
+
+  environment.systemPackages = [ pkgs.ghostty.terminfo ];
 }
