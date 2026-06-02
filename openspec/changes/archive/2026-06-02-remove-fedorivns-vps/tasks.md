@@ -9,7 +9,7 @@
 
 - [x] 2.1 Delete the `vps-lima` host block from `modules/home/ssh.nix`
       (hostname `127.0.0.1`, port `53555`, user `root`).
-- [ ] 2.2 Activate home-manager on the MBP (`just a` or `home-manager switch`)
+- [x] 2.2 Activate home-manager on the MBP (`just a` or `home-manager switch`) ✓ ~/.ssh/config empty
       and confirm `~/.ssh/config` no longer contains a `Host vps-lima` block.
 
 ## 3. Update add-fedorivns-homelab change docs
@@ -23,6 +23,6 @@
 
 ## 4. Archive
 
-- [ ] 4.1 Commit all deletions and doc updates in a single commit.
+- [x] 4.1 Commit all deletions and doc updates in a single commit.
 - [ ] 4.2 Run `/opsx:archive` (or `openspec archive remove-fedorivns-vps`) to
       move this change into the archived set.
