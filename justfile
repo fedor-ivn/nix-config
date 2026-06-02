@@ -45,7 +45,15 @@ dev:
 
 alias a := activate
 
-# Activate the configuration
+# Activate the configuration. Pass a host to activate remotely: just activate thinkpad
 [group('Main')]
-activate:
-  nix run .#activate
+activate host="":
+  nix run .#activate {{ 
+    if host == "" {
+       ""
+    } else if host == "thinkpad" { 
+      "fedorivns-thinkpad"
+    } else { 
+      error("Unknown host '" + host + "'. Available: thinkpad") 
+    } 
+  }}
