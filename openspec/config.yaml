@@ -1,0 +1,51 @@
+schema: spec-driven
+
+context: |
+  Flake. nixos-unified auto-wires by dir. flake-parts composes.
+
+  ## Hosts
+  - fedorivns-thinkpad — x86_64-linux NixOS
+  - fedorivns-mbp     — aarch64-darwin
+
+  ## Activate
+  `just a`
+
+  ## Auto-wiring
+  - configurations/{nixos,darwin}/<host>/  → system config
+  - configurations/home/<user>.nix         → HM config
+  - modules/{nixos,darwin,home}/           → reusable modules
+                                             (self.{nixos,darwin,home}Modules.*)
+  - modules/flake/                         → flake-parts modules
+
+  Darwin auto-wrapped with `mkMacosSystem { home-manager = true; }` —
+  calls nix-darwin.lib.darwinSystem, injects HM. Special args (Darwin +
+  HM modules): `flake = { self, inputs, config }`, `rosettaPkgs`. Extra
+  inputs: `flake.inputs.<name>` — no manual specialArgs.
+
+  ## Shared user mgmt
+  `modules/nixos/common/users.nix` — platform-aware. Safe to import from
+  Darwin. Sets `users.users.*` (`/Users/` Darwin, `/home/` Linux) +
+  `home-manager.users.*` from `configurations/home/*.nix`. Rest of
+  `modules/nixos/common/` = NixOS-only.
+
+  ## Secrets
+  - `secrets.yaml` — sops-nix. Age key `~/.config/sops/age/keys.txt`.
+  - `inputs.secrets` — private flake
+    (`git+ssh://git@github.com/fedor-ivn/nix-secrets`, local
+    `~/projects/nix-secrets/`). Eval-time. SSH-gated, no decrypt.
+    Access: `flake.inputs.secrets.values`.
+
+  ## Gotchas
+  - Untracked files invisible to Nix. `git add` before build.
+  - HM host toggles: use `config.me.isMainMachine`, not platform checks.
+    True only on fedorivns-mbp.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
