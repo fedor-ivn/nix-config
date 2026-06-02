@@ -52,11 +52,14 @@ in
       };
     in
     {
-      packages.whisply = pkgs.runCommand "whisply" {
-        nativeBuildInputs = [ pkgs.makeWrapper ];
-      } ''
-        makeWrapper ${venv}/bin/whisply $out/bin/whisply \
-          --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.ffmpeg ]}
-      '';
+      # Darwin-only: nvidia-cufile (transitive dep) needs RDMA libs absent on Linux
+      packages = pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+        whisply = pkgs.runCommand "whisply" {
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+        } ''
+          makeWrapper ${venv}/bin/whisply $out/bin/whisply \
+            --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.ffmpeg ]}
+        '';
+      };
     };
 }
