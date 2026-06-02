@@ -12,7 +12,16 @@ in
     flake.inputs.self.nixosModules.default
   ];
 
-  nixos-unified.sshTarget = "fedorivn@192.168.1.19";
+  nixos-unified.sshTarget = "fedorivn@fedorivns-thinkpad.local";
+
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    publish = {
+      enable = true;
+      addresses = true;
+    };
+  };
 
   # Host-specific settings for this machine
   boot.loader.systemd-boot.enable = true;
