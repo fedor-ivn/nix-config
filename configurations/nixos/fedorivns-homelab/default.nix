@@ -1,4 +1,4 @@
-{ flake, ... }:
+{ flake, pkgs, ... }:
 {
   imports = [
     ./hardware.nix
@@ -22,7 +22,7 @@
   boot.loader.systemd-boot = {
     enable = true;
     extraInstallCommands = ''
-      sed -i '/^default /c\default @saved' /boot/loader/loader.conf
+      ${pkgs.gnused}/bin/sed -i '/^default /c\default @saved' /boot/loader/loader.conf
     '';
   };
   boot.loader.efi.canTouchEfiVariables = true;
