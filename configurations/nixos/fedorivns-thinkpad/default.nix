@@ -32,7 +32,7 @@ in
   networking.hostName = "fedorivns-thinkpad";
 
   services.syncthing = {
-    enable = true;
+    enable = false;
     user = "fedorivn";
     dataDir = "/home/fedorivn/Documents";
     configDir = "/home/fedorivn/.config/syncthing";
@@ -81,6 +81,11 @@ in
         };
       };
     };
+  };
+
+  nix.gc = {
+    automatic = true;
+    options = "--delete-older-than 7d";
   };
 
   system.stateVersion = "23.11";

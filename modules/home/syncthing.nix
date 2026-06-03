@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 {
   launchd.agents.syncthing = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-    enable = true;
+    enable = false;
     config = {
       ProgramArguments = [ "${pkgs.syncthing}/bin/syncthing" ];
       KeepAlive = true;
