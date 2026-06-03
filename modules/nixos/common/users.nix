@@ -2,6 +2,7 @@
 { flake, pkgs, lib, config, ... }:
 let
   inherit (flake.inputs) self;
+  identities = import ../../../lib/identities.nix;
   mapListToAttrs = m: f:
     lib.listToAttrs (map (name: { inherit name; value = f name; }) m);
 in
@@ -32,6 +33,8 @@ in
         } // lib.optionalAttrs pkgs.stdenv.isLinux {
         isNormalUser = true;
         extraGroups = [ "wheel" "networkmanager" ];
+        openssh.authorizedKeys.keys =
+          lib.optional (identities ? ${name}) identities.${name}.sshPublicKey;
       }
     );
 
