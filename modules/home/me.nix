@@ -65,9 +65,6 @@
         "gws-calendar-insert" = "${flake.inputs.gws}/skills/gws-calendar-insert";
         "gws-calendar-agenda" = "${flake.inputs.gws}/skills/gws-calendar-agenda";
 
-        # Agentic Kit
-        "crazy" = "${flake.inputs.agentic-kit}/skills/crazy";
-
         # Caveman
         "caveman" = "${flake.inputs.caveman}/skills/caveman";
 

@@ -23,10 +23,6 @@
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.inputs.flake-parts.follows = "flake-parts";
     gws.url = "github:googleworkspace/cli";
-    agentic-kit = {
-      url = "git+ssh://git@github.com/amenocturne/agentic-kit";
-      flake = false;
-    };
     # notion-plugin = {
     #   url = "github:makenotion/claude-code-notion-plugin";
     #   flake = false;
