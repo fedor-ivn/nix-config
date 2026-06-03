@@ -26,40 +26,45 @@ in
         nil # Nix language server
         nix-info
         nixpkgs-fmt
-
-        # Cross-platform GUI / CLI apps (Linux via Nix; macOS via Homebrew where noted)
-        slack
-        qbittorrent
         jetbrains-mono
-        hoppscotch
-        zoom-us
 
         python313
         dust
       ];
 
-      linuxOnly = with pkgs; [
+      baseGuiApps = with pkgs; [
+        slack
+        qbittorrent
+        hoppscotch
+        zoom-us
+      ];
+
+      linuxOnlyGuiApps = with pkgs; [
         wl-clipboard-rs
-        libreoffice
+        # libreoffice # tmp disable on ThinkPad
         vlc
-        ungoogled-chromium
+        # ungoogled-chromium # tmp disable on ThinkPad
         telegram-desktop
       ];
 
       darwinOnly = with pkgs; [
-        monitorcontrol
-        stats
-        syncthing
         podman
         podman-compose
         docker-client
+      ];
+
+      darwinOnlyGuiApps = with pkgs; [
+        monitorcontrol
+        stats
         iina
-        postman
       ];
     in
     base
-    ++ optionals (pkgs.stdenv.hostPlatform.isLinux) linuxOnly
-    ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) darwinOnly;
+    # tmp disable base gui apps on ThinkPad
+    ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) baseGuiApps
+    ++ optionals (pkgs.stdenv.hostPlatform.isLinux) linuxOnlyGuiApps
+    ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) darwinOnly
+    ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) darwinOnlyGuiApps;
 
   # Programs natively supported by home-manager.
   # They can be configured in `programs.*` instead of using home.packages.

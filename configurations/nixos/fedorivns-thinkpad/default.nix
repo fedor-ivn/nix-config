@@ -83,10 +83,6 @@ in
     };
   };
 
-  nix.gc = {
-    automatic = true;
-    options = "--delete-older-than 7d";
-  };
-
+  nix.gc.automatic = true;
   system.stateVersion = "23.11";
 }
