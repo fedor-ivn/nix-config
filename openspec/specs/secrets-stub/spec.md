@@ -21,6 +21,18 @@ The stub flake at `secrets-stub/flake.nix` SHALL export a `values` attribute wit
 - **WHEN** a module accesses `secrets.syncthingDevices.fedorivns-iphone` or `secrets.syncthingDevices.fedorivns-mbp` with the stub active
 - **THEN** the attribute evaluates to `""` without error
 
+### Requirement: Age key provisioned before first activation
+
+On a fresh installation the user's personal age key SHALL be placed at
+`~/.config/sops/age/keys.txt` before running `nixos-install`, so sops-nix
+can decrypt secrets during the first activation.
+
+#### Scenario: Sops decryption succeeds after key placement
+
+- **WHEN** the age key has been placed at `~/.config/sops/age/keys.txt`
+- **AND** `nixos-install` (or `darwin-rebuild`) is run
+- **THEN** sops-nix decrypts secrets at boot without error
+
 ### Requirement: Bootstrap build succeeds with --override-input
 A fresh machine without SSH credentials to `github.com/fedor-ivn/nix-secrets` SHALL be able to build any host configuration by passing `--override-input secrets "github:fedor-ivn/nix-config?dir=secrets-stub"` to `nixos-rebuild` or `darwin-rebuild`.
 

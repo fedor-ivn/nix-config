@@ -95,42 +95,32 @@
 
 ## 5. Install NixOS on `homelab-root`
 
-- [ ] 5.1 Boot the live USB again. Mount the new `homelab-root` at
+- [x] 5.1 Boot the live USB again. Mount the new `homelab-root` at
       `/mnt`, the shared ESP at `/mnt/boot`. Confirm the ESP
       mounted is the *same* ESP used by `fedorivns-thinkpad`.
-- [ ] 5.2 Run `nixos-generate-config --root /mnt --no-filesystems`
+- [x] 5.2 Run `nixos-generate-config --root /mnt --no-filesystems`
       (or with filesystems if preferred) and copy the generated
       `hardware-configuration.nix` into the repo's
       `configurations/nixos/fedorivns-homelab/hardware.nix`,
       replacing the placeholder from task 3.2. Adjust file paths
       so it imports cleanly within the repo (mirror the existing
       `fedorivns-thinkpad/hardware.nix` pattern).
-- [ ] 5.3 Ensure the generated config declares the LUKS device for
+- [x] 5.3 Ensure the generated config declares the LUKS device for
       `homelab-root` (`boot.initrd.luks.devices.<name>`).
-- [ ] 5.4 Run `nixos-install --flake <repo>#fedorivns-homelab`
-      from the live USB (with `~/.config/sops/age/keys.txt`
-      placed appropriately for the install if needed, or skip
-      sops modules on first build by gating them; see task 6).
-- [ ] 5.5 Reboot. Verify the `systemd-boot` menu now lists both
+- [x] 5.4 Place the personal age key at
+      `~/.config/sops/age/keys.txt` on the live USB environment
+      (export it from your password manager). Then run
+      `nixos-install --flake <repo>#fedorivns-homelab`.
+- [x] 5.5 Reboot. Verify the `systemd-boot` menu now lists both
       `fedorivns-thinkpad` and `fedorivns-homelab` entries.
-- [ ] 5.6 Select the homelab entry and confirm it boots, networks,
+- [x] 5.6 Select the homelab entry and confirm it boots, networks,
       and is reachable over SSH from the MBP.
 
 ## 6. SOPS / age recipient for the new host
 
-- [ ] 6.1 On the homelab, capture the ssh host key:
-      `cat /etc/ssh/ssh_host_ed25519_key.pub`. Convert to an age
-      recipient with `ssh-to-age` or the equivalent.
-- [ ] 6.2 Add the recipient to `.sops.yaml` under a creation rule
-      that matches `secrets.yaml`. Re-encrypt with
-      `sops updatekeys secrets.yaml`.
-- [ ] 6.3 Add the homelab host's age key path
-      (`/var/lib/sops-nix/key.txt` or equivalent) to the host's
-      `sops.age.sshKeyPaths` or `sops.age.keyFile`, matching repo
-      convention.
-- [ ] 6.4 Re-run `just a` for the homelab and confirm sops-nix
-      decrypts at boot (`systemctl status sops-nix` or
-      `/run/secrets/*` present).
+~~Skipped — single personal age key model: no per-host SSH recipient needed.
+The homelab decrypts secrets using the personal age key placed at install
+time (task 5.4). `.sops.yaml` was updated in commit 715da0f.~~
 
 ## 7. TPM2 unattended unlock
 
