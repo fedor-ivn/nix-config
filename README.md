@@ -55,11 +55,11 @@ On a fresh machine without SSH credentials, Nix will fail to fetch the private
 
 ```sh
 # NixOS
-nixos-rebuild switch --flake ".#fedorivns-thinkpad" \
+nixos-rebuild switch --flake "github:fedor-ivn/nix-config#fedorivns-thinkpad" \
   --override-input secrets "github:fedor-ivn/nix-config?dir=secrets-stub"
 
 # macOS
-darwin-rebuild switch --flake ".#fedorivns-mbp" \
+darwin-rebuild switch --flake "github:fedor-ivn/nix-config#fedorivns-mbp" \
   --override-input secrets "github:fedor-ivn/nix-config?dir=secrets-stub"
 ```
 
