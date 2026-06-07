@@ -28,5 +28,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.timeout = 3;
 
+  security.sudo.extraConfig = "Defaults env_keep+=SSH_AUTH_SOCK";
+
   system.stateVersion = "26.05";
 }

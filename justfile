@@ -51,9 +51,11 @@ activate host="":
   nix run .#activate {{ 
     if host == "" {
        ""
-    } else if host == "thinkpad" { 
+    } else if host == "thinkpad" {
       "fedorivns-thinkpad"
-    } else { 
-      error("Unknown host '" + host + "'. Available: thinkpad") 
-    } 
+    } else if host == "homelab" {
+      "fedorivns-homelab"
+    } else {
+      error("Unknown host '" + host + "'. Available: thinkpad, homelab")
+    }
   }}
