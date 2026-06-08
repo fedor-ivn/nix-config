@@ -20,9 +20,13 @@ data partition layout are deliberately deferred to future changes.
   without another shrink.
 - Auto-unlock the homelab root via TPM2 (`systemd-cryptenroll`) so
   the headless host survives unattended reboots.
-- Configure a shared `systemd-boot` ESP so both hosts appear in the
-  boot menu; `fedorivns-homelab` is the default with a short timeout
-  and `default = @saved` semantics.
+- Give each NixOS install its own ESP (revised from initial
+  "shared ESP with `default = @saved`" plan after that approach hit
+  three concrete failure modes; see `design.md` Decision 5).
+  Thinkpad keeps `/dev/nvme0n1p1`; homelab gets a new ESP carved
+  out as part of this change. UEFI firmware boot order picks the
+  default (homelab); the desktop role is entered via one-shot
+  `efibootmgr -n` from the homelab.
 - Introduce **`modules/nixos/server/`** — a reusable headless-server
   baseline (ssh-only, no GUI, `logind.lidSwitch = "ignore"`, sane
   always-on defaults).
@@ -69,10 +73,13 @@ capabilities rather than modifying them.
 - **Secrets:** `.sops.yaml` gains the homelab host's age recipient;
   `secrets.yaml` is re-encrypted to include it. The shared user
   age key is unaffected.
-- **Bootloader:** Both NixOS installs share a single ESP under
-  `systemd-boot`. The `loader.conf default` pointer flaps to
-  whichever host was last activated; mitigated with
-  `default = @saved`.
+- **Bootloader:** Each NixOS install gets its own ESP under
+  `systemd-boot`. Both hosts use vanilla
+  `boot.loader.systemd-boot.enable = true;` — no
+  `extraInstallCommands`. UEFI firmware boot order picks the
+  default at power-on. (Initial implementation used a shared
+  ESP with rename hacks; replaced after the failure modes
+  documented in `design.md` Decision 5.)
 - **Networking:** Homelab gets its own static-DHCP IP and
   `nixos-unified.sshTarget`. No change to the existing thinkpad
   network pin.

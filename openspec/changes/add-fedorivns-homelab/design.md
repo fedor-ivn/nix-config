@@ -113,31 +113,91 @@ homelab partition is new and can be disko-driven on its own.
   but requires re-installing the desktop role. Cost > benefit for
   a yearly-use role.
 
-### Decision 5: Single shared ESP, `default = @saved`
+### Decision 5: Per-host ESPs (revised after implementation)
 
-Both NixOS installs use `systemd-boot` against one shared ESP
-partition. `boot.loader.timeout = 3`. `loader.conf` is configured
-with `default = @saved` (or the equivalent NixOS option) so
-`systemd-boot` remembers the last selected entry.
+Each NixOS install gets its own ESP. The thinkpad keeps the
+original ESP (`/dev/nvme0n1p1`). The homelab moves to a new ESP
+carved out as part of this change. Each host mounts only its own
+ESP at `/boot`. UEFI firmware boot order picks the default at
+power-on; the rarely-booted desktop role is selected with
+`sudo efibootmgr -n <thinkpad-boot-id> && sudo reboot` from the
+homelab over SSH, or via the firmware boot menu on physical
+access. Both hosts revert to vanilla
+`boot.loader.systemd-boot.enable = true;` with no
+`extraInstallCommands`.
 
-**Rationale:** `systemd-boot` namespaces entry filenames per
-install (each NixOS has its own machine-id), so menu entries do
-not collide. The `loader.conf default` pointer does collide —
-whichever host was activated last wins. `@saved` neutralizes
-that: the last *boot* choice persists across activations.
-Operationally: after `just a` on either host, the next reboot
-goes to whichever entry was last picked from the menu, not the
-host that was just rebuilt.
+**Rationale (revised).** Original plan was a single shared ESP
+with `default = @saved`. In practice it hit three concrete
+failure modes:
+
+1. **Global generation GC.** NixOS's `systemd-boot-builder.py`
+   `garbage_collect()` deletes any
+   `loader/entries/nixos-.+\.conf` not in the current rebuild's
+   `gc_roots`. With both hosts writing entries that match the
+   regex, each host's rebuild silently deletes the other's
+   entries. The workaround — renaming each host's entries via
+   `extraInstallCommands` to `{host}-nixos-generation-N.conf` —
+   sidesteps the regex but is fragile: a missed rename leaves
+   an orphan `nixos-generation-N.conf` eligible for GC by
+   either host. We observed exactly this — an orphan
+   `nixos-generation-4.conf` survived on the shared ESP after
+   multiple rebuilds.
+2. **`nixos-enter` recovery cross-store contamination.** When
+   recovering one install from the other via `nixos-enter`, the
+   chroot's bootloader install wrote entry files to the ESP but
+   the EFI stubs were copied from the *host's* `/nix/store`
+   (which `nixos-enter` bind-mounts), not the target's. Entries
+   pointed at nonexistent stubs; the install was unbootable
+   until rerun from a fresh live USB.
+3. **`loader.conf default` clobbering.** Declaring
+   `default @saved` is not possible via the
+   `boot.loader.systemd-boot.extraConfig` mechanism:
+   NixOS's installer writes the `default` line first and
+   `systemd-boot` honors the first occurrence. The workaround
+   is `extraInstallCommands` doing
+   `sed -i '/^default /c\default @saved'`, which races between
+   hosts. Upstream attempt to add `rememberLastChoice`
+   ([nixpkgs#286672](https://github.com/NixOS/nixpkgs/pull/286672))
+   stalled.
+
+None of (1)–(3) are user error; all three follow from sharing
+one ESP between two installs that each think they own the
+bootloader. A native fix would require NixOS plumbing
+`bootctl --entry-token=machine-id` (which would namespace entry
+filenames per install and let `garbage_collect` scope itself
+accordingly). That option is not exposed by the NixOS module and
+has no open issue against nixpkgs (verified against
+`nixos/modules/system/boot/loader/systemd-boot/systemd-boot-builder.py`
+on master, 2026-06).
+
+Two ESPs makes (1)–(3) structurally impossible: each host's GC,
+recovery, and `loader.conf` operate on disjoint filesystems. The
+cost is a one-shot UEFI boot-order toggle to enter the desktop
+role, paid ~yearly.
 
 **Alternatives considered:**
 
-- *Two separate ESPs.* Cleanest isolation; firmware boot order
-  picks which ESP to chainload. Cost: an extra partition, extra
-  fragility on firmware updates that reorder UEFI entries. Not
-  worth it for a two-install setup.
-- *Accept the flap (no `@saved`).* Reasonable, but easy to
-  forget: a stray `just a` on the desktop role silently makes
-  desktop the default. `@saved` is a one-line fix.
+- *Shared ESP with rename + `default @saved` hack (what we
+  actually built first).* Works but pays an ongoing tax on every
+  activation and on every recovery. Three documented failure
+  modes; see above.
+- *`nixos-rebuild --profile-name` on a single install.* The
+  cleanest NixOS-native answer to "two configurations, one
+  bootloader" — the builder iterates
+  `/nix/var/nix/profiles/system-profiles/*` and applies
+  `configurationLimit` per-profile. But requires unifying
+  `/nix/store` and `/` between the two roles, which loses
+  Decision 6's "each role's state lives behind its own LUKS"
+  property. Too invasive for the benefit.
+- *`specialisation` within one install (Solene's "two NixOS as
+  one" pattern).* Same blocker: specialisations share
+  `/etc/machine-id`, `/var`, journal, and persistent state. A
+  24/7 service host and a desktop should not share these.
+- *Original "two ESPs" rejection.* Cited "extra fragility on
+  firmware updates that reorder UEFI entries". In practice, on
+  this ThinkPad in this physical location, that risk is far
+  smaller than the per-activation friction of the shared-ESP
+  hack.
 
 ### Decision 6: TPM2 auto-unlock via `systemd-cryptenroll`
 
@@ -168,11 +228,14 @@ homelab).
   `/etc/ssh` host keys and sops-decrypted secrets in
   `/run/secrets`. Encrypting root is the conservative default.
 
-### Decision 7: Leave free space unallocated
+### Decision 7: Leave free space unallocated, modulo the new ESP
 
 After shrinking the existing root and creating the new
 `homelab-root` LUKS partition, the remaining disk space is left
-unallocated.
+unallocated — *except* for the new homelab ESP carved out as
+part of Decision 5's revision. See tasks.md section 11 for the
+carve-out source (TBD: repurpose `p3` if reclaimable, else
+shrink `homelab-root` by ~1G).
 
 **Rationale:** This change has no service that needs a data
 partition yet. Pre-creating one would commit to a layout
@@ -212,9 +275,22 @@ a built-in UPS — a bonus over a typical small server.
   Document the recovery path (passphrase fallback). Pin a
   conservative PCR set; reseal after kernel updates if needed.
   Acceptable for a homelab in a known physical location.
-- **Bootloader default-entry flap on activation** → Mitigated
-  with `default = @saved`; user picks the entry once at boot
-  and it sticks.
+- ~~**Bootloader default-entry flap on activation**~~ → Resolved
+  by Decision 5's flip to per-host ESPs. Each host's
+  `loader.conf` is on its own ESP; nothing to race.
+- **Second ESP carve-out reclaims `p3` (the thinkpad's
+  encrypted swap).** Thinkpad loses hibernation capability;
+  acceptable for a yearly-use experimental role on 14 GiB RAM.
+  A swapfile on the LUKS-encrypted thinkpad root is a trivial
+  add-back if ever needed. The thinkpad host config's
+  `swapDevices` stanza must be removed in the same change that
+  deletes the partition (see tasks.md section 11.4).
+- **UEFI firmware reordering NVRAM entries on firmware update.**
+  Once each host has its own UEFI boot entry, a firmware update
+  could in principle reorder them. Mitigated by the fact that
+  this ThinkPad's firmware has been stable and `efibootmgr -o`
+  re-pins the order in seconds if needed. Acceptable cost given
+  the shared-ESP failure modes the flip eliminates.
 - ~~**Static-DHCP IP drift**~~ → Mitigated by using Avahi/mDNS
   (`fedorivns-homelab.local`) instead of a pinned IP. No router
   reservation needed; mDNS resolves as long as the host is on
@@ -238,3 +314,12 @@ a built-in UPS — a bonus over a typical small server.
 - **Wake-on-LAN** on the ThinkPad NIC. Convenient for "boot to
   desktop role from MBP" but adds firmware setup. Not in scope;
   flag as a possible follow-up.
+- ~~**Identity of partition `/dev/nvme0n1p3`** (15.9G LUKS).~~
+  Resolved (2026-06): it's the thinkpad's encrypted swap.
+  Deleted entirely as part of section 11 of tasks.md. The
+  thinkpad loses hibernation; on a 14 GiB-RAM box used ~yearly
+  for experiments, that's acceptable. A swapfile on the
+  LUKS-encrypted root is a trivial future add-back if a
+  session ever needs one. The new homelab ESP takes 512 MiB
+  from the reclaimed space; the remaining ~15.4 GiB is left
+  unallocated (consistent with Decision 7).
