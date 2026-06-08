@@ -9,16 +9,25 @@
     ];
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci_renesas" "xhci_pci" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
+  # tpm_tis required in initrd for systemd-cryptsetup to reach the TPM2 chip.
+  boot.initrd.kernelModules = [ "tpm_tis" ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
+
+  # Required for tpm2-device=auto to be honoured by systemd-cryptsetup.
+  boot.initrd.systemd.enable = true;
 
   fileSystems."/" =
     { device = "/dev/mapper/homelab-root";
       fsType = "ext4";
     };
 
-  boot.initrd.luks.devices."homelab-root".device = "/dev/disk/by-uuid/330f428f-678e-4a3e-8051-90bfa19d54e2";
+  boot.initrd.luks.devices."homelab-root" = {
+    device = "/dev/disk/by-uuid/330f428f-678e-4a3e-8051-90bfa19d54e2";
+    # TPM2 enrolled: systemd-cryptenroll /dev/nvme0n1p4 --tpm2-device=auto --tpm2-pcrs=0+7
+    # Passphrase keyslot retained as fallback (keyslot 0).
+    crypttabExtraOpts = [ "tpm2-device=auto" ];
+  };
 
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/5E82-1FFB";

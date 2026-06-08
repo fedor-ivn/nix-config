@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ flake, ... }:
+{ flake, pkgs, ... }:
 let
   secrets = flake.inputs.secrets.values;
 in
@@ -25,6 +25,22 @@ in
 
   # Host-specific settings for this machine
   boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.extraInstallCommands = ''
+    for old in /boot/loader/entries/thinkpad-nixos-generation-*.conf; do
+      [ -f "$old" ] || continue
+      num="''${old##*thinkpad-nixos-generation-}"
+      num="''${num%.conf}"
+      [ -e "/nix/var/nix/profiles/system-''${num}-link" ] || ${pkgs.coreutils}/bin/rm "$old"
+    done
+    for f in /boot/loader/entries/nixos-generation-*.conf; do
+      [ -f "$f" ] || continue
+      if ${pkgs.gnugrep}/bin/grep -q "fedorivns-thinkpad" "$f"; then
+        ${pkgs.gnused}/bin/sed -i 's/^title .*/title Thinkpad/' "$f"
+        ${pkgs.coreutils}/bin/mv "$f" "/boot/loader/entries/thinkpad-$(${pkgs.coreutils}/bin/basename "$f")"
+      fi
+    done
+    ${pkgs.gnused}/bin/sed -i '/^default /c\default @saved' /boot/loader/loader.conf
+  '';
   boot.loader.efi.canTouchEfiVariables = true;
 
   boot.initrd.luks.devices."luks-12eb18d9-ffeb-4cf7-8afb-1b40347bab6a".device = "/dev/disk/by-uuid/12eb18d9-ffeb-4cf7-8afb-1b40347bab6a";
