@@ -145,6 +145,7 @@ in
       shellAliases = {
         t = "task";
         tt = "taskwarrior-tui";
+        buy = "task add project:shopping";
       };
     };
 
