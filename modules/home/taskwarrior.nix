@@ -85,6 +85,10 @@ let
     '';
   };
 
+  taskTagNext = pkgs.writeShellScriptBin "task-tag-next" ''
+    task "$1" modify +next
+  '';
+
   taskOpenUrls = pkgs.writeShellApplication {
     name = "task-open-urls";
     runtimeInputs = with pkgs; [ jq pkgs.taskwarrior3 ];
@@ -141,7 +145,7 @@ in
   config = {
     # Scripts from old shell-applications.nix
     home = {
-      packages = [ pkgs.taskwarrior-tui taskSync taskImportGh taskOpenUrls ];
+      packages = [ pkgs.taskwarrior-tui taskSync taskImportGh taskOpenUrls taskTagNext ];
       shellAliases = {
         t = "task";
         tt = "taskwarrior-tui";
@@ -168,19 +172,21 @@ in
       extraConfig = "include ${config.sops.templates."taskwarrior-sync.rc".path}";
       config =
         {
+          default.project = "inbox";
           uda.taskwarrior-tui = {
             shortcuts = {
               "1" = "task-open-urls";
               "2" = "task-sync";
+              "n" = "task-tag-next";
             };
             quick-tag.name = "today";
           };
           urgency.user.tag.today.coefficient = 6;
           context = {
-            upcoming = "project.not:shopping project.not:wishlist -someday";
-            personal = "project.not:shopping project.not:wishlist -someday";
-            shop = "project:shopping -someday";
-            someday = "(project:wishlist or +someday)";
+            inbox = "project:inbox";
+            personal = "project.not:shopping project.not:inbox -sdm";
+            shop = "project:shopping -sdm";
+            someday = "+sdm";
             today = "(scheduled.before:today or scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
           };
           recurrence = if config.me.isMainMachine then "on" else "off";
