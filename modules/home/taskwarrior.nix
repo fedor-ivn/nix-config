@@ -99,6 +99,22 @@ in
             keyconfig.shortcut5="n";
           };
           urgency.user.tag.today.coefficient = 6;
+          urgency.user.tag.sdm.coefficient = -50;
+          urgency.user.tag.waiting.coefficient = -3;
+
+          uda.focus.type = "string";
+          uda.focus.label = "Focus";
+          uda.focus.values = "H,L";
+
+          uda.estimate.type = "duration";
+          uda.estimate.label = "Estimate";
+
+          report.next.columns = "id,start.age,entry.age,depends.count,priority,project,tags,recur,scheduled.countdown,due.relative,until.remaining,focus,estimate,description.truncated_count,urgency";
+          report.next.labels = "ID,Active,Age,Deps,P,Project,Tag,Recur,S,Due,Until,Focus,Est,Description,Urg";
+
+          "color.uda.focus.H" = "bold red";
+          "color.uda.focus.L" = "green";
+
           context = {
             inbox = "project:inbox";
             personal = "project.not:shopping project.not:inbox -sdm";
