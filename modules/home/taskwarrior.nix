@@ -7,7 +7,18 @@ let
 
   tagNext = pkgs.writeShellScriptBin "task-tag-next" ''
     [ -n "$1" ] || { echo "Usage: task-tag-next <id>"; exit 1; }
-    task "$1" modify +next
+    task rc.verbose= "$1" modify +next
+  '';
+
+  tickle = pkgs.writeShellScriptBin "tick" ''
+    [ -n "$1" ] || { echo "Usage: tick <date> [description...]"; exit 1; }
+    deadline=$1
+    shift
+    task rc.verbose= add wait:"$deadline" "$@"
+  '';
+
+  buy = pkgs.writeShellScriptBin "buy" ''
+    task rc.verbose= add project:shopping "$@"
   '';
 
   openUrls = pkgs.writeShellApplication {
@@ -52,11 +63,10 @@ in
 {
   config = {
     home = {
-      packages = [ pkgs.taskwarrior-tui sync openUrls tagNext ];
+      packages = [ pkgs.taskwarrior-tui sync openUrls tagNext buy tickle ];
       shellAliases = {
         t = "task";
         tt = "taskwarrior-tui";
-        buy = "task add project:shopping";
       };
     };
 
@@ -83,9 +93,10 @@ in
             shortcuts = {
               "1" = "task-open-urls";
               "2" = "task-sync";
-              "n" = "task-tag-next";
+              "5" = "task-tag-next";
             };
             quick-tag.name = "today";
+            keyconfig.shortcut5="n";
           };
           urgency.user.tag.today.coefficient = 6;
           context = {
