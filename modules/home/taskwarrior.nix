@@ -117,10 +117,10 @@ in
 
           context = {
             inbox = "project:inbox";
-            personal = "project.not:shopping project.not:inbox -sdm";
-            shop = "project:shopping -sdm";
-            someday = "+sdm";
-            today = "(scheduled.before:today or scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
+            personal = "project.not:inbox project.not:shopping -sdm";
+            shop = "project.not:inbox project:shopping -sdm";
+            someday = "project.not:inbox +sdm";
+            today = "project.not:inbox (scheduled.before:today or scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
           };
           recurrence = if config.me.isMainMachine then "on" else "off";
         };
