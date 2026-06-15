@@ -112,8 +112,8 @@ in
           report.next.columns = "id,start.age,entry.age,depends.count,priority,project,tags,recur,scheduled.countdown,due.relative,until.remaining,focus,estimate,description.truncated_count,urgency";
           report.next.labels = "ID,Active,Age,Deps,P,Project,Tag,Recur,S,Due,Until,Focus,Est,Description,Urg";
 
-          "color.uda.focus.H" = "bold red";
-          "color.uda.focus.L" = "green";
+          "color.uda.focus.H" = "bold magenta";
+          "color.uda.focus.L" = "blue";
 
           context = {
             inbox = "project:inbox";
