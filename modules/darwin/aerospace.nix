@@ -39,23 +39,6 @@ let
     { }
     monitors;
 
-  mkGroupCases = dir: group:
-    let
-      n = builtins.length group;
-      pairs =
-        if dir == "next"
-        then builtins.genList (i: { cur = builtins.elemAt group i;       nxt = builtins.elemAt group (i + 1); }) (n - 1)
-        else builtins.genList (i: { cur = builtins.elemAt group (i + 1); nxt = builtins.elemAt group i; })       (n - 1);
-    in builtins.concatStringsSep " " (
-      map (p: "${toString p.cur}) ${aerospaceBin} workspace ${toString p.nxt};;") pairs);
-
-  mkMonitorNavScript = dir:
-    let cases = builtins.concatStringsSep " " (map (mkGroupCases dir) monitorGroups);
-    in "exec-and-forget bash -c 'ws=$(${aerospaceBin} list-workspaces --monitor focused --visible | head -1); case $ws in ${cases} esac'";
-
-  nextOnMonitor = mkMonitorNavScript "next";
-  prevOnMonitor = mkMonitorNavScript "prev";
-
   floatingApps = [
     "System Settings"
     "Calculator"
@@ -125,8 +108,8 @@ in
 
           "alt-tab" = "workspace-back-and-forth";
 
-          "alt-rightSquareBracket" = nextOnMonitor;
-          "alt-leftSquareBracket"  = prevOnMonitor;
+          "alt-rightSquareBracket" = "workspace next";
+          "alt-leftSquareBracket"  = "workspace prev";
 
           "alt-r" = "mode resize";
         };
