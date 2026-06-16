@@ -20,7 +20,6 @@ in
     "USB 10/100/1000 LAN"
     "Thunderbolt Bridge"
     "Wi-Fi"
-    "iPhone USB"
   ] ++ secrets.knownNetworkServices;
 
   networking.dns = [
