@@ -55,6 +55,24 @@ let
         ];
         rules =
           lib.optionals corp [
+            # Browsers query the HTTPS/SVCB RR (type 65/64) over the system
+            # resolver. The FakeIP server only synthesizes A/AAAA, so these
+            # queries get black-holed and Firefox stalls until the fetch dies
+            # (NS_ERROR_NET_TIMEOUT, surfaced on the page as a failed CORS
+            # request). Forwarding them upstream instead would leak real
+            # ipv4hint/ipv6hint + ECH config, letting the client bypass FakeIP
+            # and connect with an encrypted SNI we can't sniff — either way the
+            # corp domain_suffix route rule never fires and the request skips
+            # the SOCKS bridge. Reject them with a fast empty answer so the
+            # client falls back to the A/AAAA FakeIP path that routes correctly.
+            {
+              query_type = [
+                64
+                65
+              ];
+              domain_suffix = corpDomains;
+              action = "reject";
+            }
             {
               domain_suffix = corpDomains;
               server = "fakeip-dns";
