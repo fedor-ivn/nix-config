@@ -98,6 +98,7 @@ in
 
   programs.zsh.enable = true;
   services.tailscale.enable = true;
+  services.openssh.enable = true;
 
   system.configurationRevision = self.rev or self.dirtyRev or null;
 }
