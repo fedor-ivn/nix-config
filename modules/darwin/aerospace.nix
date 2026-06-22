@@ -56,6 +56,7 @@ let
     { app = "Ghostty";   workspace = 8; }
     { app = "Telegram";  workspace = 9; }
     { app = "Slack";     workspace = 9; }
+    { app = "Time";      workspace = 9; }
     { app = "Spotify";   workspace = 10; }
     { app = "KeePassXC"; workspace = 10; }
   ];
