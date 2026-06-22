@@ -1,4 +1,4 @@
-{ flake, ... }:
+{ flake, pkgs, ... }:
 let
   secrets = flake.inputs.secrets.values;
 in
@@ -31,4 +31,8 @@ in
     "2001:4860:4860::8888"
     "2001:4860:4860::8844"
   ];
+
+  home-manager.users.fedorivn.home.packages = with pkgs; [ iina zoom-us ];
+
+  homebrew.casks = [ "chatgpt" "claude" "altserver" ] ++ secrets.homebrewCasks;
 }

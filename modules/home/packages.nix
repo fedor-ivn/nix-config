@@ -36,13 +36,11 @@ in
         slack
         qbittorrent
         hoppscotch
-        zoom-us
       ];
 
       linuxOnlyGuiApps = with pkgs; [
         wl-clipboard-rs
         # libreoffice # tmp disable on ThinkPad
-        vlc
         # ungoogled-chromium # tmp disable on ThinkPad
         telegram-desktop
         hiddify-app
@@ -57,7 +55,6 @@ in
       darwinOnlyGuiApps = with pkgs; [
         monitorcontrol
         stats
-        iina
       ];
     in
     base

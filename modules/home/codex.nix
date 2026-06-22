@@ -1,5 +1,6 @@
+{ lib, ... }:
 {
   programs.codex = {
-    enable = true;
+    enable = lib.mkDefault true;
   };
 }

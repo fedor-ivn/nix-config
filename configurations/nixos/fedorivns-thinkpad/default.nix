@@ -99,6 +99,8 @@ in
     };
   };
 
+  home-manager.users.fedorivn.home.packages = with pkgs; [ vlc ];
+
   nix.gc.automatic = true;
   system.stateVersion = "23.11";
 }

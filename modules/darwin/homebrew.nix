@@ -1,33 +1,22 @@
-{ flake, ... }:
-let
-  secrets = flake.inputs.secrets.values;
-in
+{ ... }:
 {
   homebrew = {
     enable = true;
-    casks = map
-      (name: {
-        inherit name;
-        greedy = true;
-      })
-      ([
-        "telegram"
-        "altserver"
-        "beekeeper-studio"
-        "ungoogled-chromium"
-        # "libreoffice"
-        "keyboardcleantool"
-        "lm-studio"
-        "obs"
-        "mac-mouse-fix"
-        "chatgpt"
-        "claude"
-        "ghostty"
-        "handy"
-        "swiftbar"
-        "raycast"
-      ] ++ secrets.homebrewCasks);
-    # caskArgs.no_quarantine = true; # Deprecated flag, removed by Homebrew
+    greedyCasks = true;
+    casks = [
+      "telegram"
+      "beekeeper-studio"
+      "ungoogled-chromium"
+      # "libreoffice"
+      "keyboardcleantool"
+      "lm-studio"
+      "obs"
+      "mac-mouse-fix"
+      "ghostty"
+      "handy"
+      "swiftbar"
+      "raycast"
+    ];
     onActivation = {
       cleanup = "zap";
       autoUpdate = true;
