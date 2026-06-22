@@ -13,6 +13,7 @@ in
   system.primaryUser = "fedorivn";
 
   networking.hostName = "fedorivns-mbp";
+  networking.localHostName = "fedorivns-mbp";
   networking.computerName = "fedorivns-mbp";
   networking.knownNetworkServices = [
     "USB Controls 2"
