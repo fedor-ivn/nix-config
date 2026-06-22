@@ -100,8 +100,6 @@ in
   services.tailscale.enable = true;
   services.openssh = {
     enable = true;
-    # Reap dead corp reverse-tunnel sessions promptly so port 2222 is freed for
-    # reconnect. Without this the Mac sshd holds zombie sessions until TCP timeout.
     extraConfig = ''
       ClientAliveInterval 30
       ClientAliveCountMax 3
