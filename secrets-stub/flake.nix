@@ -10,6 +10,7 @@
       knownNetworkServices = [];
       clamorPaths = {};
       homebrewCasks = [];
+      corpTunnelUser = "";
     };
   };
 }
