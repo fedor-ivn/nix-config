@@ -7,6 +7,7 @@
   ];
 
   nixos-unified.sshTarget = "fedorivn@fedorivns-homelab.local";
+  managedUsers = [ "fedorivn" ];
 
   networking.hostName = "fedorivns-homelab";
 

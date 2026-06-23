@@ -1,8 +1,8 @@
-# List of users for darwin or nixos system and their top-level configuration.
+# OS accounts managed on a host, plus their home-manager configuration.
 { flake, pkgs, lib, config, ... }:
 let
   inherit (flake.inputs) self;
-  identities = import ../../../lib/identities.nix;
+  identity = import ../../../lib/identity.nix;
   mapListToAttrs = m: f:
     lib.listToAttrs (map (name: { inherit name; value = f name; }) m);
 in
@@ -10,16 +10,13 @@ in
   options = {
     managedUsers = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      description = "List of usernames";
-      defaultText = "All users under ./configuration/users are included by default";
-      default =
-        let
-          dirContents = builtins.readDir (self + /configurations/home);
-          fileNames = builtins.attrNames dirContents; # Extracts keys: [ "fedorivn.nix" ]
-          regularFiles = builtins.filter (name: dirContents.${name} == "regular") fileNames; # Filters for regular files
-          baseNames = map (name: builtins.replaceStrings [ ".nix" ] [ "" ] name) regularFiles; # Removes .nix extension
-        in
-        baseNames;
+      description = ''
+        OS account usernames to create on this host and manage with
+        home-manager. Each account shares the same generic home config
+        (configurations/home) and identity (lib/identity.nix); only the
+        username differs.
+      '';
+      default = [ "fedorivn" ];
     };
   };
 
@@ -33,14 +30,14 @@ in
         } // lib.optionalAttrs pkgs.stdenv.isLinux {
         isNormalUser = true;
         extraGroups = [ "wheel" "networkmanager" ];
-        openssh.authorizedKeys.keys =
-          lib.optional (identities ? ${name}) identities.${name}.sshPublicKey;
+        openssh.authorizedKeys.keys = [ identity.sshPublicKey ];
       }
     );
 
-    # Enable home-manager for our user
+    # Enable home-manager for each managed account, injecting its username.
     home-manager.users = mapListToAttrs config.managedUsers (name: {
-      imports = [ (self + /configurations/home/${name}.nix) ];
+      imports = [ (self + /configurations/home) ];
+      me.username = name;
     });
 
     # All users can add Nix caches.

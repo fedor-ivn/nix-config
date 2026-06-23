@@ -1,9 +1,11 @@
+# Generic home-manager config, shared by every managed account. The account
+# username is injected per host (see modules/nixos/common/users.nix); the
+# identity (name/email/SSH key) is the same person everywhere.
 { flake, config, osConfig ? { }, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
-  identities = import ../../lib/identities.nix;
-  identity = identities.fedorivn;
+  identity = import ../../lib/identity.nix;
   isMainMachine =
     osConfig != null
     && (osConfig.networking.hostName or null) == "fedorivns-mbp";
@@ -16,6 +18,7 @@ in
     inputs.clamor.homeManagerModules.default
   ];
 
+  # `me.username` is set per account in users.nix.
   me = identity // {
     inherit isMainMachine;
   };

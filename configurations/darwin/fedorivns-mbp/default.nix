@@ -11,6 +11,7 @@ in
 
   # TODO: make it DRY with substitutions
   system.primaryUser = "fedorivn";
+  managedUsers = [ "fedorivn" ];
 
   networking.hostName = "fedorivns-mbp";
   networking.localHostName = "fedorivns-mbp";
@@ -32,7 +33,17 @@ in
     "2001:4860:4860::8844"
   ];
 
-  home-manager.users.fedorivn.home.packages = with pkgs; [ iina zoom-us ];
+  home-manager.users.fedorivn.home.packages = with pkgs; [ 
+    iina
+    zoom-us 
+    slack
+    qbittorrent
+    hoppscotch
+  ];
+
+  home-manager.users.fedorivn.programs.whisply.enable = true;
+  home-manager.users.fedorivn.programs.codex.enable = true;
+  
 
   homebrew.casks = [ "chatgpt" "claude" "altserver" ] ++ secrets.homebrewCasks;
 }

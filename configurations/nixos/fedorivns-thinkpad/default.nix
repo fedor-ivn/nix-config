@@ -13,6 +13,7 @@ in
   ];
 
   nixos-unified.sshTarget = "fedorivn@fedorivns-thinkpad.local";
+  managedUsers = [ "fedorivn" ];
 
   services.avahi = {
     enable = true;

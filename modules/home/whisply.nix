@@ -3,7 +3,7 @@ let
   whisplyPackage = flake.self.packages.${pkgs.stdenv.hostPlatform.system}.whisply;
 in
 {
-  options.programs.whisply.enable = lib.mkEnableOption "whisply" // { default = true; };
+  options.programs.whisply.enable = lib.mkEnableOption "whisply" // { default = false; };
 
   config = lib.mkIf (config.programs.whisply.enable && pkgs.stdenv.hostPlatform.isDarwin) {
     sops.secrets."whisply/hf-token" = { };

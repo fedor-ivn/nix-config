@@ -32,12 +32,6 @@ in
         dust
       ];
 
-      baseGuiApps = with pkgs; [
-        slack
-        qbittorrent
-        hoppscotch
-      ];
-
       linuxOnlyGuiApps = with pkgs; [
         wl-clipboard-rs
         # libreoffice # tmp disable on ThinkPad
@@ -59,7 +53,6 @@ in
     in
     base
     # tmp disable base gui apps on ThinkPad
-    ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) baseGuiApps
     ++ optionals (pkgs.stdenv.hostPlatform.isLinux) linuxOnlyGuiApps
     ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) darwinOnly
     ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) darwinOnlyGuiApps;
