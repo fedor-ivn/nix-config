@@ -1,4 +1,7 @@
-{ ... }:
+{ flake, ... }:
+let
+  secrets = flake.inputs.secrets.values;
+in
 {
   homebrew = {
     enable = true;
@@ -10,13 +13,12 @@
       # "libreoffice"
       "keyboardcleantool"
       "lm-studio"
-      "obs"
       "mac-mouse-fix"
       "ghostty"
       "handy"
       "swiftbar"
       "raycast"
-    ];
+    ] ++ secrets.homebrewCasks;
     onActivation = {
       cleanup = "zap";
       autoUpdate = true;

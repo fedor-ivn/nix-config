@@ -45,5 +45,10 @@ in
   home-manager.users.fedorivn.programs.codex.enable = true;
   
 
-  homebrew.casks = [ "chatgpt" "claude" "altserver" ] ++ secrets.homebrewCasks;
+  homebrew.casks = [ 
+    "chatgpt"
+    "claude"
+    "altserver"
+    "obs"
+  ];
 }
