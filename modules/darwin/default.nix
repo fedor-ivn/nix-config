@@ -1,4 +1,4 @@
-{ flake, ... }:
+{ flake, config, ... }:
 {
   imports = [
     ../nixos/common/users.nix
@@ -10,7 +10,7 @@
 
   nix-homebrew = {
     enable = true;
-    user = "fedorivn";
+    user = config.system.primaryUser;
     taps = {
       "homebrew/homebrew-core" = flake.inputs.homebrew-core;
       "homebrew/homebrew-cask" = flake.inputs.homebrew-cask;
