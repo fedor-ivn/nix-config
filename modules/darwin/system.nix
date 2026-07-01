@@ -74,6 +74,10 @@ in
       autohide = true;
     };
 
+    trackpad = {
+      FirstClickThreshold = 0;
+    };
+
     NSGlobalDomain = {
       AppleInterfaceStyle = "Dark";
       AppleScrollerPagingBehavior = true;
