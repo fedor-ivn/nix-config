@@ -30,9 +30,29 @@ in
     chmod 0644 /etc/nix/all-certs.pem
   '';
 
-  home-manager.users."ext.fivanov".programs = {
-    codex.enable = false;
-    whisply.enable = false;
+
+  home-manager.users."ext.fivanov" = { config, pkgs, ... }: {
+    programs = {
+      codex.enable = false;
+      whisply.enable = false;
+
+      git.includes =
+        let
+          helper = pkgs.writeShellScript "git-credential-github-pat" ''
+            test "$1" = get || exit 0
+            echo username=fedor-ivn
+            echo password=$(cat ${config.sops.secrets."github/pat".path})
+          '';
+        in
+        [{
+          path = pkgs.writeText "corp-github-credentials.gitconfig" ''
+            [credential "https://github.com"]
+              helper = !${helper}
+          '';
+        }];
+    };
+
+    sops.secrets."github/pat" = { };
   };
 
   # taskchampion (the sync library in taskwarrior3) defaults to bundled Mozilla
