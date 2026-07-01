@@ -35,6 +35,21 @@ in
     whisply.enable = false;
   };
 
+  # taskchampion (the sync library in taskwarrior3) defaults to bundled Mozilla
+  # root store (tls-webpki-roots), which doesn't include the Tinkoff NGFW CA.
+  # Switch to tls-native-roots so it reads from the macOS Keychain instead.
+  nixpkgs.overlays = [
+    (final: prev: {
+      taskwarrior3 = prev.taskwarrior3.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          sed -i 's/^\[features\]/[features]\ndefault = ["tls-native-roots"]/' \
+            src/taskchampion-cpp/Cargo.toml
+        '';
+      });
+    })
+  ];
+
+
   # ssl-cert-file covers the nix daemon (substitution, fixed-output fetches);
   # NIX_SSL_CERT_FILE covers client-side flake fetches and overrides the default
   # the nix profile would otherwise export (which lacks the corp CAs).
