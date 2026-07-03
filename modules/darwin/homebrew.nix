@@ -23,6 +23,8 @@ in
       cleanup = "zap";
       autoUpdate = true;
       upgrade = true;
+      # Skip "Do you want to proceed with the cleanup?" prompt during zap.
+      extraFlags = [ "--force" ];
     };
   };
 }
