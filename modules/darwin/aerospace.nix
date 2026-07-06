@@ -49,16 +49,17 @@ let
   ];
 
   appWorkspaceRules = [
-    { app = "Code";      workspace = 1; }
-    { app = "Firefox";   workspace = 2; }
-    { app = "Obsidian";  workspace = 3; }
-    { app = "Finder";    workspace = 4; }
-    { app = "Ghostty";   workspace = 8; }
-    { app = "Telegram";  workspace = 9; }
-    { app = "Slack";     workspace = 9; }
-    { app = "Time";      workspace = 9; }
-    { app = "Spotify";   workspace = 10; }
-    { app = "KeePassXC"; workspace = 10; }
+    { app = "Code";        workspace = 1; }
+    { app = "Firefox";     workspace = 2; }
+    { app = "Obsidian";    workspace = 3; }
+    { app = "Finder";      workspace = 4; }
+    { app = "Ghostty";     workspace = 8; }
+    { app = "Telegram";    workspace = 9; }
+    { app = "Slack";       workspace = 9; }
+    { app = "Time";        workspace = 9; }
+    { app = "Thunderbird"; workspace = 9; }
+    { app = "Spotify";     workspace = 10; }
+    { app = "KeePassXC";   workspace = 10; }
   ];
 in
 {
@@ -68,7 +69,7 @@ in
       automatically-unhide-macos-hidden-apps = true;
       default-root-container-layout = "accordion";
       default-root-container-orientation = "auto";
-      accordion-padding = 0;
+      accordion-padding = 30;
 
       workspace-to-monitor-force-assignment = workspaceToMonitor;
 
