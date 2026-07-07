@@ -41,9 +41,12 @@ in
     hoppscotch
   ];
 
-  home-manager.users.fedorivn.programs.whisply.enable = true;
-  home-manager.users.fedorivn.programs.codex.enable = true;
-  
+  home-manager.users.fedorivn.programs = {
+    whisply.enable = true;
+    codex.enable = true;
+    secretTool2.enable = true;
+  };
+
 
   homebrew.casks = [ 
     "chatgpt"

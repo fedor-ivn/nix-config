@@ -35,6 +35,8 @@ in
     programs = {
       codex.enable = false;
       whisply.enable = false;
+      secretTool1.enable = true;
+      secretTool2.enable = true;
 
       git.includes =
         let
