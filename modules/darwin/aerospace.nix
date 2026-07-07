@@ -58,8 +58,10 @@ let
     { app = "Slack";       workspace = 9; }
     { app = "Time";        workspace = 9; }
     { app = "Thunderbird"; workspace = 9; }
+    { app = "Outlook";     workspace = 9; }
     { app = "Spotify";     workspace = 10; }
     { app = "KeePassXC";   workspace = 10; }
+    { app = "Cisco Secure Client";   workspace = 10; }
   ];
 in
 {
