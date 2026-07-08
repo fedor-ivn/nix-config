@@ -5,5 +5,9 @@
     # servers.notion.url = "https://mcp.notion.com/mcp";
   };
 
-  mcp-servers.programs.playwright.enable = true;
+  # https://github.com/natsukium/mcp-servers-nix
+  mcp-servers.programs = {
+    playwright.enable = true;
+    context7.enable = true;
+  };
 }
