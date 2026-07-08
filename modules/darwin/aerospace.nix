@@ -90,6 +90,7 @@ in
         mkDirectionBindings "alt-" "focus"
         // mkDirectionBindings "shift-alt-" "swap"
         // mkDirectionBindings "ctrl-alt-" "move"
+        // mkDirectionBindings "alt-shift-cmd-" "join-with"
         // mkWorkspaceBindings "alt-" "workspace"
         // mkWorkspaceBindings "shift-alt-" "move-node-to-workspace"
         // {
@@ -97,6 +98,8 @@ in
           "alt-d" = "focus-monitor --wrap-around up";
           "shift-alt-s" = "move-node-to-monitor --focus-follows-window down";
           "shift-alt-d" = "move-node-to-monitor --focus-follows-window up";
+
+          "alt-shift-cmd-f" = "flatten-workspace-tree";
 
           "shift-alt-space" = "layout accordion tiles";
           "shift-alt-t"     = "layout floating tiling";
