@@ -72,9 +72,12 @@
         "commit-message" = ./agents/skills/commit-message;
         "create-event" = ./agents/skills/create-event;
         "cv-eval" = ./agents/skills/cv-eval;
+        "load-task" = ./agents/skills/load-task;
       };
 
       commands = {
+        "load-task" = ./agents/commands/load-task.md;
+
         # Notion (uncomment when notion-plugin flake input is enabled)
         # "create-database-row" = "${flake.inputs.notion-plugin}/commands/create-database-row.md";
         # "create-page" = "${flake.inputs.notion-plugin}/commands/create-page.md";
