@@ -21,6 +21,16 @@ let
     task rc.verbose= add project:shopping "$@"
   '';
 
+  # Single-action task with no project (override default.project=inbox).
+  # Two names to trial-run memorability; drop one later.
+  # TODO(2026-12-31): pick winner between `x` and `ah`, delete the other.
+  adhocX = pkgs.writeShellScriptBin "x" ''
+    task rc.verbose= add project: "$@"
+  '';
+  adhocAh = pkgs.writeShellScriptBin "ah" ''
+    task rc.verbose= add project: "$@"
+  '';
+
   openUrls = pkgs.writeShellApplication {
     name = "task-open-urls";
     runtimeInputs = with pkgs; [ jq taskwarrior3 ];
@@ -63,7 +73,7 @@ in
 {
   config = {
     home = {
-      packages = [ pkgs.taskwarrior-tui sync openUrls tagNext buy tickle ];
+      packages = [ pkgs.taskwarrior-tui sync openUrls tagNext buy adhocX adhocAh tickle ];
       shellAliases = {
         t = "task";
         tt = "taskwarrior-tui";
