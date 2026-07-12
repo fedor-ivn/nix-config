@@ -87,7 +87,9 @@
   virtualisation.docker.rootless = {
     enable = true;
     setSocketVariable = true;
+    daemon.settings.dns = [ "8.8.8.8" "1.1.1.1" ];
   };
+  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
 
   environment.systemPackages = [ pkgs.ghostty.terminfo ];
 }
