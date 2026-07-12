@@ -37,7 +37,6 @@ in
         # libreoffice # tmp disable on ThinkPad
         # ungoogled-chromium # tmp disable on ThinkPad
         telegram-desktop
-        hiddify-app
       ];
 
       darwinOnly = with pkgs; [
