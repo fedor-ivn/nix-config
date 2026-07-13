@@ -71,20 +71,10 @@
   };
   "genieai.enableConversationHistory" = true;
   "git.confirmSync" = false;
+  "chat.commandCenter.enabled" = false;
+  "chat.disableAIFeatures" = true;
   "chat.viewSessions.orientation" = "stacked";
-  "chat.useAgentSkills" = true;
-  "mermaid-chat.enabled" = true;
-  "github.copilot.enable" = {
-    "*" = true;
-    markdown = true;
-    plaintext = false;
-    scminput = false;
-  };
-  "github.copilot.chat.anthropic.tools.websearch.enabled" = true;
-  "chat.mcp.discovery.enabled" = {
-    "cursor-workspace" = true;
-  };
-  "claudeCode.preferredLocation" = "panel";
+  "github.copilot.enable" = false;
   "notebook.cellToolbarLocation" = {
     default = "right";
     jupyter-notebook = "right";
