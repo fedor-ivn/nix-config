@@ -37,6 +37,7 @@ in
       whisply.enable = false;
       secretTool1.enable = true;
       secretTool2.enable = true;
+      glab.config.enable = true;
 
       git.includes =
         let
