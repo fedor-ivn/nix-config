@@ -12,9 +12,12 @@ in
   system.primaryUser = "ext.fivanov";
   managedUsers = [ "ext.fivanov" ];
 
-  networking.hostName = "fedorivns-tbank-mbp";
-  networking.localHostName = "fedorivns-tbank-mbp";
-  networking.computerName = "fedorivns-tbank-mbp";
+  # Corp Jamf re-applies `macbook-<serial>` (here macbook-DLQX9KQ54V) every 15
+  # minutes, so fighting it is whack-a-mole. Instead we adopt that name as the
+  # flake host (dir name = hostname, required by nixos-unified autowiring).
+  networking.hostName = "macbook-DLQX9KQ54V";
+  networking.localHostName = "macbook-DLQX9KQ54V";
+  networking.computerName = "macbook-DLQX9KQ54V";
 
   # Corp network does TLS interception (Tinkoff MITM CA). nix's bundled OpenSSL
   # uses ONLY the cert file (unlike macOS curl, which also consults the Keychain),
