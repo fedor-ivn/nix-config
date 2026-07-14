@@ -1,6 +1,15 @@
 { config, ... }:
+let
+  ignores = [
+    ".direnv"
+    ".envrc"
+  ];
+  tbankIgnores = ignores ++ [ ".claude" ];
+  tbankIgnoreFile = ".config/git/tbank-ignore";
+in
 {
-
+  home.file.${tbankIgnoreFile}.text =
+    builtins.concatStringsSep "\n" tbankIgnores;
 
   programs = {
     git = {
@@ -54,12 +63,17 @@
         };
       };
 
-      ignores = [
-        ".direnv"
-        ".envrc"
-        "*~"
-        "*.swp"
+      includes = [
+        {
+          condition = "hasconfig:remote.*.url:ssh://git@gitlab.tcsbank.ru:*/**";
+          contents = {
+            user.email = "ext.fivanov@tbank.ru";
+            core.excludesFile = "~/${tbankIgnoreFile}";
+          };
+        }
       ];
+
+      inherit ignores;
     };
 
     # Preserve lazygit from the new config since it doesn't conflict.
