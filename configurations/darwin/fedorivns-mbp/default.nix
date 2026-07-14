@@ -46,7 +46,7 @@ in
     codex.enable = true;
     secretTool1.enable = true;
     secretTool2.enable = true;
-    glab.config.enable = true;
+    glab.config.enable = false;
   };
 
 
