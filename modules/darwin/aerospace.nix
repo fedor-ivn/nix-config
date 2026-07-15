@@ -99,7 +99,7 @@ in
           "shift-alt-s" = "move-node-to-monitor --focus-follows-window down";
           "shift-alt-d" = "move-node-to-monitor --focus-follows-window up";
 
-          "alt-shift-cmd-f" = "flatten-workspace-tree";
+          "alt-shift-cmd-f" = [ "flatten-workspace-tree" "layout tiles horizontal" ];
 
           "shift-alt-space" = "layout accordion tiles";
           "shift-alt-t"     = "layout floating tiling";
