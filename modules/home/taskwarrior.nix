@@ -10,6 +10,11 @@ let
     task rc.verbose= "$1" modify +next
   '';
 
+  clearProject = pkgs.writeShellScriptBin "task-clear-project" ''
+    [ -n "$1" ] || { echo "Usage: task-clear-project <id>..."; exit 1; }
+    task rc.verbose= "$@" modify project:
+  '';
+
   tickle = pkgs.writeShellScriptBin "tick" ''
     [ -n "$1" ] || { echo "Usage: tick <date> [description...]"; exit 1; }
     deadline=$1
@@ -73,7 +78,7 @@ in
 {
   config = {
     home = {
-      packages = [ pkgs.taskwarrior-tui sync openUrls tagNext buy adhocX adhocAh tickle ];
+      packages = [ pkgs.taskwarrior-tui sync openUrls tagNext clearProject buy adhocX adhocAh tickle ];
       shellAliases = {
         t = "task";
         tt = "taskwarrior-tui";
@@ -103,6 +108,7 @@ in
             shortcuts = {
               "1" = "task-open-urls";
               "2" = "task-sync";
+              "3" = "task-clear-project";
               "5" = "task-tag-next";
             };
             quick-tag.name = "today";
