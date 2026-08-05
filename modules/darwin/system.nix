@@ -100,6 +100,16 @@ in
     ];
   };
 
+  system.activationScripts.installRussianTrustedCA.text = ''
+    cert="${../../certs/russian-trusted-root-ca.pem}"
+    if ! /usr/bin/security find-certificate -c "Russian Trusted Root CA" \
+        /Library/Keychains/System.keychain &>/dev/null; then
+      echo "Installing Russian Trusted Root CA into System keychain..."
+      /usr/bin/security add-trusted-cert -d -r trustRoot \
+        -k /Library/Keychains/System.keychain "$cert"
+    fi
+  '';
+
   programs.zsh.enable = true;
   services.tailscale.enable = true;
   services.openssh = {

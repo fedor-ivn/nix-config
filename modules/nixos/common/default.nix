@@ -92,4 +92,6 @@
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
 
   environment.systemPackages = [ pkgs.ghostty.terminfo ];
+
+  security.pki.certificateFiles = [ ../../../certs/russian-trusted-root-ca.pem ];
 }
