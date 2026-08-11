@@ -7,8 +7,22 @@ let
     command = "${clamor-hook}/bin/clamor-state-hook";
     timeout = 5;
   };
+
+  pclaude = pkgs.writeShellApplication {
+    name = "pclaude";
+    text = ''
+      ANTHROPIC_BASE_URL=$(cat ${config.sops.secrets."pclaude/anthropic-base-url".path}) \
+      ANTHROPIC_API_KEY=$(cat ${config.sops.secrets."pclaude/anthropic-api-key".path}) \
+      exec claude "$@"
+    '';
+  };
 in
 {
+  sops.secrets."pclaude/anthropic-api-key" = { };
+  sops.secrets."pclaude/anthropic-base-url" = { };
+
+  home.packages = [ pclaude ];
+
   programs.claude-code = {
     enable = true;
     enableMcpIntegration = true;
