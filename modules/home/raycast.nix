@@ -88,7 +88,7 @@ lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
       # @raycast.packageName Taskwarrior
       # @raycast.argument1 { "type": "text", "placeholder": "task description" }
 
-      ah "$1"
+      ${pkgs.taskwarrior3}/bin/task rc.verbose= add project: "$1"
     '';
   };
 
