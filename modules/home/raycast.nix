@@ -75,6 +75,23 @@ lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
     '';
   };
 
+  home.file.".config/raycast/scripts/task-add-adhoc.sh" = {
+    executable = true;
+    text = ''
+      #!/bin/bash
+
+      # Required parameters:
+      # @raycast.schemaVersion 1
+      # @raycast.title Add Ad-hoc Task
+      # @raycast.alias ah
+      # @raycast.mode silent
+      # @raycast.packageName Taskwarrior
+      # @raycast.argument1 { "type": "text", "placeholder": "task description" }
+
+      ah "$1"
+    '';
+  };
+
   home.file.".config/swiftbar/plugins/volume.250ms.sh" = {
     executable = true;
     text = ''
