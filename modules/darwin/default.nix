@@ -6,6 +6,7 @@
     ./system.nix
     ./aerospace.nix
     ./homebrew.nix
+    ./overlays.nix
   ];
 
   nix-homebrew = {
