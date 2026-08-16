@@ -64,10 +64,6 @@
       url = "github:chigwell/telegram-mcp/v2.0.37";
       flake = false;
     };
-    whisply-src = {
-      url = "github:fedor-ivn/whisply/f917467";
-      flake = false;
-    };
     uv2nix = {
       url = "github:pyproject-nix/uv2nix";
       inputs.pyproject-nix.follows = "pyproject-nix";

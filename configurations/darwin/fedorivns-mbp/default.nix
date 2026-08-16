@@ -42,7 +42,6 @@ in
   ];
 
   home-manager.users.fedorivn.programs = {
-    whisply.enable = true;
     codex.enable = true;
     secretTool1.enable = true;
     secretTool2.enable = true;
