@@ -20,6 +20,14 @@
     mutableTaps = false;
   };
 
+  # Mirror the nix-homebrew taps into the generated Brewfile. Without this, the
+  # taps exist on disk (pinned read-only by nix-homebrew) but are absent from
+  # the Brewfile, so `homebrew.onActivation.cleanup = "zap"` decides to untap
+  # them — which first uninstalls EVERY cask belonging to those taps. The untap
+  # then fails on the read-only symlink (`mutableTaps = false`), leaving all
+  # casks wiped and re-triggering the same loop on the next activation.
+  homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
+
   home-manager.sharedModules = [
     flake.inputs.spicetify-nix.homeManagerModules.default
     (
