@@ -24,10 +24,10 @@ in
     # For home-manager to work.
     # https://github.com/nix-community/home-manager/issues/4026#issuecomment-1565487545
     users.users = mapListToAttrs config.managedUsers (name:
-      lib.optionalAttrs pkgs.stdenv.isDarwin
+      lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin
         {
           home = "/Users/${name}";
-        } // lib.optionalAttrs pkgs.stdenv.isLinux {
+        } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         isNormalUser = true;
         extraGroups = [ "wheel" "networkmanager" ];
         openssh.authorizedKeys.keys = [ identity.sshPublicKey ];

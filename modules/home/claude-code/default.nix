@@ -29,9 +29,9 @@ in
     skills = config.me.ai.skills;
     commands = config.me.ai.commands;
 
-    plugins = [
-      "${flake.inputs.claude-plugins-official}/plugins/rust-analyzer-lsp"
-    ];
+    plugins = {
+      rust-analyzer-lsp = "${flake.inputs.claude-plugins-official}/plugins/rust-analyzer-lsp";
+    };
 
     settings = {
       preferredNotifChannel = "notifications_disabled";
