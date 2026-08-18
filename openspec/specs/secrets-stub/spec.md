@@ -21,6 +21,13 @@ The stub flake at `secrets-stub/flake.nix` SHALL export a `values` attribute wit
 - **WHEN** a module accesses `secrets.syncthingDevices.fedorivns-iphone` or `secrets.syncthingDevices.fedorivns-mbp` with the stub active
 - **THEN** the attribute evaluates to `""` without error
 
+### Requirement: Stub flake provides home module stand-ins
+The stub flake SHALL also export a `homeModules` attribute with the same names as `nix-secrets`, each a declare-only module that defines the `programs.<name>.enable` option and configures nothing, so that host configurations which set those options evaluate under the stub and simply come up without the private tooling.
+
+#### Scenario: Host enabling a private module builds under the stub
+- **WHEN** a host sets `programs.secretTool1.enable = true` (or `tunnel`/`tunnelAgent`) and is evaluated with the stub active
+- **THEN** evaluation succeeds and the resulting system contains none of the private tooling
+
 ### Requirement: Age key provisioned before first activation
 
 On a fresh installation the user's personal age key SHALL be placed at
