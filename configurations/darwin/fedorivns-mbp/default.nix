@@ -43,6 +43,7 @@ in
 
   home-manager.users.fedorivn.programs = {
     codex.enable = true;
+    tunnelAgent.enable = true;
     secretTool1.enable = true;
     secretTool2.enable = true;
     glab.config.enable = false;

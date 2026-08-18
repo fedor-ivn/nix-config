@@ -39,6 +39,7 @@ in
       codex.enable = false;
       secretTool1.enable = true;
       secretTool2.enable = true;
+      tunnel.enable = true;
       glab.config.enable = false;
 
       git.includes =

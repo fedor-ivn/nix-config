@@ -5,5 +5,7 @@
   imports = [
     flake.inputs.secrets.homeModules.secretTool1
     flake.inputs.secrets.homeModules.secretTool2
+    flake.inputs.secrets.homeModules.tunnel
+    flake.inputs.secrets.homeModules.tunnelAgent
   ];
 }
