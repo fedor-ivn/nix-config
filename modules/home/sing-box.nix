@@ -1,10 +1,17 @@
-# sing-box split-tunnel configs, generated from one source.
+# sing-box split-tunnel configs for a personal machine, generated from one source.
 #
-# Two profiles share a single `mkConfig` generator; the `corp` flag toggles the
-# only parts that differ (FakeIP DNS rule, the SOCKS outbound, and the corp
-# route rule). Both profiles are rendered by sops-nix at *activation* time, so
-# the WireGuard keys never enter the world-readable Nix store — they live in
-# secrets.yaml under `wireguard/{private-key,preshared-key}` and are
+# The generators live in lib/sing-box: the base (personal) profile and the corp
+# overlay, which adds the FakeIP DNS server, the SOCKS outbound and the corp
+# route rule. This module only supplies the host-specific parts — where to read
+# the host's WireGuard identity from, and the config dialect SFM speaks.
+#
+# Enabled per host (see configurations/darwin/<host>/). The homelab does not use
+# this module: it runs sing-box as a system service instead (see
+# modules/nixos/sing-box.nix).
+#
+# Both profiles are rendered by sops-nix at *activation* time, so nothing about
+# the WireGuard identity — keys or tunnel addresses — enters the world-readable
+# Nix store. It all lives in secrets.yaml under `wireguard/<hostname>/*` and is
 # interpolated via placeholders.
 #
 # The rendered files are symlinked into ~/.sing-box/{personal,corp}.json (out of
@@ -12,191 +19,47 @@
 # bridge (127.0.0.1:1080) is up, `personal.json` otherwise.
 #
 # Note: no build-time `sing-box check`. SFM tracks dev-next (1.14.x) while
-# nixpkgs lags (1.13.x); validating against the older binary false-rejects
-# valid 1.14 fields such as rule_set `http_client`.
-{ config, lib, ... }:
+# nixpkgs lags (1.13.x); validating against the older binary false-rejects valid
+# 1.14 fields such as rule_set `http_client`.
+{ config, lib, osConfig ? { }, ... }:
 let
-  corpDomains = [ "tcsbank.ru" "t-tech.team" "tcsgroup.io" "tbank.ru" "tinkoff.ru"];
+  cfg = config.programs.singBox;
 
-  ruleSet = tag: url: {
-    type = "remote";
-    inherit tag url;
-    format = "binary";
-    http_client.detour = "direct";
-    update_interval = "1d";
+  # The WireGuard identity is per-host, so the secrets to read follow the machine
+  # this account is activating on rather than being hardcoded to one hostname.
+  secret = name: "wireguard/${osConfig.networking.hostName}/${name}";
+
+  # `endpoints[0].address` is a JSON array, so each element can be its own
+  # placeholder — a single one could not be split back into two at render time.
+  secretNames = [ "private-key" "preshared-key" "address-v4" "address-v6" ];
+
+  hostArgs = {
+    wireguardAddresses = [
+      config.sops.placeholder.${secret "address-v4"}
+      config.sops.placeholder.${secret "address-v6"}
+    ];
+    privateKey = config.sops.placeholder.${secret "private-key"};
+    presharedKey = config.sops.placeholder.${secret "preshared-key"};
+    # SFM ships 1.14.x, where the rule-set download detour is nested under
+    # `http_client`.
+    ruleSetDetourField = "http_client";
   };
-
-  mkConfig =
-    { corp }:
-    builtins.toJSON {
-      log = {
-        level = "info";
-        timestamp = true;
-      };
-
-      dns = {
-        servers = [
-          {
-            tag = "tunnel-dns";
-            type = "udp";
-            server = "1.1.1.1";
-            detour = "wg";
-          }
-          {
-            tag = "direct-dns";
-            type = "local";
-          }
-          {
-            tag = "fakeip-dns";
-            type = "fakeip";
-            inet4_range = "198.18.0.0/15";
-            inet6_range = "fc00::/18";
-          }
-        ];
-        rules =
-          lib.optionals corp [
-            # Browsers query the HTTPS/SVCB RR (type 65/64) over the system
-            # resolver. The FakeIP server only synthesizes A/AAAA, so these
-            # queries get black-holed and Firefox stalls until the fetch dies
-            # (NS_ERROR_NET_TIMEOUT, surfaced on the page as a failed CORS
-            # request). Forwarding them upstream instead would leak real
-            # ipv4hint/ipv6hint + ECH config, letting the client bypass FakeIP
-            # and connect with an encrypted SNI we can't sniff — either way the
-            # corp domain_suffix route rule never fires and the request skips
-            # the SOCKS bridge. Reject them with a fast empty answer so the
-            # client falls back to the A/AAAA FakeIP path that routes correctly.
-            {
-              query_type = [
-                64
-                65
-              ];
-              domain_suffix = corpDomains;
-              action = "reject";
-            }
-            {
-              domain_suffix = corpDomains;
-              server = "fakeip-dns";
-            }
-          ]
-          ++ [
-            {
-              rule_set = "geosite-ru-inside";
-              server = "direct-dns";
-            }
-          ];
-        final = "tunnel-dns";
-      };
-
-      inbounds = [
-        {
-          type = "tun";
-          tag = "tun-in";
-          address = [
-            "172.19.0.1/30"
-            "fdfe:dcba:9876::1/126"
-          ];
-          mtu = 1420;
-          auto_route = true;
-          strict_route = true;
-          stack = "gvisor";
-        }
-      ];
-
-      endpoints = [
-        {
-          type = "wireguard";
-          tag = "wg";
-          address = [
-            "10.6.6.17/32"
-            "fd9f:6666::f/128"
-          ];
-          private_key = config.sops.placeholder."wireguard/private-key";
-          peers = [
-            {
-              address = "snejugal.ru";
-              port = 51830;
-              public_key = "OFp4DTqLQKgBZTN+N2rZ7zscb90kU/kANX34qFv2PjM=";
-              pre_shared_key = config.sops.placeholder."wireguard/preshared-key";
-              allowed_ips = [
-                "0.0.0.0/0"
-                "::/0"
-              ];
-              persistent_keepalive_interval = 16;
-            }
-          ];
-        }
-      ];
-
-      outbounds =
-        [
-          {
-            type = "direct";
-            tag = "direct";
-          }
-        ]
-        ++ lib.optionals corp [
-          {
-            type = "socks";
-            tag = "socks-tbank";
-            server = "127.0.0.1";
-            server_port = 1080;
-            version = "5";
-          }
-        ];
-
-      route = {
-        rules =
-          [
-            { action = "sniff"; }
-            {
-              protocol = "dns";
-              action = "hijack-dns";
-            }
-          ]
-          ++ lib.optionals corp [
-            {
-              domain_suffix = corpDomains;
-              outbound = "socks-tbank";
-            }
-          ]
-          ++ [
-            {
-              rule_set = [
-                "geosite-ru-inside"
-                "geoip-ru"
-              ];
-              outbound = "direct";
-            }
-            {
-              ip_is_private = true;
-              outbound = "direct";
-            }
-          ];
-        rule_set = [
-          (ruleSet "geosite-ru-inside"
-            "https://raw.githubusercontent.com/runetfreedom/russia-v2ray-rules-dat/release/sing-box/rule-set-geosite/geosite-ru-available-only-inside.srs"
-          )
-          (ruleSet "geoip-ru"
-            "https://raw.githubusercontent.com/runetfreedom/russia-v2ray-rules-dat/release/sing-box/rule-set-geoip/geoip-ru.srs"
-          )
-        ];
-        final = "wg";
-        auto_detect_interface = true;
-        default_domain_resolver = "direct-dns";
-      };
-
-      experimental.cache_file.enabled = true;
-    };
 in
 {
-  config = lib.mkIf config.me.isMainMachine {
-    sops.secrets = {
-      "wireguard/private-key" = { };
-      "wireguard/preshared-key" = { };
-    };
+  options.programs.singBox.enable = lib.mkEnableOption ''
+    user-level sing-box configs for SFM (the GUI app), rendered to
+    ~/.sing-box/{personal,corp}.json. Requires
+    `wireguard/<hostname>/{private-key,preshared-key,address-v4,address-v6}` in
+    secrets.yaml
+  '';
 
-    sops.templates."sing-box-personal.json".content = mkConfig { corp = false; };
-    sops.templates."sing-box-corp.json".content = mkConfig { corp = true; };
+  config = lib.mkIf cfg.enable {
+    sops.secrets = lib.genAttrs (map secret secretNames) (_: { });
+
+    sops.templates."sing-box-personal.json".content =
+      builtins.toJSON (import ../../lib/sing-box hostArgs);
+    sops.templates."sing-box-corp.json".content =
+      builtins.toJSON (import ../../lib/sing-box/corp.nix hostArgs);
 
     home.file.".sing-box/personal.json".source =
       config.lib.file.mkOutOfStoreSymlink config.sops.templates."sing-box-personal.json".path;

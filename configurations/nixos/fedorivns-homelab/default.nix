@@ -4,6 +4,7 @@
     ./hardware.nix
     flake.inputs.self.nixosModules.common
     flake.inputs.self.nixosModules.server
+    flake.inputs.self.nixosModules.sing-box
   ];
 
   nixos-unified.sshTarget = "fedorivn@fedorivns-homelab.local";
@@ -41,6 +42,11 @@
   };
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.timeout = 3;
+
+  # Split-tunnel router: this host's WireGuard peer exists on snejugal.ru, and
+  # its identity and assigned tunnel addresses live in secrets.yaml under
+  # `wireguard/fedorivns-homelab/*`.
+  singBox.enable = true;
 
   security.sudo.extraConfig = "Defaults env_keep+=SSH_AUTH_SOCK";
 

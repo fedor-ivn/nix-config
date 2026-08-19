@@ -47,8 +47,21 @@ in
     secretTool1.enable = true;
     secretTool2.enable = true;
     glab.config.enable = false;
+    telegramMcp.enable = true;
+    # sing-box configs for SFM (the GUI app); this host's WireGuard identity
+    # comes from secrets.yaml. The homelab runs sing-box as a system service
+    # instead.
+    singBox.enable = true;
+    # This is the replica that generates recurring tasks.
+    taskwarrior.generateRecurring = true;
   };
 
+  home-manager.users.fedorivn.programs.ssh = {
+    enableDefaultConfig = false;
+    settings."fedorivns-homelab.local" = {
+      ForwardAgent = true;
+    };
+  };
 
   homebrew.casks = [ 
     "chatgpt"

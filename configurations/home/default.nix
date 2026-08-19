@@ -1,14 +1,11 @@
 # Generic home-manager config, shared by every managed account. The account
 # username is injected per host (see modules/nixos/common/users.nix); the
 # identity (name/email/SSH key) is the same person everywhere.
-{ flake, config, osConfig ? { }, ... }:
+{ flake, config, ... }:
 let
   inherit (flake) inputs;
   inherit (inputs) self;
   identity = import ../../lib/identity.nix;
-  isMainMachine =
-    osConfig != null
-    && (osConfig.networking.hostName or null) == "fedorivns-mbp";
 in
 {
   imports = [
@@ -19,9 +16,7 @@ in
   ];
 
   # `me.username` is set per account in users.nix.
-  me = identity // {
-    inherit isMainMachine;
-  };
+  me = identity;
 
   sops = {
     age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";

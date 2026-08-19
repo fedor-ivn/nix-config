@@ -37,8 +37,9 @@ context: |
 
   ## Gotchas
   - Untracked files invisible to Nix. `git add` before build.
-  - HM host toggles: use `config.me.isMainMachine`, not platform checks.
-    True only on fedorivns-mbp.
+  - HM host toggles: declare an enable option in the module and set it from
+    the host config (configurations/{darwin,nixos}/<host>/), not platform
+    checks and not a machine-identity flag in the shared home config.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.

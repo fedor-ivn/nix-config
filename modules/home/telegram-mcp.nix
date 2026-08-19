@@ -3,7 +3,10 @@ let
   telegramMcpPackage = flake.self.packages.${pkgs.stdenv.hostPlatform.system}.telegram-mcp;
 in
 {
-  config = lib.mkIf config.me.isMainMachine {
+  options.programs.telegramMcp.enable =
+    lib.mkEnableOption "the Telegram MCP server (needs `telegram/*` in secrets.yaml)";
+
+  config = lib.mkIf config.programs.telegramMcp.enable {
     sops.secrets = {
       "telegram/api-id" = { };
       "telegram/api-hash" = { };

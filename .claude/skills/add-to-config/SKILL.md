@@ -105,7 +105,7 @@ Cask names must match exactly what `brew search --casks <name>` returns. Use htt
 |---|---|
 | Linux-only block in HM | `lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux { ... }` |
 | macOS-only block in HM | `lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { ... }` |
-| Main machine only | `lib.mkIf config.me.isMainMachine { ... }` |
+| One machine only | declare an enable option in the module, `lib.mkIf config.<opt>.enable { ... }`, and turn it on in that host's config |
 | Inline optional packages | `++ optionals (pkgs.stdenv.hostPlatform.isLinux) [ pkg ]` |
 
 ---
