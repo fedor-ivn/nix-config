@@ -124,6 +124,12 @@ in
       }
       # Anything below here selects an outbound; ./corp.nix relies on that to
       # insert its own rule ahead of them.
+
+      # Reaching another peer at its tunnel address: must beat `ip_is_private`.
+      {
+        ip_cidr = [ "10.6.6.0/24" "fd9f:6666::/64" ];
+        outbound = "wg";
+      }
       {
         rule_set = [
           "geosite-ru-inside"
