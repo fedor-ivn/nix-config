@@ -1,5 +1,9 @@
-{ pkgs, lib, ... }:
-{
+{ config, pkgs, lib, ... }:
+# Only the terminal emulator itself is desktop-gated. Remote terminfo for
+# NixOS hosts comes from `pkgs.ghostty.terminfo` in
+# modules/nixos/common/default.nix, so headless hosts stay valid SSH targets
+# (see openspec/specs/ghostty-ssh-terminfo).
+lib.mkIf config.me.gui.enable {
   programs.ghostty = {
     enable = true;
     # On Darwin, Ghostty is installed via Homebrew cask (no nixpkgs support).

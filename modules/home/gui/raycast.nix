@@ -1,5 +1,5 @@
-{ pkgs, lib, ... }:
-lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+{ config, pkgs, lib, ... }:
+lib.mkIf (config.me.gui.enable && pkgs.stdenv.hostPlatform.isDarwin) {
   home.file.".config/raycast/scripts/switch-input-source-to-english.sh" = {
     executable = true;
     text = ''

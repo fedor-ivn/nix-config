@@ -41,6 +41,8 @@ in
     hoppscotch
   ];
 
+  home-manager.users.fedorivn.me.gui.enable = true;
+
   home-manager.users.fedorivn.programs = {
     codex.enable = true;
     tunnelAgent.enable = true;

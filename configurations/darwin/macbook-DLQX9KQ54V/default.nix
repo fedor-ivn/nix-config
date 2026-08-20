@@ -35,6 +35,8 @@ in
 
 
   home-manager.users."ext.fivanov" = { config, pkgs, ... }: {
+    me.gui.enable = true;
+
     programs = {
       codex.enable = false;
       secretTool1.enable = true;

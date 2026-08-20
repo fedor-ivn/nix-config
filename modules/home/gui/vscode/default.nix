@@ -1,5 +1,5 @@
-{ pkgs, ... }:
-{
+{ config, pkgs, lib, ... }:
+lib.mkIf config.me.gui.enable {
   programs.vscode = {
     enable = true;
     profiles.default = {

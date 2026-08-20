@@ -6,6 +6,8 @@ in
   # Nix packages to install to $HOME
   #
   # Search for packages here: https://search.nixos.org/packages
+  #
+  # GUI packages live in ./gui/packages.nix, gated on `me.gui.enable`.
   home.packages =
     let
       base = with pkgs; [
@@ -33,29 +35,14 @@ in
         dust
       ];
 
-      linuxOnlyGuiApps = with pkgs; [
-        wl-clipboard-rs
-        # libreoffice # tmp disable on ThinkPad
-        # ungoogled-chromium # tmp disable on ThinkPad
-        telegram-desktop
-      ];
-
       darwinOnly = with pkgs; [
         podman
         podman-compose
         docker-client
       ];
-
-      darwinOnlyGuiApps = with pkgs; [
-        monitorcontrol
-        stats
-      ];
     in
     base
-    # tmp disable base gui apps on ThinkPad
-    ++ optionals (pkgs.stdenv.hostPlatform.isLinux) linuxOnlyGuiApps
-    ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) darwinOnly
-    ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) darwinOnlyGuiApps;
+    ++ optionals (pkgs.stdenv.hostPlatform.isDarwin) darwinOnly;
 
   # Programs natively supported by home-manager.
   # They can be configured in `programs.*` instead of using home.packages.
@@ -78,8 +65,5 @@ in
     jq.enable = true;
     yt-dlp.enable = true;
     btop.enable = true;
-
-  } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-    keepassxc.enable = true;
   };
 }
