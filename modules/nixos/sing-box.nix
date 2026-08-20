@@ -41,13 +41,21 @@ let
 
     # Not `type = "local"`: that resolves via systemd-resolved on 127.0.0.53,
     # whose own upstream queries leave through the tun inbound and come back
-    # through `hijack-dns` — a loop. Talk to an upstream directly over the
-    # `direct` outbound instead.
+    # through `hijack-dns` — a loop. Talk to an upstream directly instead.
+    #
+    # No `detour` here, deliberately. A DNS server with no detour dials with
+    # sing-box's own default dialer (common/dialer: `Detour == ""` -> NewDefault),
+    # which is exactly what an option-less `direct` outbound does — so since 1.12
+    # `detour = "direct"` is a *fatal* error, "detour to an empty direct outbound
+    # makes no sense". Note this is not the same as falling through to
+    # `route.final`: DNS servers never traverse the route rules, so these queries
+    # stay off the tunnel, which is the whole point of `direct-dns`. `sing-box
+    # check` does not catch the mistake — it only validates the schema, and the
+    # detour is resolved at service start.
     directDns = {
       tag = "direct-dns";
       type = "udp";
       server = "1.1.1.1";
-      detour = "direct";
     };
 
     # nixpkgs ships 1.13.x, which predates the `http_client` rule-set field.
