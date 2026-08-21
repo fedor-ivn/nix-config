@@ -7,7 +7,7 @@
     flake.inputs.self.nixosModules.sing-box
   ];
 
-  nixos-unified.sshTarget = "fedorivn@fedorivns-homelab.local";
+  nixos-unified.sshTarget = "fedorivn@fedorivns-homelab";
   managedUsers = [ "fedorivn" ];
 
   networking.hostName = "fedorivns-homelab";
