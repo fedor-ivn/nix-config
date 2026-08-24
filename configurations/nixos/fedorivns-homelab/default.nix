@@ -48,6 +48,8 @@
   # `wireguard/fedorivns-homelab/*`.
   singBox.enable = true;
 
+  home-manager.users.fedorivn.me.prompt.hostnameColor = "bright-blue";
+
   security.sudo.extraConfig = "Defaults env_keep+=SSH_AUTH_SOCK";
 
   system.stateVersion = "26.05";

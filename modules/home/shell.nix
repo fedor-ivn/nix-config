@@ -1,14 +1,24 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
-  xdg.enable = true;
+  options.me.prompt.hostnameColor = lib.mkOption {
+    type = lib.types.str;
+    default = "red";
+    description = ''
+      Starship color for the hostname segment of the prompt. Set per-host so
+      it's obvious at a glance which machine a shell is on — see
+      configurations/{nixos,darwin}/<host>/default.nix.
+    '';
+  };
 
-  home.shellAliases = {
+  config.xdg.enable = true;
+
+  config.home.shellAliases = {
     g = "git";
     lg = "lazygit";
     timr = "timr-tui";
   };
 
-  programs = {
+  config.programs = {
     # Zsh: merge old nix-darwin settings with new layout.
     zsh = {
       enable = true;
@@ -67,7 +77,7 @@
         hostname = {
           ssh_only = false;
           ssh_symbol = "🌐 ";
-          format = "on [$hostname](bold red) ";
+          format = "on [$hostname](bold ${config.me.prompt.hostnameColor}) ";
           trim_at = ".local";
           disabled = false;
         };

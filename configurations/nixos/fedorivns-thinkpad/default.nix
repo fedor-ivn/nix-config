@@ -101,6 +101,7 @@ in
   };
 
   home-manager.users.fedorivn.me.gui.enable = true;
+  home-manager.users.fedorivn.me.prompt.hostnameColor = "bright-red";
   home-manager.users.fedorivn.home.packages = with pkgs; [ vlc ];
 
   nix.gc.automatic = true;
