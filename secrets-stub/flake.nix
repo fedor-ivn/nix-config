@@ -33,6 +33,7 @@
       {
         secretTool1 = declareOnly "secretTool1";
         secretTool2 = declareOnly "secretTool2";
+        secretDockerHelper = declareOnly "secretDockerHelper";
         tunnel = declareOnly "tunnel";
         tunnelAgent = declareOnly "tunnelAgent";
       };
