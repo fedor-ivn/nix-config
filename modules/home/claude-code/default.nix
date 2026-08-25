@@ -8,12 +8,18 @@ let
     timeout = 5;
   };
 
+  pclaudeSettings = pkgs.writeText "pclaude-settings.json" (builtins.toJSON {
+    model = "openrouter/anthropic/claude-opus-5";
+  });
+
   pclaude = pkgs.writeShellApplication {
     name = "pclaude";
     text = ''
       ANTHROPIC_BASE_URL=$(cat ${config.sops.secrets."pclaude/anthropic-base-url".path}) \
       ANTHROPIC_API_KEY=$(cat ${config.sops.secrets."pclaude/anthropic-api-key".path}) \
-      exec claude "$@"
+      ANTHROPIC_CUSTOM_MODEL_OPTION=openrouter/anthropic/claude-opus-5 \
+      ANTHROPIC_CUSTOM_MODEL_OPTION_NAME="Claude Opus 5 (OpenRouter)" \
+      exec claude --settings ${pclaudeSettings} "$@"
     '';
   };
 in
