@@ -50,7 +50,7 @@ in
     secretTool1.enable = true;
     secretTool2.enable = true;
     glab.config.enable = false;
-    telegramMcp.enable = true;
+    telegramMcp.enable = false;
     secretDockerHelper.enable = true;
     # sing-box configs for SFM (the GUI app); this host's WireGuard identity
     # comes from secrets.yaml. The homelab runs sing-box as a system service
