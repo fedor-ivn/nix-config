@@ -8,5 +8,6 @@
     flake.inputs.secrets.homeModules.secretDockerHelper
     flake.inputs.secrets.homeModules.tunnel
     flake.inputs.secrets.homeModules.tunnelAgent
+    flake.inputs.secrets.homeModules.sshAliases
   ];
 }

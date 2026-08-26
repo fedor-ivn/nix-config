@@ -58,9 +58,11 @@ in
     singBox.enable = true;
     # This is the replica that generates recurring tasks.
     taskwarrior.generateRecurring = true;
+    sshAliases.enable = true;
   };
 
   home-manager.users.fedorivn.programs.ssh = {
+    enable = true;
     enableDefaultConfig = false;
     settings."fedorivns-homelab.local" = {
       ForwardAgent = true;

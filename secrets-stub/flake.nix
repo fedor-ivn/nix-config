@@ -36,6 +36,7 @@
         secretDockerHelper = declareOnly "secretDockerHelper";
         tunnel = declareOnly "tunnel";
         tunnelAgent = declareOnly "tunnelAgent";
+        sshAliases = declareOnly "sshAliases";
       };
   };
 }
