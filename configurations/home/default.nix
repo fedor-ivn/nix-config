@@ -12,7 +12,6 @@ in
     self.homeModules.default
     inputs.sops-nix.homeManagerModules.sops
     inputs.mcp-servers-nix.homeManagerModules.default
-    inputs.clamor.homeManagerModules.default
   ];
 
   # `me.username` is set per account in users.nix.

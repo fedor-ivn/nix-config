@@ -1,12 +1,6 @@
 { config, pkgs, flake, ... }:
 let
   rtk-hook = pkgs.callPackage ./rtk-hook.nix { };
-  clamor-hook = pkgs.callPackage ./clamor-hook.nix { inherit flake; };
-  clamorHook = {
-    type = "command";
-    command = "${clamor-hook}/bin/clamor-state-hook";
-    timeout = 5;
-  };
 
   pclaudeSettings = pkgs.writeText "pclaude-settings.json" (builtins.toJSON {
     model = "openrouter/anthropic/claude-opus-5";
@@ -52,14 +46,7 @@ in
               command = "${rtk-hook}/bin/rtk-rewrite-hook";
             }];
           }
-          { hooks = [ clamorHook ]; }
         ];
-        PostToolUse = [{ hooks = [ clamorHook ]; }];
-        UserPromptSubmit = [{ hooks = [ clamorHook ]; }];
-        Notification = [{ hooks = [ clamorHook ]; }];
-        PermissionRequest = [{ hooks = [ clamorHook ]; }];
-        PreCompact = [{ hooks = [ clamorHook ]; }];
-        Stop = [{ hooks = [ clamorHook ]; }];
       };
     };
   };

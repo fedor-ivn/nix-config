@@ -61,27 +61,6 @@
         "type": "github"
       }
     },
-    "clamor": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1779951284,
-        "narHash": "sha256-AJnXX8WFRgto4MBpo8+qyRY3+5BjZE8ZsxP39nzQAZI=",
-        "owner": "fedor-ivn",
-        "repo": "clamor",
-        "rev": "148ed75dfbda4b93e80033a50e2ba30fa4973e9b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "fedor-ivn",
-        "ref": "combined/nix-and-shift-enter",
-        "repo": "clamor",
-        "type": "github"
-      }
-    },
     "claude-plugins-official": {
       "flake": false,
       "locked": {
@@ -593,7 +572,6 @@
     "root": {
       "inputs": {
         "caveman": "caveman",
-        "clamor": "clamor",
         "claude-plugins-official": "claude-plugins-official",
         "disko": "disko",
         "flake-parts": "flake-parts",

@@ -8,7 +8,6 @@
         fedorivns-mbp = "";
       };
       knownNetworkServices = [];
-      clamorPaths = {};
       homebrewCasks = [];
       corpTunnelUser = "";
     };
