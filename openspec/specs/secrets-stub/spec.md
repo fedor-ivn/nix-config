@@ -13,10 +13,6 @@ The stub flake at `secrets-stub/flake.nix` SHALL export a `values` attribute wit
 - **WHEN** a module concatenates `++ secrets.knownNetworkServices` or `++ secrets.homebrewCasks` with the stub active
 - **THEN** the concatenation produces the same result as if the attribute were `[]`
 
-#### Scenario: Attrset consumers receive empty attrset
-- **WHEN** a module calls `lib.mapAttrs` over `secrets.clamorPaths` with the stub active
-- **THEN** the result is an empty attrset and no evaluation error occurs
-
 #### Scenario: String consumers receive empty string
 - **WHEN** a module accesses `secrets.syncthingDevices.fedorivns-iphone` or `secrets.syncthingDevices.fedorivns-mbp` with the stub active
 - **THEN** the attribute evaluates to `""` without error
