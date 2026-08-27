@@ -50,7 +50,6 @@ in
     ripgrep.enable = true;
     bat.enable = true;
     tealdeer.enable = true;
-    tmux.enable = true;
 
     fd = {
       enable = true;
