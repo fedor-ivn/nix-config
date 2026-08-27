@@ -42,7 +42,7 @@ in
   ];
 
   home-manager.users.fedorivn.me.gui.enable = true;
-  home-manager.users.fedorivn.me.prompt.hostnameColor = "bright-purple";
+  home-manager.users.fedorivn.me.prompt.hostnameColor = "bold bright-purple";
 
   home-manager.users.fedorivn.programs = {
     codex.enable = true;

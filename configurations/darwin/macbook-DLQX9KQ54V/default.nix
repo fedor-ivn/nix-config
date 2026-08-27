@@ -36,7 +36,7 @@ in
 
   home-manager.users."ext.fivanov" = { config, pkgs, ... }: {
     me.gui.enable = true;
-    me.prompt.hostnameColor = "bright-yellow";
+    me.prompt.hostnameColor = "bold bright-yellow";
 
     programs = {
       codex.enable = false;

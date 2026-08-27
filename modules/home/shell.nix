@@ -2,10 +2,11 @@
 {
   options.me.prompt.hostnameColor = lib.mkOption {
     type = lib.types.str;
-    default = "red";
+    default = "bold red";
     description = ''
-      Starship color for the hostname segment of the prompt. Set per-host so
-      it's obvious at a glance which machine a shell is on — see
+      Starship style for the hostname segment of the prompt (color, plus any
+      modifiers like bold/underline). Set per-host so it's obvious at a
+      glance which machine a shell is on — see
       configurations/{nixos,darwin}/<host>/default.nix.
     '';
   };
@@ -77,7 +78,7 @@
         hostname = {
           ssh_only = false;
           ssh_symbol = "🌐 ";
-          format = "on [$hostname](bold ${config.me.prompt.hostnameColor}) ";
+          format = "on [$hostname](${config.me.prompt.hostnameColor}) ";
           trim_at = ".local";
           disabled = false;
         };
