@@ -8,14 +8,10 @@ in
     greedyCasks = true;
     casks = [
       "telegram"
-      "beekeeper-studio"
       "ungoogled-chromium"
-      # "libreoffice"
       "keyboardcleantool"
-      "lm-studio"
       "mac-mouse-fix"
       "ghostty"
-      "handy"
       "swiftbar"
       "raycast"
     ] ++ secrets.homebrewCasks;
