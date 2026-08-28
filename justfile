@@ -30,18 +30,13 @@ update-and-commit:
 
 # Lint nix files
 [group('dev')]
-lint:
-  nix fmt
+fmt:
+  nix fmt .
 
 # Check nix flake
 [group('dev')]
 check:
   nix flake check
-
-# Manually enter dev shell
-[group('dev')]
-dev:
-  nix develop
 
 alias a := activate
 
