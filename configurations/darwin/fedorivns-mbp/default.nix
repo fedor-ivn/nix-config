@@ -33,9 +33,9 @@ in
     "2001:4860:4860::8844"
   ];
 
-  home-manager.users.fedorivn.home.packages = with pkgs; [ 
+  home-manager.users.fedorivn.home.packages = with pkgs; [
     iina
-    zoom-us 
+    zoom-us
     slack
     qbittorrent
     hoppscotch
@@ -69,7 +69,7 @@ in
     };
   };
 
-  homebrew.casks = [ 
+  homebrew.casks = [
     "chatgpt"
     "claude"
     "altserver"

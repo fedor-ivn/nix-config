@@ -7,8 +7,8 @@
         fedorivns-iphone = "";
         fedorivns-mbp = "";
       };
-      knownNetworkServices = [];
-      homebrewCasks = [];
+      knownNetworkServices = [ ];
+      homebrewCasks = [ ];
       corpTunnelUser = "";
     };
 

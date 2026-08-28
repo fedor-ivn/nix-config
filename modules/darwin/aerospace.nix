@@ -17,10 +17,12 @@ let
   # mode key behaves like a one-shot chord instead of trapping you.
   mkOneShotDirectionBindings = prefix: command:
     builtins.listToAttrs (
-      map (b: {
-        name = "${prefix}${b.key}";
-        value = [ "${command} ${b.direction}" "mode main" ];
-      }) directions
+      map
+        (b: {
+          name = "${prefix}${b.key}";
+          value = [ "${command} ${b.direction}" "mode main" ];
+        })
+        directions
     );
 
   mkWorkspaceBindings = prefix: command:
@@ -33,7 +35,7 @@ let
   # External monitor (top) = main: workspaces 1-4
   # MacBook screen (bottom) = secondary: workspaces 8-10
   monitors = [
-    { name = "main";      workspaces = [ 1 2 3 4 5 6]; }
+    { name = "main"; workspaces = [ 1 2 3 4 5 6 ]; }
     { name = "secondary"; workspaces = [ 7 8 9 10 ]; }
   ];
 
@@ -59,20 +61,20 @@ let
   ];
 
   appWorkspaceRules = [
-    { app = "Code";        workspace = 1; }
-    { app = "Firefox";     workspace = 2; }
-    { app = "Obsidian";    workspace = 3; }
-    { app = "Finder";      workspace = 4; }
-    { app = "Calendar";    workspace = 7; }
-    { app = "Mail";        workspace = 7; }
-    { app = "Ghostty";     workspace = 8; }
-    { app = "Telegram";    workspace = 9; }
-    { app = "Slack";       workspace = 9; }
-    { app = "Time";        workspace = 9; }
-    { app = "Outlook";     workspace = 9; }
-    { app = "Spotify";     workspace = 10; }
-    { app = "KeePassXC";   workspace = 10; }
-    { app = "Cisco Secure Client";   workspace = 10; }
+    { app = "Code"; workspace = 1; }
+    { app = "Firefox"; workspace = 2; }
+    { app = "Obsidian"; workspace = 3; }
+    { app = "Finder"; workspace = 4; }
+    { app = "Calendar"; workspace = 7; }
+    { app = "Mail"; workspace = 7; }
+    { app = "Ghostty"; workspace = 8; }
+    { app = "Telegram"; workspace = 9; }
+    { app = "Slack"; workspace = 9; }
+    { app = "Time"; workspace = 9; }
+    { app = "Outlook"; workspace = 9; }
+    { app = "Spotify"; workspace = 10; }
+    { app = "KeePassXC"; workspace = 10; }
+    { app = "Cisco Secure Client"; workspace = 10; }
   ];
 in
 {
@@ -87,15 +89,19 @@ in
       workspace-to-monitor-force-assignment = workspaceToMonitor;
 
       on-window-detected =
-        (map (app: {
-          "if"."app-name-regex-substring" = app;
-          run = "layout floating";
-        }) floatingApps)
+        (map
+          (app: {
+            "if"."app-name-regex-substring" = app;
+            run = "layout floating";
+          })
+          floatingApps)
         ++
-        (map (rule: {
-          "if"."app-name-regex-substring" = "^${rule.app}$";
-          run = "move-node-to-workspace ${toString rule.workspace}";
-        }) appWorkspaceRules);
+        (map
+          (rule: {
+            "if"."app-name-regex-substring" = "^${rule.app}$";
+            run = "move-node-to-workspace ${toString rule.workspace}";
+          })
+          appWorkspaceRules);
 
       # Every layer sits on hjkl:
       #   alt-        focus a window inside the current workspace
@@ -120,16 +126,16 @@ in
           # Two orthogonal toggles: container type, and orientation.
           # `horizontal`/`vertical` keep the current type, `accordion`/`tiles`
           # keep the current orientation.
-          "alt-comma"       = "layout accordion tiles";
-          "alt-slash"       = "layout horizontal vertical";
+          "alt-comma" = "layout accordion tiles";
+          "alt-slash" = "layout horizontal vertical";
           "shift-alt-space" = "layout floating tiling";
-          "shift-alt-m"     = "fullscreen";
-          "alt-e"           = "balance-sizes";
-          "alt-minus"       = "resize smart -50";
-          "alt-equal"       = "resize smart +50";
+          "shift-alt-m" = "fullscreen";
+          "alt-e" = "balance-sizes";
+          "alt-minus" = "resize smart -50";
+          "alt-equal" = "resize smart +50";
 
           # Two-digit workspace 10 can't use alt-10
-          "alt-0"       = "workspace 10";
+          "alt-0" = "workspace 10";
           "shift-alt-0" = "move-node-to-workspace 10";
 
           "alt-tab" = "workspace-back-and-forth";
@@ -141,19 +147,19 @@ in
 
       # Same two axes as cmd-alt, but dragging the focused window along.
       mode.move.binding = {
-        "h"   = [ "move-node-to-workspace prev" "mode main" ];
-        "l"   = [ "move-node-to-workspace next" "mode main" ];
-        "j"   = [ "move-node-to-monitor --focus-follows-window down" "mode main" ];
-        "k"   = [ "move-node-to-monitor --focus-follows-window up" "mode main" ];
+        "h" = [ "move-node-to-workspace prev" "mode main" ];
+        "l" = [ "move-node-to-workspace next" "mode main" ];
+        "j" = [ "move-node-to-monitor --focus-follows-window down" "mode main" ];
+        "k" = [ "move-node-to-monitor --focus-follows-window up" "mode main" ];
         "esc" = "mode main";
       };
 
       mode.service.binding =
         mkOneShotDirectionBindings "" "join-with"
         // {
-          "esc"       = [ "reload-config" "mode main" ];
-          "r"         = [ "flatten-workspace-tree" "mode main" ];
-          "f"         = [ "layout floating tiling" "mode main" ];
+          "esc" = [ "reload-config" "mode main" ];
+          "r" = [ "flatten-workspace-tree" "mode main" ];
+          "f" = [ "layout floating tiling" "mode main" ];
           "backspace" = [ "close-all-windows-but-current" "mode main" ];
 
           # Deterministic set, unlike the alt-slash toggle in main
@@ -162,13 +168,13 @@ in
         };
 
       mode.resize.binding = {
-        "h"     = "resize width -50";
-        "j"     = "resize height +50";
-        "k"     = "resize height -50";
-        "l"     = "resize width +50";
+        "h" = "resize width -50";
+        "j" = "resize height +50";
+        "k" = "resize height -50";
+        "l" = "resize width +50";
         "minus" = "resize smart -50";
         "equal" = "resize smart +50";
-        "esc"   = "mode main";
+        "esc" = "mode main";
       };
     };
   };

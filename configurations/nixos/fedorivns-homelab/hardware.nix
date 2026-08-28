@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci_renesas" "xhci_pci" "usb_storage" "sd_mod" ];
@@ -18,7 +19,8 @@
   boot.initrd.systemd.enable = true;
 
   fileSystems."/" =
-    { device = "/dev/mapper/homelab-root";
+    {
+      device = "/dev/mapper/homelab-root";
       fsType = "ext4";
     };
 
@@ -30,7 +32,8 @@
   };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/5E82-1FFB";
+    {
+      device = "/dev/disk/by-uuid/5E82-1FFB";
       fsType = "vfat";
       options = [ "fmask=0022" "dmask=0022" ];
     };

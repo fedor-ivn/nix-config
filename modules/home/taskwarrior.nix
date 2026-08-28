@@ -117,7 +117,7 @@ in
               "5" = "task-tag-next";
             };
             quick-tag.name = "today";
-            keyconfig.shortcut5="n";
+            keyconfig.shortcut5 = "n";
           };
           urgency.user.tag.today.coefficient = 6;
           urgency.user.tag.sdm.coefficient = -50;
