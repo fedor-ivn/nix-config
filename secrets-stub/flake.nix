@@ -6,6 +6,7 @@
       syncthingDevices = {
         fedorivns-iphone = "";
         fedorivns-mbp = "";
+        macbook-DLQX9KQ54V = "";
       };
       knownNetworkServices = [ ];
       homebrewCasks = [ ];

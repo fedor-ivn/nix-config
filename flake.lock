@@ -601,11 +601,11 @@
     },
     "secrets": {
       "locked": {
-        "lastModified": 1787738161,
-        "narHash": "sha256-VGJjdo58ID1ao/31ac0fJ+GDjDwT8QWY3wp/GwuUVoA=",
+        "lastModified": 1787995213,
+        "narHash": "sha256-GJTBlATx0sbU6Sfzrf0+EQ8XW7jBuFbwJ5O2RLYSD/I=",
         "ref": "refs/heads/master",
-        "rev": "64f95c2b786c9cc36d20d16d49e9bf449756c269",
-        "revCount": 19,
+        "rev": "3c6bb10bd44b9bca1926752a05107a630ecd556c",
+        "revCount": 20,
         "type": "git",
         "url": "https://git@github.com/fedor-ivn/nix-secrets"
       },

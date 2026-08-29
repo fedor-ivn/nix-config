@@ -59,6 +59,7 @@ in
     # This is the replica that generates recurring tasks.
     taskwarrior.generateRecurring = true;
     sshAliases.enable = true;
+    syncthing.enable = true;
   };
 
   home-manager.users.fedorivn.programs.ssh = {

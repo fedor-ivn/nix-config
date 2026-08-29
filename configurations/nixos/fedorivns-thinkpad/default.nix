@@ -3,13 +3,11 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { flake, pkgs, ... }:
-let
-  secrets = flake.inputs.secrets.values;
-in
 {
   imports = [
     ./hardware.nix
     flake.inputs.self.nixosModules.default
+    flake.inputs.self.nixosModules.syncthing
   ];
 
   nixos-unified.sshTarget = "fedorivn@fedorivns-thinkpad.local";
@@ -48,57 +46,9 @@ in
 
   networking.hostName = "fedorivns-thinkpad";
 
-  services.syncthing = {
-    enable = false;
-    user = "fedorivn";
-    dataDir = "/home/fedorivn/Documents";
-    configDir = "/home/fedorivn/.config/syncthing";
-    overrideDevices = true;
-    overrideFolders = true;
-    settings = {
-      devices = {
-        "fedorivns-iphone" = {
-          id = secrets.syncthingDevices.fedorivns-iphone;
-        };
-
-        "fedorivns-mbp" = {
-          id = secrets.syncthingDevices.fedorivns-mbp;
-        };
-      };
-
-      folders = {
-        "Documents" = {
-          id = "default";
-          path = "/home/fedorivn/Documents";
-          devices = [
-            "fedorivns-iphone"
-            "fedorivns-mbp"
-          ];
-        };
-
-        "iu" = {
-          path = "/home/fedorivn/iu";
-          devices = [
-            "fedorivns-mbp"
-          ];
-        };
-
-        "projects" = {
-          path = "/home/fedorivn/projects";
-          devices = [
-            "fedorivns-mbp"
-          ];
-        };
-
-        "obsidian" = {
-          path = "/home/fedorivn/obsidian";
-          devices = [
-            "fedorivns-mbp"
-          ];
-        };
-      };
-    };
-  };
+  # Documents sync moved to fedorivns-homelab (same physical machine, dual
+  # boot); see modules/nixos/syncthing.nix and lib/syncthing.
+  syncthing.enable = false;
 
   home-manager.users.fedorivn.me.gui.enable = true;
   home-manager.users.fedorivn.me.prompt.hostnameColor = "bold bright-red";

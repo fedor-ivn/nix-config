@@ -5,6 +5,7 @@
     flake.inputs.self.nixosModules.common
     flake.inputs.self.nixosModules.server
     flake.inputs.self.nixosModules.sing-box
+    flake.inputs.self.nixosModules.syncthing
   ];
 
   nixos-unified.sshTarget = "fedorivn@fedorivns-homelab";
@@ -47,6 +48,10 @@
   # its identity and assigned tunnel addresses live in secrets.yaml under
   # `wireguard/fedorivns-homelab/*`.
   singBox.enable = true;
+
+  # This host owns the Documents folder in the Syncthing mesh; see
+  # modules/nixos/syncthing.nix and lib/syncthing.
+  syncthing.enable = true;
 
   home-manager.users.fedorivn.me.prompt.hostnameColor = "bold bright-red";
 

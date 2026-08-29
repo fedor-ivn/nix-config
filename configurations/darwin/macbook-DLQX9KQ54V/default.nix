@@ -44,6 +44,7 @@ in
       secretTool2.enable = true;
       tunnel.enable = true;
       glab.config.enable = false;
+      syncthing.enable = true;
 
       git.includes =
         let
