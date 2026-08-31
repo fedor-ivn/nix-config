@@ -49,7 +49,7 @@
   # `wireguard/fedorivns-homelab/*`.
   singBox.enable = true;
 
-  # This host owns the Documents folder in the Syncthing mesh; see
+  # This host owns the Sync folder in the Syncthing mesh; see
   # modules/nixos/syncthing.nix and lib/syncthing.
   syncthing.enable = true;
 

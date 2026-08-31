@@ -46,7 +46,7 @@
 
   networking.hostName = "fedorivns-thinkpad";
 
-  # Documents sync moved to fedorivns-homelab (same physical machine, dual
+  # Sync moved to fedorivns-homelab (same physical machine, dual
   # boot); see modules/nixos/syncthing.nix and lib/syncthing.
   syncthing.enable = false;
 

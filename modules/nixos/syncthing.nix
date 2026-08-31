@@ -1,4 +1,4 @@
-# Syncthing, NixOS flavour: system service syncing only the Documents folder
+# Syncthing, NixOS flavour: system service syncing only the Sync folder
 # against the other devices in lib/syncthing (phone, personal Mac, corp Mac).
 { flake, config, lib, ... }:
 let
@@ -8,20 +8,20 @@ let
   syncthingLib = import ../../lib/syncthing { secrets = inputs.secrets.values; };
 in
 {
-  options.syncthing.enable = lib.mkEnableOption "Syncthing (Documents folder only)";
+  options.syncthing.enable = lib.mkEnableOption "Syncthing";
 
   config = lib.mkIf cfg.enable {
     services.syncthing = {
       enable = true;
       inherit user;
-      dataDir = "/home/${user}/Documents";
+      dataDir = "/home/${user}/Sync";
       configDir = "/home/${user}/.config/syncthing";
       overrideDevices = true;
       overrideFolders = true;
       settings = {
         devices = syncthingLib.devices;
-        folders.Documents = syncthingLib.mkDocumentsFolder {
-          path = "/home/${user}/Documents";
+        folders.Sync = syncthingLib.mkSyncFolder {
+          path = "/home/${user}/Sync";
           devices = builtins.attrNames syncthingLib.devices;
         };
       };

@@ -8,7 +8,7 @@
     macbook-DLQX9KQ54V.id = secrets.syncthingDevices.macbook-DLQX9KQ54V;
   };
 
-  mkDocumentsFolder = { path, devices }: {
+  mkSyncFolder = { path, devices }: {
     id = "default";
     inherit path devices;
   };
