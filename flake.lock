@@ -607,11 +607,11 @@
         "rev": "3c6bb10bd44b9bca1926752a05107a630ecd556c",
         "revCount": 20,
         "type": "git",
-        "url": "https://git@github.com/fedor-ivn/nix-secrets"
+        "url": "ssh://git@github.com/fedor-ivn/nix-secrets"
       },
       "original": {
         "type": "git",
-        "url": "https://git@github.com/fedor-ivn/nix-secrets"
+        "url": "ssh://git@github.com/fedor-ivn/nix-secrets"
       }
     },
     "sops-nix": {

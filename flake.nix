@@ -83,7 +83,7 @@
     };
 
     # Private evaluation-time secrets
-    secrets.url = "git+https://git@github.com/fedor-ivn/nix-secrets";
+    secrets.url = "git+ssh://git@github.com/fedor-ivn/nix-secrets";
   };
 
   # Wired using https://nixos-unified.org/guide/autowiring
