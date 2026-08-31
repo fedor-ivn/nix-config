@@ -18,6 +18,7 @@ in
       configDir = "/home/${user}/.config/syncthing";
       overrideDevices = true;
       overrideFolders = true;
+      openDefaultPorts = true;
       settings = {
         devices = syncthingLib.devices;
         folders.Sync = syncthingLib.mkSyncFolder {
