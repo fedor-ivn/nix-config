@@ -3,9 +3,9 @@
 let
   directions = [
     { key = "h"; direction = "left"; }
+    { key = "l"; direction = "right"; }
     { key = "j"; direction = "down"; }
     { key = "k"; direction = "up"; }
-    { key = "l"; direction = "right"; }
   ];
 
   mkDirectionBindings = prefix: command:
@@ -105,23 +105,23 @@ in
 
       # Every layer sits on hjkl:
       #   alt-        focus a window inside the current workspace
-      #   shift-alt-  swap windows in place
-      #   cmd-alt-    navigate — h/l walk the workspace strip, j/k walk the
+      #   cmd-alt-    swap windows in place
+      #   shift-alt-  navigate — h/l walk the workspace strip, j/k walk the
       #               vertically stacked monitors
       # Carrying a window across workspaces/monitors is `move` mode (alt-s)
       # rather than a fourth chord.
       mode.main.binding =
         mkDirectionBindings "alt-" "focus"
-        // mkDirectionBindings "shift-alt-" "swap"
+        // mkDirectionBindings "cmd-alt-" "swap"
         // mkWorkspaceBindings "alt-" "workspace"
         // mkWorkspaceBindings "shift-alt-" "move-node-to-workspace"
         // {
           # No --wrap-around: these stop at the ends of each axis, so the
           # keypress stays positional instead of cycling forever.
-          "cmd-alt-h" = "workspace prev";
-          "cmd-alt-l" = "workspace next";
-          "cmd-alt-j" = "focus-monitor down";
-          "cmd-alt-k" = "focus-monitor up";
+          "shift-alt-h" = "workspace prev";
+          "shift-alt-l" = "workspace next";
+          "shift-alt-j" = "focus-monitor down";
+          "shift-alt-k" = "focus-monitor up";
 
           # Two orthogonal toggles: container type, and orientation.
           # `horizontal`/`vertical` keep the current type, `accordion`/`tiles`
@@ -140,10 +140,19 @@ in
 
           "alt-tab" = "workspace-back-and-forth";
 
+          "alt-a" = "mode swap";
           "alt-s" = "mode move";
           "alt-r" = "mode resize";
           "shift-alt-semicolon" = "mode service";
         };
+
+      mode.swap.binding = {
+        "h" = [ "swap left" "mode main" ];
+        "l" = [ "swap right" "mode main" ];
+        "j" = [ "swap down" "mode main" ];
+        "k" = [ "swap up" "mode main" ];
+        "esc" = "mode main";
+      };
 
       # Same two axes as cmd-alt, but dragging the focused window along.
       mode.move.binding = {
