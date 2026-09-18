@@ -140,19 +140,10 @@ in
 
           "alt-tab" = "workspace-back-and-forth";
 
-          "alt-a" = "mode swap";
           "alt-s" = "mode move";
           "alt-r" = "mode resize";
           "shift-alt-semicolon" = "mode service";
         };
-
-      mode.swap.binding = {
-        "h" = [ "swap left" "mode main" ];
-        "l" = [ "swap right" "mode main" ];
-        "j" = [ "swap down" "mode main" ];
-        "k" = [ "swap up" "mode main" ];
-        "esc" = "mode main";
-      };
 
       # Same two axes as cmd-alt, but dragging the focused window along.
       mode.move.binding = {
