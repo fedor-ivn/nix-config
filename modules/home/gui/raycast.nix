@@ -92,6 +92,23 @@ lib.mkIf (config.me.gui.enable && pkgs.stdenv.hostPlatform.isDarwin) {
     '';
   };
 
+  home.file.".config/raycast/scripts/ghostty-new-window.sh" = {
+    executable = true;
+    text = ''
+      #!/bin/bash
+
+      # Required parameters:
+      # @raycast.schemaVersion 1
+      # @raycast.title New Ghostty Window
+      # @raycast.mode silent
+      # @raycast.packageName Ghostty
+
+      # AppleScript `new window` reuses the running instance and doesn't
+      # activate an existing window, so AeroSpace keeps the current workspace.
+      osascript -e 'tell application "Ghostty" to new window'
+    '';
+  };
+
   home.file.".config/swiftbar/plugins/volume.250ms.sh" = {
     executable = true;
     text = ''
