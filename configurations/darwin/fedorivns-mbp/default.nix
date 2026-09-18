@@ -71,9 +71,6 @@ in
   };
 
   homebrew.casks = [
-    "chatgpt"
-    "claude"
-    "altserver"
     "obs"
   ];
 }
