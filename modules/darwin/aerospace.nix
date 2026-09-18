@@ -67,7 +67,6 @@ let
     { app = "Finder"; workspace = 4; }
     { app = "Calendar"; workspace = 7; }
     { app = "Mail"; workspace = 7; }
-    { app = "Ghostty"; workspace = 8; }
     { app = "Telegram"; workspace = 9; }
     { app = "Slack"; workspace = 9; }
     { app = "Time"; workspace = 9; }
@@ -122,6 +121,11 @@ in
           "shift-alt-l" = "workspace next";
           "shift-alt-j" = "focus-monitor down";
           "shift-alt-k" = "focus-monitor up";
+
+          "shift-cmd-alt-h" = "move-node-to-workspace prev";
+          "shift-cmd-alt-l" = "move-node-to-workspace next";
+          "shift-cmd-alt-j" = "move-node-to-monitor --focus-follows-window down";
+          "shift-cmd-alt-k" = "move-node-to-monitor --focus-follows-window up";
 
           # Two orthogonal toggles: container type, and orientation.
           # `horizontal`/`vertical` keep the current type, `accordion`/`tiles`
