@@ -72,5 +72,6 @@ in
 
   homebrew.casks = [
     "obs"
+    "sfm"
   ];
 }
