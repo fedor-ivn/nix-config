@@ -48,12 +48,12 @@ refresh-sing-box-subscription:
   [ "$(jq 'length' <<<"$nodes")" -gt 0 ] || { echo "no nodes returned; aborting" >&2; exit 1; }
   echo "nodes fetched:"
   jq -r '.[].tag | "  " + .' <<<"$nodes"
-  # `wg` and `direct` come from lib/sing-box/default.nix; tags resolve globally.
+  # `direct` comes from lib/sing-box/default.nix; tags resolve globally.
   group="$(jq -c '. + [
     { type: "urltest", tag: "proxy-auto", outbounds: [ .[].tag ],
       url: "https://www.gstatic.com/generate_204", interval: "3m" },
     { type: "selector", tag: "proxy",
-      outbounds: ([ "proxy-auto", "wg", "direct" ] + [ .[].tag ]),
+      outbounds: ([ "proxy-auto", "direct" ] + [ .[].tag ]),
       default: "proxy-auto" }
   ]' <<<"$nodes")"
   sops set secrets.yaml '["sing-box"]["proxy-outbounds"]' \

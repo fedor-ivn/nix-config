@@ -1,8 +1,8 @@
 # Shared plumbing between the two consumers of ./default.nix.
 #
-# Both hosts now run the same shape — subscription nodes as the default exit,
-# `wg` demoted to peer traffic — so the mechanics of getting the nodes out of
-# sops and into the config live here instead of being written twice.
+# Both hosts run the same shape — subscription nodes as the default exit — so
+# the mechanics of getting the nodes out of sops and into the config live here
+# instead of being written twice.
 #
 # Both render a *complete* JSON document through `sops.templates`, rather than
 # handing an attrset to a module that substitutes secrets itself. That is forced
@@ -52,7 +52,6 @@ rec {
   # references to `proxy` resolve exactly as they will in production.
   checkable = { generator, args }:
     let
-      dummyKey = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
       dummyNodes = [
         { type = "socks"; tag = "dummy-a"; server = "127.0.0.1"; server_port = 1080; }
         { type = "socks"; tag = "dummy-b"; server = "127.0.0.1"; server_port = 1081; }
@@ -64,15 +63,12 @@ rec {
         {
           type = "selector";
           tag = "proxy";
-          outbounds = [ "proxy-auto" "wg" "direct" "dummy-a" "dummy-b" ];
+          outbounds = [ "proxy-auto" "direct" "dummy-a" "dummy-b" ];
           default = "proxy-auto";
         }
       ];
       rendered = builtins.toJSON (import generator (args // {
         proxyOutbounds = marker;
-        privateKey = dummyKey;
-        presharedKey = dummyKey;
-        wireguardAddresses = [ "10.0.0.1/32" "fd00::1/128" ];
       }));
       nodesJson = builtins.toJSON dummyNodes;
       # Strip the array's own brackets: the marker sits *inside* `outbounds`.

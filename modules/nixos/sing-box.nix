@@ -3,7 +3,7 @@
 # Same generator *and* the same rendering path as the mac (lib/sing-box,
 # lib/sing-box/render.nix); only the delivery differs — a system daemon here, a
 # GUI app there. Both hosts run the same shape: subscription nodes as the
-# default exit, `wg` demoted to peer traffic.
+# default exit.
 #
 # `services.sing-box.settings` is deliberately left empty. It used to carry the
 # config as an attrset with `{ _secret = <path>; }` leaves, which the nixpkgs
@@ -12,8 +12,8 @@
 # of objects, so it cannot express them (see lib/sing-box/render.nix). With
 # `settings = { }` the module's ExecStart switches from RUNTIME_DIRECTORY to
 # CONFIGURATION_DIRECTORY, i.e. `sing-box -C /etc/sing-box run`, so we drop a
-# sops-rendered config in there instead. Secrets still never touch the Nix
-# store: the rendered file lives under /run/secrets and /etc/sing-box/ only
+# sops-rendered config in there instead. The node credentials still never touch
+# the Nix store: the rendered file lives under /run/secrets and /etc/sing-box/ only
 # symlinks it.
 #
 # The corp overlay is deliberately not used here: no host running this needs the
@@ -28,17 +28,7 @@ let
 
   render = import ../../lib/sing-box/render.nix;
 
-  secret = name: "wireguard/${config.networking.hostName}/${name}";
-  secretNames = [ "private-key" "preshared-key" "address-v4" "address-v6" ];
-
   hostArgs = {
-    wireguardAddresses = [
-      config.sops.placeholder.${secret "address-v4"}
-      config.sops.placeholder.${secret "address-v6"}
-    ];
-    privateKey = config.sops.placeholder.${secret "private-key"};
-    presharedKey = config.sops.placeholder.${secret "preshared-key"};
-
     # `system` beats gvisor on Linux, and strict_route installs firewall rules
     # that can cut off inbound connections to a box that serves them (SSH,
     # Tailscale) — plain auto_route already keeps LAN/tailnet routes, which are
@@ -78,14 +68,12 @@ in
   imports = [ inputs.sops-nix.nixosModules.sops ];
 
   options.singBox.enable = lib.mkEnableOption ''
-    the sing-box split-tunnel router, reading this host's WireGuard identity from
-    `wireguard/<hostname>/{private-key,preshared-key,address-v4,address-v6}` and
-    the subscription nodes from `sing-box/proxy-outbounds` in secrets.yaml
-    (refresh the latter with `just refresh-sing-box-subscription`).
+    the sing-box split-tunnel router, reading the subscription nodes from
+    `sing-box/proxy-outbounds` in secrets.yaml (refresh it with
+    `just refresh-sing-box-subscription`).
 
-    Default traffic leaves through the subscription; `wg` only carries peer
-    traffic, so an unprovisioned WireGuard peer no longer blackholes the host —
-    but it does make 10.6.6.0/24 unreachable
+    Everything that is not RU-inside, private or tailnet leaves through the
+    subscription. There is no WireGuard leg, so 10.6.6.0/24 is unreachable
   '';
 
   config = lib.mkIf cfg.enable {
@@ -101,8 +89,7 @@ in
         # The host SSH key is not a recipient; don't let sops-nix add it as one.
         sshKeyPaths = [ ];
       };
-      secrets = lib.genAttrs (map secret secretNames ++ [ render.proxySecret ])
-        (_: { restartUnits = [ "sing-box.service" ]; });
+      secrets.${render.proxySecret}.restartUnits = [ "sing-box.service" ];
 
       # The service runs as the `sing-box` user, so it must be able to read the
       # rendered config; the default is root-only.

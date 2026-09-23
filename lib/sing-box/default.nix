@@ -11,19 +11,12 @@
 # sites by rule-set, private IPs), everything else through the default outbound.
 # Profiles that need more than this patch the returned attrset — see ./corp.nix.
 #
-# That default outbound used to be the WireGuard endpoint. `snejugal.ru` is
-# banned as a general exit, so it is now the `proxy` selector over subscription
-# nodes, and `wg` is demoted to carrying peer traffic (the 10.6.6.0/24 rule
-# below) plus being a manual fallback in the selector. See
+# The default outbound is the `proxy` selector over subscription nodes. It used
+# to be a WireGuard endpoint (`snejugal.ru`), which is banned as a general exit;
+# the endpoint has since been removed entirely, so there is no WireGuard leg and
+# no peer route here any more. See
 # openspec/specs/split-tunnel-router/design-notes.md.
-#
-# `wireguardAddresses` is the host's addresses inside the tunnel: a two-element
-# list (v4, v6). Its elements are secrets too, so each is its own sops
-# placeholder — one placeholder could not be split back into two at render time.
-{ wireguardAddresses
-, privateKey
-, presharedKey
-, tunStack ? "gvisor"
+{ tunStack ? "gvisor"
 , tunStrictRoute ? true
 , tunInterfaceName ? null
   # How the host resolves names that must not go through the tunnel (RU-inside
@@ -38,7 +31,7 @@
   # a `urltest` that cannot pick a node until it resolves its probe URL. That is
   # a startup deadlock: no DNS until the proxy is ready, no proxy until DNS
   # works, so nothing resolves at all. It only became reachable when the default
-  # outbound stopped being `wg` (a WireGuard endpoint needs no health probe, so
+  # outbound stopped being a WireGuard endpoint (which needs no health probe, so
   # it was always "ready"), which is why this used to work on macOS.
   #
   # Talking to an upstream directly avoids the cycle. No `detour` here,
@@ -58,8 +51,8 @@
   # has to work, taking RU-inside resolution and `default_domain_resolver` with
   # it. Given as an IP, so it needs no bootstrap resolution of its own.
 , directDns ? { tag = "direct-dns"; type = "https"; server = "1.1.1.1"; }
-  # Subscription nodes that carry the traffic `wg` used to. A marker string the
-  # consumer substitutes for a JSON *array* of outbounds (see
+  # Subscription nodes that carry everything the tunnel takes. A marker string
+  # the consumer substitutes for a JSON *array* of outbounds (see
   # modules/home/sing-box.nix).
   #
   # The substituted array holds the nodes *and* the `proxy-auto` urltest and
@@ -69,7 +62,7 @@
   # provider and the rough geography even though the credentials stay encrypted;
   # and it would force a second, hand-maintained copy of the tag list that only
   # fails at activation when it drifts. Keeping the groups inside the secret
-  # means the store sees only `proxy`, `wg` and `direct`.
+  # means the store sees only `proxy` and `direct`.
   #
   # So the substituted value must define a `proxy` outbound — `route.final` and
   # the tunnel DNS server both name it. Required: every host runs this shape,
@@ -170,34 +163,11 @@ in
     } // (if tunInterfaceName == null then { } else { interface_name = tunInterfaceName; }))
   ];
 
-  endpoints = [
-    {
-      type = "wireguard";
-      tag = "wg";
-      address = wireguardAddresses;
-      private_key = privateKey;
-      peers = [
-        {
-          # The one server every host here dials.
-          address = "snejugal.ru";
-          port = 51830;
-          public_key = "OFp4DTqLQKgBZTN+N2rZ7zscb90kU/kANX34qFv2PjM=";
-          pre_shared_key = presharedKey;
-          allowed_ips = [
-            "0.0.0.0/0"
-            "::/0"
-          ];
-          persistent_keepalive_interval = 16;
-        }
-      ];
-    }
-  ];
-
   # `proxyOutbounds` is a marker the consumer replaces with the node array plus
   # the `proxy-auto` urltest and `proxy` selector built over it, so it is spliced
-  # in as-is rather than merged. The selector it defines names `wg` and `direct`
-  # from this file — tags resolve across the whole config, so that is fine, and
-  # it keeps `wg` a one-click fallback in the SFM dashboard.
+  # in as-is rather than merged. The selector it defines names `direct` from this
+  # file — tags resolve across the whole config, so that is fine, and it keeps
+  # `direct` a one-click bypass in the SFM dashboard.
   outbounds = [
     {
       type = "direct";
@@ -219,11 +189,6 @@ in
       # Anything below here selects an outbound; ./corp.nix relies on that to
       # insert its own rule ahead of them.
 
-      # Reaching another peer at its tunnel address: must beat `ip_is_private`.
-      {
-        ip_cidr = [ "10.6.6.0/24" "fd9f:6666::/64" ];
-        outbound = "wg";
-      }
       # Tailscale. The tailnet's v4 range is RFC6598 CGNAT, which `ip_is_private`
       # does *not* cover — Go's netip.Addr.IsPrivate() is RFC1918 plus fc00::/7
       # only. Without this rule tailnet traffic falls through to `route.final`
@@ -234,8 +199,8 @@ in
       # answers the handshake locally and the proxied connection then goes
       # nowhere.
       #
-      # The v6 half is already private, but naming it keeps the pair together
-      # and immune to reordering — in particular it must stay ahead of the
+      # The v6 half is already private, but naming it keeps the pair together and
+      # immune to reordering — in particular it must stay ahead of the
       # `ip_version = 6` reject below.
       {
         ip_cidr = [ "100.64.0.0/10" "fd7a:115c:a1e0::/48" ];
@@ -280,9 +245,8 @@ in
       # happy-eyeballs. Rejecting at the route level covers the client-side
       # resolver case the DNS strategy cannot reach.
       #
-      # Both rules sit after the peer and private rules, so the wg leg
-      # (fd9f:6666::/64) and LAN v6 keep working; only proxied traffic loses
-      # QUIC and v6.
+      # Both rules sit after the tailnet and private rules, so LAN v6 keeps
+      # working; only proxied traffic loses QUIC and v6.
       {
         ip_version = 6;
         action = "reject";

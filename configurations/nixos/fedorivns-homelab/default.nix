@@ -44,9 +44,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.timeout = 3;
 
-  # Split-tunnel router: this host's WireGuard peer exists on snejugal.ru, and
-  # its identity and assigned tunnel addresses live in secrets.yaml under
-  # `wireguard/fedorivns-homelab/*`.
+  # Split-tunnel router: everything that is not RU-inside, private or tailnet
+  # leaves through the subscription nodes in secrets.yaml
+  # (`sing-box/proxy-outbounds`).
   singBox.enable = true;
 
   # This host owns the Sync folder in the Syncthing mesh; see
