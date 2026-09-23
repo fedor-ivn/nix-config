@@ -1,20 +1,25 @@
 # Base sing-box split-tunnel config generator (personal profile).
 #
-# Returns an *attrset*, not JSON, so both consumers can use it:
-#   * darwin/home-manager renders it with `builtins.toJSON` into a sops-nix
-#     template (secrets are `config.sops.placeholder."..."` strings);
-#   * NixOS passes it straight to `services.sing-box.settings`, where secrets are
-#     `{ _secret = "/run/secrets/..."; }` attrsets that the module substitutes
-#     into /run/sing-box/config.json at preStart.
+# Returns an *attrset*. Both hosts render it the same way — through
+# ./render.nix, into a sops-nix template whose secrets are
+# `config.sops.placeholder."..."` strings — and differ only in where the result
+# lands: `~/.sing-box/*.json` for SFM on the mac, `/etc/sing-box/config.json`
+# for the system service on the homelab. ./render.nix explains why NixOS does
+# not use `services.sing-box.settings` for this.
 #
 # The shape is: everything outside the tunnel that should stay outside (RU-only
-# sites by rule-set, private IPs), everything else through the WireGuard
-# endpoint. Profiles that need more than this patch the returned attrset — see
-# ./corp.nix.
+# sites by rule-set, private IPs), everything else through the default outbound.
+# Profiles that need more than this patch the returned attrset — see ./corp.nix.
+#
+# That default outbound used to be the WireGuard endpoint. `snejugal.ru` is
+# banned as a general exit, so it is now the `proxy` selector over subscription
+# nodes, and `wg` is demoted to carrying peer traffic (the 10.6.6.0/24 rule
+# below) plus being a manual fallback in the selector. See
+# openspec/specs/split-tunnel-router/design-notes.md.
 #
 # `wireguardAddresses` is the host's addresses inside the tunnel: a two-element
-# list (v4, v6). Its elements are secrets too, so each is whatever the consumer's
-# substitution mechanism expects — a placeholder string or `{ _secret = ...; }`.
+# list (v4, v6). Its elements are secrets too, so each is its own sops
+# placeholder — one placeholder could not be split back into two at render time.
 { wireguardAddresses
 , privateKey
 , presharedKey
@@ -22,26 +27,78 @@
 , tunStrictRoute ? true
 , tunInterfaceName ? null
   # How the host resolves names that must not go through the tunnel (RU-inside
-  # rule-set, the WireGuard peer, rule-set downloads). `type = "local"` defers to
-  # the system resolver, which is right on macOS but loops on hosts where the
-  # stub resolver's own upstream queries get hijacked by the tun inbound.
-, directDns ? { tag = "direct-dns"; type = "local"; }
-  # Rule-set download detour moved from `download_detour` to `http_client.detour`
-  # in sing-box 1.14; pick whichever the target binary understands.
-, ruleSetDetourField ? "http_client"
+  # rule-set, the WireGuard peer, rule-set downloads) — and, via
+  # `route.default_domain_resolver`, how sing-box resolves domains it needs
+  # itself, such as the `urltest` probe URL.
+  #
+  # NOT `type = "local"`. That defers to the system resolver, which under an
+  # auto_route tun is sing-box itself: the query leaves the host, gets captured
+  # by the tun inbound, comes back through `hijack-dns`, and falls to
+  # `dns.final` = `tunnel-dns`, whose detour is the `proxy` selector — backed by
+  # a `urltest` that cannot pick a node until it resolves its probe URL. That is
+  # a startup deadlock: no DNS until the proxy is ready, no proxy until DNS
+  # works, so nothing resolves at all. It only became reachable when the default
+  # outbound stopped being `wg` (a WireGuard endpoint needs no health probe, so
+  # it was always "ready"), which is why this used to work on macOS.
+  #
+  # Talking to an upstream directly avoids the cycle. No `detour` here,
+  # deliberately: a DNS server without one dials with sing-box's own default
+  # dialer (common/dialer: `Detour == ""` -> NewDefault), which is exactly what
+  # an option-less `direct` outbound does — so since 1.12 `detour = "direct"` is
+  # a *fatal* error, "detour to an empty direct outbound makes no sense". This is
+  # not the same as falling through to `route.final`: DNS servers never traverse
+  # the route rules, so these queries stay off the tunnel, which is the whole
+  # point of `direct-dns`. `sing-box check` catches none of this — it validates
+  # schema only, and detours resolve at service start.
+  #
+  # DoH (port 443), not plain UDP:53. Measured on the mac's network: `dig` to
+  # 1.1.1.1, 8.8.8.8 *and* 77.88.8.8 all time out, while DoH to the same address
+  # answers — plain DNS egress is filtered, which is routine on Russian ISPs. A
+  # `type = "udp"` direct resolver is therefore dead exactly where this config
+  # has to work, taking RU-inside resolution and `default_domain_resolver` with
+  # it. Given as an IP, so it needs no bootstrap resolution of its own.
+, directDns ? { tag = "direct-dns"; type = "https"; server = "1.1.1.1"; }
+  # Subscription nodes that carry the traffic `wg` used to. A marker string the
+  # consumer substitutes for a JSON *array* of outbounds (see
+  # modules/home/sing-box.nix).
+  #
+  # The substituted array holds the nodes *and* the `proxy-auto` urltest and
+  # `proxy` selector over them — not just the raw nodes. Two reasons, both
+  # learned the hard way: naming the nodes here would put their tags
+  # (`ameno/reality-de1`, …) in the world-readable Nix store, which leaks the
+  # provider and the rough geography even though the credentials stay encrypted;
+  # and it would force a second, hand-maintained copy of the tag list that only
+  # fails at activation when it drifts. Keeping the groups inside the secret
+  # means the store sees only `proxy`, `wg` and `direct`.
+  #
+  # So the substituted value must define a `proxy` outbound — `route.final` and
+  # the tunnel DNS server both name it. Required: every host runs this shape,
+  # and lib/sing-box/render.nix is the only caller.
+, proxyOutbounds
 }:
 let
-  ruleSet = tag: url:
-    {
-      type = "remote";
-      inherit tag url;
-      format = "binary";
-      update_interval = "1d";
-    } // (
-      if ruleSetDetourField == "http_client"
-      then { http_client.detour = "direct"; }
-      else { download_detour = "direct"; }
-    );
+  # Rule-set downloads must not go through the tunnel, and saying
+  # `detour = "direct"` is not how you express that on 1.14: pointing a detour at
+  # an option-less `direct` outbound is rejected ("detour to an empty direct
+  # outbound makes no sense") — fatal at service start, and `sing-box check` does
+  # *not* catch it, so a build-time check will happily pass a config that cannot
+  # boot. The 1.14 spelling is a tagged top-level HTTP client, which dials with
+  # the default dialer. An inline `http_client = { }` is not equivalent: that is
+  # the deprecated implicit default, and it routes downloads through
+  # `route.final` — i.e. straight into the tunnel.
+  #
+  # Both consumers are 1.14.1 (nixpkgs; SFM via the `sfm` cask, whose
+  # `HTTPClientOptions.UnmarshalJSON` accepts the bare-string tag form), so
+  # there is no older `download_detour` dialect to fall back to.
+  ruleSetHttpClientTag = "rule-set-http";
+
+  ruleSet = tag: url: {
+    type = "remote";
+    inherit tag url;
+    format = "binary";
+    update_interval = "1d";
+    http_client = ruleSetHttpClientTag;
+  };
 in
 {
   log = {
@@ -55,7 +112,7 @@ in
         tag = "tunnel-dns";
         type = "udp";
         server = "1.1.1.1";
-        detour = "wg";
+        detour = "proxy";
       }
       directDns
     ];
@@ -66,6 +123,18 @@ in
       }
     ];
     final = "tunnel-dns";
+
+    # The subscription nodes have no IPv6 egress — a request for a v6-only host
+    # through them fails outright. Handing clients an AAAA they cannot use is
+    # worse than not having one: curl falls back to v4 quickly, but browsers
+    # follow happy-eyeballs into the dead v6 path and stall, which reads as
+    # "the internet is broken in Chrome but `curl` is fine". The provider's own
+    # generated config sets ipv4_only for the same reason.
+    #
+    # `dns.strategy` is global: per-rule `strategy` is deprecated in 1.14 and
+    # removed in 1.16. It costs v6 on the direct (RU) leg too, which is a real
+    # but small loss next to a browser that hangs.
+    strategy = "ipv4_only";
   };
 
   inbounds = [
@@ -82,6 +151,22 @@ in
       auto_route = true;
       strict_route = tunStrictRoute;
       stack = tunStack;
+      # Keep the tailnet out of the tun entirely.
+      #
+      # `auto_route` otherwise installs routes that sit on top of Tailscale's:
+      # observed on the mac was a /32 for a tailnet peer pointing at the tun and
+      # flagged reject (`UHW3Ig ... utun7 !`), with Tailscale's own 100.64/10
+      # route gone. Traffic then dies in the kernel *before* sing-box sees it,
+      # so the `ip_cidr` route rule below cannot help — and even if it could,
+      # `direct` + `auto_detect_interface` binds the physical interface, which
+      # is equally wrong for an address that only exists inside Tailscale.
+      #
+      # Excluding the prefixes leaves the OS routing them to Tailscale's own
+      # interface, which is the only thing that can deliver them.
+      route_exclude_address = [
+        "100.64.0.0/10"
+        "fd7a:115c:a1e0::/48"
+      ];
     } // (if tunInterfaceName == null then { } else { interface_name = tunInterfaceName; }))
   ];
 
@@ -108,12 +193,21 @@ in
     }
   ];
 
+  # `proxyOutbounds` is a marker the consumer replaces with the node array plus
+  # the `proxy-auto` urltest and `proxy` selector built over it, so it is spliced
+  # in as-is rather than merged. The selector it defines names `wg` and `direct`
+  # from this file — tags resolve across the whole config, so that is fine, and
+  # it keeps `wg` a one-click fallback in the SFM dashboard.
   outbounds = [
     {
       type = "direct";
       tag = "direct";
     }
+    proxyOutbounds
   ];
+
+  # Keeps rule-set downloads off the tunnel — see `ruleSetHttpClientTag`.
+  http_clients = [{ tag = ruleSetHttpClientTag; }];
 
   route = {
     rules = [
@@ -130,6 +224,23 @@ in
         ip_cidr = [ "10.6.6.0/24" "fd9f:6666::/64" ];
         outbound = "wg";
       }
+      # Tailscale. The tailnet's v4 range is RFC6598 CGNAT, which `ip_is_private`
+      # does *not* cover — Go's netip.Addr.IsPrivate() is RFC1918 plus fc00::/7
+      # only. Without this rule tailnet traffic falls through to `route.final`
+      # and leaves through a subscription node, which cannot reach a 100.64/10
+      # peer. The symptom is confusing: `tailscale ping` keeps working, because
+      # it runs in userspace inside tailscaled and never touches these rules,
+      # while `ssh` to the same host dies with "Connection closed" — the tun
+      # answers the handshake locally and the proxied connection then goes
+      # nowhere.
+      #
+      # The v6 half is already private, but naming it keeps the pair together
+      # and immune to reordering — in particular it must stay ahead of the
+      # `ip_version = 6` reject below.
+      {
+        ip_cidr = [ "100.64.0.0/10" "fd7a:115c:a1e0::/48" ];
+        outbound = "direct";
+      }
       {
         rule_set = [
           "geosite-ru-inside"
@@ -141,6 +252,42 @@ in
         ip_is_private = true;
         outbound = "direct";
       }
+      # Everything below here would go to the proxy. Two things the browser does
+      # and `curl` does not have to be killed before they get there, both of
+      # which present as "google.com hangs in the browser, `curl` is fine".
+      #
+      # `no_drop` on both: without it `method` silently becomes `drop` after 50
+      # triggers in 30s, and a browser retrying blows through that in seconds —
+      # which would restore the exact hang these rules remove.
+
+      # 1. QUIC / HTTP3. Google advertises `alpn=h2,h3` in its HTTPS RR, so
+      # Firefox and Chrome both open HTTP/3 over UDP:443; the system `curl` has
+      # no HTTP/3 support at all, which is why the two disagree. The
+      # subscription's vless nodes carry no `packet_encoding`, so their UDP
+      # relay does not carry QUIC properly and the attempt hangs rather than
+      # failing. Rejecting makes the fallback to h2 immediate.
+      {
+        network = "udp";
+        port = [ 443 ];
+        action = "reject";
+        no_drop = true;
+      }
+
+      # 2. IPv6. The nodes have no v6 egress, so a v6 connection through them
+      # black-holes. `dns.strategy = "ipv4_only"` stops *our* resolver handing
+      # out AAAA, but a browser that resolves for itself — Firefox's DoH is on
+      # by default — never asks us, gets an AAAA anyway, and stalls on
+      # happy-eyeballs. Rejecting at the route level covers the client-side
+      # resolver case the DNS strategy cannot reach.
+      #
+      # Both rules sit after the peer and private rules, so the wg leg
+      # (fd9f:6666::/64) and LAN v6 keep working; only proxied traffic loses
+      # QUIC and v6.
+      {
+        ip_version = 6;
+        action = "reject";
+        no_drop = true;
+      }
     ];
     rule_set = [
       (ruleSet "geosite-ru-inside"
@@ -150,7 +297,7 @@ in
         "https://raw.githubusercontent.com/runetfreedom/russia-v2ray-rules-dat/release/sing-box/rule-set-geoip/geoip-ru.srs"
       )
     ];
-    final = "wg";
+    final = "proxy";
     auto_detect_interface = true;
     default_domain_resolver = directDns.tag;
   };

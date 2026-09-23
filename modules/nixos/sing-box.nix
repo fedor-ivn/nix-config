@@ -1,14 +1,20 @@
 # sing-box split-tunnel router, NixOS flavour.
 #
-# Same generator as the mac (lib/sing-box), different plumbing: instead of
-# rendering JSON through a sops-nix template and importing it into a GUI app,
-# this drives `services.sing-box`, whose `settings` is a freeform JSON submodule.
-# The WireGuard identity — keys and tunnel addresses alike — is passed as
-# `{ _secret = <path>; }` attrsets, which the nixpkgs module substitutes at
-# preStart into /run/sing-box/config.json (RuntimeDirectory, 0700, root), so none
-# of it enters the Nix store either. That works inside the `address` array too:
-# genJqSecretsReplacementSnippet recurses into lists, addressing elements as
-# `.endpoints[0].address[0]`.
+# Same generator *and* the same rendering path as the mac (lib/sing-box,
+# lib/sing-box/render.nix); only the delivery differs — a system daemon here, a
+# GUI app there. Both hosts run the same shape: subscription nodes as the
+# default exit, `wg` demoted to peer traffic.
+#
+# `services.sing-box.settings` is deliberately left empty. It used to carry the
+# config as an attrset with `{ _secret = <path>; }` leaves, which the nixpkgs
+# module substitutes at preStart via genJqSecretsReplacementSnippet — but that
+# mechanism substitutes *string values*, and the subscription nodes are an array
+# of objects, so it cannot express them (see lib/sing-box/render.nix). With
+# `settings = { }` the module's ExecStart switches from RUNTIME_DIRECTORY to
+# CONFIGURATION_DIRECTORY, i.e. `sing-box -C /etc/sing-box run`, so we drop a
+# sops-rendered config in there instead. Secrets still never touch the Nix
+# store: the rendered file lives under /run/secrets and /etc/sing-box/ only
+# symlinks it.
 #
 # The corp overlay is deliberately not used here: no host running this needs the
 # reverse-SSH SOCKS bridge.
@@ -20,16 +26,18 @@ let
   inherit (flake) inputs;
   cfg = config.singBox;
 
-  # Stand-ins of the right shape, used to validate the config at build time; the
-  # real values come from sops at runtime.
-  dummyKey = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-  dummyAddresses = [ "10.0.0.1/32" "fd00::1/128" ];
+  render = import ../../lib/sing-box/render.nix;
 
-  secretPath = name:
-    config.sops.secrets."wireguard/${config.networking.hostName}/${name}".path;
+  secret = name: "wireguard/${config.networking.hostName}/${name}";
+  secretNames = [ "private-key" "preshared-key" "address-v4" "address-v6" ];
 
-  mkSettings = { privateKey, presharedKey, wireguardAddresses }: import ../../lib/sing-box {
-    inherit privateKey presharedKey wireguardAddresses;
+  hostArgs = {
+    wireguardAddresses = [
+      config.sops.placeholder.${secret "address-v4"}
+      config.sops.placeholder.${secret "address-v6"}
+    ];
+    privateKey = config.sops.placeholder.${secret "private-key"};
+    presharedKey = config.sops.placeholder.${secret "preshared-key"};
 
     # `system` beats gvisor on Linux, and strict_route installs firewall rules
     # that can cut off inbound connections to a box that serves them (SSH,
@@ -39,43 +47,27 @@ let
     tunStrictRoute = false;
     tunInterfaceName = "sbtun0";
 
-    # Not `type = "local"`: that resolves via systemd-resolved on 127.0.0.53,
-    # whose own upstream queries leave through the tun inbound and come back
-    # through `hijack-dns` — a loop. Talk to an upstream directly instead.
-    #
-    # No `detour` here, deliberately. A DNS server with no detour dials with
-    # sing-box's own default dialer (common/dialer: `Detour == ""` -> NewDefault),
-    # which is exactly what an option-less `direct` outbound does — so since 1.12
-    # `detour = "direct"` is a *fatal* error, "detour to an empty direct outbound
-    # makes no sense". Note this is not the same as falling through to
-    # `route.final`: DNS servers never traverse the route rules, so these queries
-    # stay off the tunnel, which is the whole point of `direct-dns`. `sing-box
-    # check` does not catch the mistake — it only validates the schema, and the
-    # detour is resolved at service start.
-    directDns = {
-      tag = "direct-dns";
-      type = "udp";
-      server = "1.1.1.1";
-    };
+    # `directDns` is left at the generator's default (an upstream, not
+    # `type = "local"`) — systemd-resolved on 127.0.0.53 would loop through the
+    # tun exactly as the macOS resolver does. See lib/sing-box/default.nix.
 
-    # nixpkgs ships 1.13.x, which predates the `http_client` rule-set field.
-    ruleSetDetourField = "download_detour";
+    # `proxyOutbounds` is supplied by render.nix, which owns the marker.
   };
 
   # The account whose sops age key decrypts secrets.yaml (one entry in practice).
   ageKeyFile =
     "${config.users.users.${lib.head config.managedUsers}.home}/.config/sops/age/keys.txt";
 
-  # Catch schema mistakes at build time — unlike the mac, the binary that will
-  # run this config is the one we can validate against.
+  # Catch schema mistakes at build time, against the very binary that will run
+  # this config. Note `check` validates shape only — a detour to an empty direct
+  # outbound passes here and is fatal at start.
   configCheck = pkgs.runCommand "sing-box-config-check"
     {
       nativeBuildInputs = [ pkgs.sing-box ];
-      configJson = builtins.toJSON (mkSettings {
-        privateKey = dummyKey;
-        presharedKey = dummyKey;
-        wireguardAddresses = dummyAddresses;
-      });
+      configJson = render.checkable {
+        generator = ../../lib/sing-box;
+        args = hostArgs;
+      };
       passAsFile = [ "configJson" ];
     } ''
     sing-box check -c "$configJsonPath"
@@ -87,10 +79,13 @@ in
 
   options.singBox.enable = lib.mkEnableOption ''
     the sing-box split-tunnel router, reading this host's WireGuard identity from
-    `wireguard/<hostname>/{private-key,preshared-key,address-v4,address-v6}` in
-    secrets.yaml. Leave this off until the host's WireGuard peer exists
-    server-side: the tun inbound sends everything but RU-inside destinations to
-    the endpoint, so an unprovisioned peer blackholes the host's traffic
+    `wireguard/<hostname>/{private-key,preshared-key,address-v4,address-v6}` and
+    the subscription nodes from `sing-box/proxy-outbounds` in secrets.yaml
+    (refresh the latter with `just refresh-sing-box-subscription`).
+
+    Default traffic leaves through the subscription; `wg` only carries peer
+    traffic, so an unprovisioned WireGuard peer no longer blackholes the host —
+    but it does make 10.6.6.0/24 unreachable
   '';
 
   config = lib.mkIf cfg.enable {
@@ -106,23 +101,28 @@ in
         # The host SSH key is not a recipient; don't let sops-nix add it as one.
         sshKeyPaths = [ ];
       };
-      secrets = lib.genAttrs
-        (map (name: "wireguard/${config.networking.hostName}/${name}")
-          [ "private-key" "preshared-key" "address-v4" "address-v6" ])
+      secrets = lib.genAttrs (map secret secretNames ++ [ render.proxySecret ])
         (_: { restartUnits = [ "sing-box.service" ]; });
-    };
 
-    services.sing-box = {
-      enable = true;
-      settings = mkSettings {
-        privateKey._secret = secretPath "private-key";
-        presharedKey._secret = secretPath "preshared-key";
-        wireguardAddresses = [
-          { _secret = secretPath "address-v4"; }
-          { _secret = secretPath "address-v6"; }
-        ];
+      # The service runs as the `sing-box` user, so it must be able to read the
+      # rendered config; the default is root-only.
+      templates."sing-box.json" = {
+        content = render.render {
+          placeholders = config.sops.placeholder;
+          generator = ../../lib/sing-box;
+          args = hostArgs;
+        };
+        owner = "sing-box";
+        restartUnits = [ "sing-box.service" ];
       };
     };
+
+    # Empty `settings` makes the module run `sing-box -C $CONFIGURATION_DIRECTORY`
+    # (/etc/sing-box) rather than rendering its own config — see the header.
+    services.sing-box.enable = true;
+
+    environment.etc."sing-box/config.json".source =
+      config.sops.templates."sing-box.json".path;
 
     # Secrets must be on disk before the service reads the config.
     systemd.services.sing-box.after = [ "sops-install-secrets.service" ];
