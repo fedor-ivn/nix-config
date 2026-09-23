@@ -266,5 +266,22 @@ in
     default_domain_resolver = directDns.tag;
   };
 
-  experimental.cache_file.enabled = true;
+  # `store_fakeip` is not implied by `enabled`, and only ./corp.nix has a FakeIP
+  # server — but it belongs here, because the profiles share this file and a
+  # FakeIP address that outlives its mapping is the worst failure the router
+  # has. Without it the mappings are in-memory: sing-box restarts (a profile
+  # reload, an SFM update, a laptop wake), the browser still holds
+  # `198.18.x.x` from before, and every connection to it dies with
+  #
+  #   ERROR router: missing fakeip record, try enable `experimental.cache_file`
+  #
+  # The allocator also restarts at the bottom of `inet4_range`, so after a
+  # restart the same address is handed to whichever corp domain asks first and
+  # a stale browser entry silently points at a *different* host. Firefox caches
+  # DNS hard and reuses connections, so it wears all of this while `curl`,
+  # which re-resolves per invocation, looks fine.
+  experimental.cache_file = {
+    enabled = true;
+    store_fakeip = true;
+  };
 }
