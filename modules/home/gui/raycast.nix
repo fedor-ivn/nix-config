@@ -88,7 +88,20 @@ lib.mkIf (config.me.gui.enable && pkgs.stdenv.hostPlatform.isDarwin) {
       # @raycast.packageName Taskwarrior
       # @raycast.argument1 { "type": "text", "placeholder": "task description" }
 
-      ${pkgs.taskwarrior3}/bin/task rc.verbose= add project: "$1"
+      # Raycast hands the whole input over as one argument, so split it here
+      # and pull out +tags; the rest stays a single quoted description so
+      # taskwarrior does not try to parse anything else out of it.
+      read -ra words <<< "$1"
+      args=(project:)
+      desc=""
+      for word in "''${words[@]}"; do
+          case "$word" in
+              +?*) args+=("$word") ;;
+              *) desc="''${desc:+$desc }$word" ;;
+          esac
+      done
+
+      ${pkgs.taskwarrior3}/bin/task rc.verbose= add "$desc" "''${args[@]}"
     '';
   };
 
