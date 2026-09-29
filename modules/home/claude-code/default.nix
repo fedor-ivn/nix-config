@@ -38,6 +38,10 @@ in
       preferredNotifChannel = "notifications_disabled";
       remoteControlAtStartup = true;
       agentPushNotifEnabled = true;
+      attribution = {
+        commit = "";
+        sessionUrl = false;
+      };
       hooks = {
         PreToolUse = [
           {
