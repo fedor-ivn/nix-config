@@ -62,6 +62,7 @@
   };
   "editor.inlayHints.enabled" = "offUnlessPressed";
   "explorer.confirmDragAndDrop" = false;
+  "extensions.ignoreRecommendations" = true;
   "files.autoSave" = "onFocusChange";
   "files.insertFinalNewline" = true;
   "files.watcherExclude" = {
