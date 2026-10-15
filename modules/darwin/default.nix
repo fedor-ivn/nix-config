@@ -31,6 +31,16 @@
   home-manager.sharedModules = [
     flake.inputs.spicetify-nix.homeManagerModules.default
     (
+      { lib, ... }:
+      {
+        # The sing-box profile server is a launchd agent, and the only consumer
+        # (SFM) is a mac app. `mkDefault` so an individual host can still turn
+        # it off; it does nothing unless that host also sets
+        # `programs.singBox.enable`.
+        programs.singBox.server.enable = lib.mkDefault true;
+      }
+    )
+    (
       { pkgs, flake, ... }:
       {
         # TODO: There's some problems with spotify dmg, so I disabled it for now.

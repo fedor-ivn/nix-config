@@ -64,6 +64,11 @@ proxies.
   routing, which is the entire point of this setup.
 - Blanc could never be one.
 
+Note that §11 later *does* use a Remote Profile — pointed at a loopback server
+that returns the profile generated here, not at the provider. That keeps the
+routing and only changes how the file reaches SFM; it is not the idea rejected
+above.
+
 **Config merging (`sing-box run -C <dir>`) would solve this cleanly** — arrays
 concatenate, scalars from later files win, and cross-file tag references resolve
 (a `selector` in one file can name a `urltest` defined in another; `check` passes
@@ -416,3 +421,95 @@ Happ before testing the activated profile.**
 That is **correct**, not a bug: the ruleset is
 `geosite-ru-available-only-inside`, and those three are reachable from outside
 Russia.
+
+---
+
+## 11. Profile delivery: loopback HTTP instead of manual import
+
+**Problem.** SFM *copies* a local profile into its own store at import time. The
+sops-rendered `~/.sing-box/{personal,corp}.json` and the config SFM actually
+runs therefore diverged after every `just a`, silently, until a manual
+re-import. Every config change had a human step that was easy to forget and
+invisible when skipped.
+
+**Fix.** A loopback-only static server over `~/.sing-box`, and two SFM *Remote*
+profiles pointed at it:
+
+```
+http://127.0.0.1:18088/personal.json
+http://127.0.0.1:18088/corp.json
+```
+
+Nothing about the generated config changes — `lib/sing-box/*`, `render.nix`,
+the sops templates, the justfile recipes and the homelab are all untouched. The
+`~/.sing-box` symlinks stay (they are now the docroot, and
+`just check-sing-box-nodes` still defaults to one of them). The only new thing
+is a launchd agent in `modules/home/sing-box.nix`.
+
+### Why the server has to re-resolve symlinks per request
+
+The docroot entries are a three-hop chain:
+
+```
+~/.sing-box/personal.json
+  -> /nix/store/...-hm_singboxpersonal.json       (mkOutOfStoreSymlink)
+  -> ~/.config/sops-nix/secrets/rendered/...      (per-generation symlink)
+  -> $TMPDIR/secrets.d/<generation>/rendered/...  (the real file, mode 0400)
+```
+
+`<generation>` increments on every activation, so a server that caches a path
+or holds an fd would keep serving the old profile forever — which would defeat
+the entire change. darkhttpd opens per request; verified by swapping a
+generation symlink under a live server and watching the served bytes change
+without a restart.
+
+Consequences: **never `--chroot`** (it cuts off the escape into `$TMPDIR`), and
+any later swap to a different/caching server has to re-test this property.
+
+### Why darkhttpd
+
+Small, no config file, explicit `--addr`, `--no-listing`. `--addr 127.0.0.1` is
+load-bearing — the default is every interface, which would publish the node
+credentials to the LAN. `--default-mimetype application/json` rather than a
+mimetype file, since the directory only holds JSON.
+
+### Accepted cost
+
+The rendered files remain mode 0400, but their *contents* are now readable by
+anything that can reach loopback: other local user accounts, and sandboxed apps
+with network but no filesystem access. A process already running as this user
+loses nothing — it can read the file directly today. Accepted on a
+single-user laptop.
+
+An unguessable path component would close it, but the token cannot come from
+Nix: `home.file` paths and `inputs.secrets` values both land in the
+world-readable store, so a token there is decorative. It would take an
+activation script minting the directory once. Deliberately not done.
+
+### Login race
+
+`org.nix-community.home.sops-nix` is `RunAtLoad` and re-renders into a fresh
+generation directory. Nothing orders the profile server against it, so at login
+there is a window where the docroot symlinks dangle and fetches 404. `KeepAlive`
+does not help — the server is up, the files are not. SFM keeps its last good
+profile across a failed update, so this self-heals on the next poll.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| Both profiles over HTTP | 200, `application/json`, valid JSON, `final = proxy` |
+| Directory listing (`GET /`) | 404 (`--no-listing`) |
+| Path traversal (`/../.ssh/id_ed25519`) | 404 |
+| Symlink chain into `$TMPDIR` | followed |
+| Generation bump under a live server | picked up on the next request, no restart |
+| SFM accepts a plain `http://` Remote profile | yes — imported successfully |
+
+Two things were **not** measured and are worth knowing:
+
+1. Whether SFM reloads the tunnel on *every* poll or only on changed content.
+   If unconditional, `Auto Update 60` costs an hourly blip; leave auto-update
+   off and use the Update button, which still beats re-importing.
+2. Whether a fetch to `127.0.0.1` survives with the tun up. 127/8 should stay on
+   `lo0` and `auto_route` should not touch it, but this needs SFM actually
+   connected. If an update hangs while connected, that is the first suspect.

@@ -148,6 +148,33 @@ left world-readable, and none SHALL reach the Nix store.
 - **THEN** its file permissions restrict read access to the owning user (the
   invoking user on the mac, the `sing-box` service user on the homelab)
 
+Note: on the mac the rendered profiles are additionally served over loopback so
+SFM can fetch them (see "Profiles delivered to SFM over loopback"). File
+permissions are unchanged, but the contents are readable by anything that can
+reach `127.0.0.1` on the serving port. This is a deliberate, accepted widening
+— see the rationale in `modules/home/sing-box.nix`.
+
+### Requirement: Profiles delivered to SFM over loopback
+
+On the mac the rendered profiles SHALL be served over a loopback-only HTTP
+listener and consumed by SFM as *Remote* profiles, so that an activation
+reaches the running client without a manual re-import.
+
+The listener SHALL bind `127.0.0.1` only, and SHALL re-resolve the profile
+symlink chain per request so that a new sops generation is picked up without
+restarting it.
+
+#### Scenario: An activation reaches SFM without re-importing
+
+- **WHEN** `just a` renders a changed profile and SFM polls or is told to
+  update
+- **THEN** SFM serves the new content, with no manual import step
+
+#### Scenario: The listener is not reachable off-host
+
+- **WHEN** the serving port is probed from another machine on the LAN
+- **THEN** nothing is listening — the bind address is `127.0.0.1`
+
 ### Requirement: Configuration validated before activation
 
 Each generated profile SHALL be checked against a real sing-box binary at build
