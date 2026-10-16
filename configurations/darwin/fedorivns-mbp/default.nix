@@ -49,6 +49,7 @@ in
     tunnelAgent.enable = true;
     secretTool1.enable = true;
     secretTool2.enable = true;
+    secretTool3.enable = true;
     glab.config.enable = false;
     telegramMcp.enable = false;
     secretDockerHelper.enable = true;

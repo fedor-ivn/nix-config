@@ -84,6 +84,7 @@
 
     # Private evaluation-time secrets
     secrets.url = "git+ssh://git@github.com/fedor-ivn/nix-secrets";
+    secrets.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   # Wired using https://nixos-unified.org/guide/autowiring

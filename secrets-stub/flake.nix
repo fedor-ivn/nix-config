@@ -1,6 +1,11 @@
 {
   description = "Bootstrap stub for nix-secrets — empty defaults, no SSH required";
 
+  # Unused here, but the real nix-secrets declares it and nix-config points a
+  # `follows` at it — an override for an input the stub lacks would warn on
+  # every bootstrap build.
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
   outputs = _: {
     values = {
       syncthingDevices = {
@@ -33,6 +38,7 @@
       {
         secretTool1 = declareOnly "secretTool1";
         secretTool2 = declareOnly "secretTool2";
+        secretTool3 = declareOnly "secretTool3";
         secretDockerHelper = declareOnly "secretDockerHelper";
         tunnel = declareOnly "tunnel";
         tunnelAgent = declareOnly "tunnelAgent";
