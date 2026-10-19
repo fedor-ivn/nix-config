@@ -137,6 +137,14 @@ in
           "color.uda.focus.L" = "blue";
 
           context = {
+            # taskwarrior-tui 0.27.0 drops the alphabetically-first context from
+            # its `c` switcher on Taskwarrior 3.x: `task context` underlines the
+            # header with ANSI escapes instead of printing a dashed separator
+            # row, so the parser's blanket `i == 0 || i == 1` skip eats the
+            # first real row. This decoy sorts ahead of `inbox` and gets eaten
+            # in its place. Fixed upstream in d9031e0 (#804), unreleased.
+            # TODO(2027-01-31): drop once taskwarrior-tui > 0.27.0 is in nixpkgs.
+            aaa-tui-bug = "status:deleted";
             inbox = "project:inbox";
             personal = "project.not:inbox project.not:shopping -sdm";
             shop = "project.not:inbox project:shopping -sdm";
