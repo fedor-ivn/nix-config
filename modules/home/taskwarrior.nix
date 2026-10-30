@@ -108,7 +108,7 @@ in
       extraConfig = "include ${config.sops.templates."taskwarrior-sync.rc".path}";
       config =
         {
-          default.project = "inbox";
+          default.project = "in";
           uda.taskwarrior-tui = {
             shortcuts = {
               "1" = "task-open-urls";
@@ -145,11 +145,11 @@ in
             # in its place. Fixed upstream in d9031e0 (#804), unreleased.
             # TODO(2027-01-31): drop once taskwarrior-tui > 0.27.0 is in nixpkgs.
             aaa-tui-bug = "status:deleted";
-            inbox = "project:inbox";
-            personal = "project.not:inbox project.not:shopping -sdm";
-            shop = "project.not:inbox project:shopping -sdm";
-            someday = "project.not:inbox +sdm";
-            today = "project.not:inbox (scheduled.before:today or scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
+            inbox = "project:in";
+            personal = "project.not:in project.not:shopping -sdm";
+            shop = "project.not:in project:shopping -sdm";
+            someday = "project.not:in +sdm";
+            today = "project.not:in (scheduled.before:today or scheduled:today or due.before:tomorrow or due:tomorrow or +today)";
           };
           recurrence = if config.programs.taskwarrior.generateRecurring then "on" else "off";
         };
