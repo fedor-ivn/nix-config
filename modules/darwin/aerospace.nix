@@ -146,7 +146,7 @@ in
 
           "alt-s" = "mode move";
           "alt-r" = "mode resize";
-          "shift-alt-semicolon" = "mode service";
+          "shift-alt-esc" = "mode service";
         };
 
       # Same two axes as cmd-alt, but dragging the focused window along.
