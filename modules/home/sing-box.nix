@@ -85,10 +85,16 @@ let
   # which renders the same way.
   render = import ../../lib/sing-box/render.nix;
 
-  # Nothing host-specific is left on the mac: the tun defaults in the generator
-  # are the macOS ones. Kept as a name so both profiles and both checks stay in
-  # step if that changes again.
-  hostArgs = { };
+  # The tun defaults in the generator are otherwise the macOS ones.
+  hostArgs = {
+    # SFM runs sing-box as a NetworkExtension, where `route_exclude_address`
+    # does not mean "leave this prefix alone" — macOS turns each entry into a
+    # kernel route pinned to the primary physical interface, which overwrites
+    # Tailscale's own route for the same prefix and black-holes the tailnet on
+    # every tunnel restart. Specificity already keeps the tailnet off the tun;
+    # see the long comment in lib/sing-box/default.nix.
+    tunRouteExcludeAddress = [ ];
+  };
 
   profileDir = "${config.home.homeDirectory}/.sing-box";
 

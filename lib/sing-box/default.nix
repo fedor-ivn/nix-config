@@ -19,6 +19,10 @@
 { tunStack ? "gvisor"
 , tunStrictRoute ? true
 , tunInterfaceName ? null
+  # Prefixes `auto_route` must not pull into the tun. Defaults to the tailnet,
+  # which is what every host needs — except macOS, which has to override it to
+  # `[ ]`. See the `route_exclude_address` comment in `inbounds` for why.
+, tunRouteExcludeAddress ? [ "100.64.0.0/10" "fd7a:115c:a1e0::/48" ]
   # How the host resolves names that must not go through the tunnel (RU-inside
   # rule-set, the WireGuard peer, rule-set downloads) — and, via
   # `route.default_domain_resolver`, how sing-box resolves domains it needs
@@ -144,23 +148,43 @@ in
       auto_route = true;
       strict_route = tunStrictRoute;
       stack = tunStack;
-      # Keep the tailnet out of the tun entirely.
+      # Keep the tailnet out of the tun — on the platforms where that is what
+      # this option actually does. The two sing-box flavours implement it
+      # completely differently, and only one of them is non-destructive:
       #
-      # `auto_route` otherwise installs routes that sit on top of Tailscale's:
-      # observed on the mac was a /32 for a tailnet peer pointing at the tun and
-      # flagged reject (`UHW3Ig ... utun7 !`), with Tailscale's own 100.64/10
-      # route gone. Traffic then dies in the kernel *before* sing-box sees it,
-      # so the `ip_cidr` route rule below cannot help — and even if it could,
-      # `direct` + `auto_detect_interface` binds the physical interface, which
-      # is equally wrong for an address that only exists inside Tailscale.
+      # * CLI (`sing-tun/tun_darwin.go` `setRoutes`, `tun_linux.go`): the
+      #   excluded prefixes are subtracted from the route set and simply never
+      #   installed. On Linux that is load-bearing — `auto_route` is policy
+      #   routing, and carving the prefixes out of sing-box's own table is what
+      #   lets the lookup fall through to `main`, where Tailscale's routes live.
       #
-      # Excluding the prefixes leaves the OS routing them to Tailscale's own
-      # interface, which is the only thing that can deliver them.
-      route_exclude_address = [
-        "100.64.0.0/10"
-        "fd7a:115c:a1e0::/48"
-      ];
-    } // (if tunInterfaceName == null then { } else { interface_name = tunInterfaceName; }))
+      # * NetworkExtension (SFM, `sing-box-for-apple`
+      #   `ExtensionPlatformInterface.swift`): the prefixes become
+      #   `ipv4Settings.excludedRoutes`, and macOS installs each as a real
+      #   kernel route **pinned to the primary physical interface**. Confirmed
+      #   in the SystemConfiguration store, which lists `100.64.0.0/255.192.0.0`
+      #   and `fd7a:115c:a1e0::/48` under `ExcludedRoutes` with
+      #   `InterfaceName : en0`.
+      #
+      # That second one is a route fight, not an exclusion: it writes a route at
+      # the *same* prefix length as Tailscale's own, so longest-prefix-match
+      # cannot break the tie and the last writer wins. Restarting the tunnel
+      # makes NE the last writer, the tailnet starts leaving via the LAN gateway
+      # (`100.64/10 192.168.1.1 UGSc en0`) and dies there; `tailscale down &&
+      # tailscale up` makes tailscaled the last writer and it works again until
+      # the next restart. Cold boot happens to come up fine because tailscaled's
+      # link-change reconcile lands after NE's setup — a fast restart loses that
+      # race.
+      #
+      # So macOS passes `[ ]` and relies on specificity instead: the tun's
+      # included route is `default`, Tailscale's `100.64.0.0/10` and
+      # `fd7a:115c:a1e0::/48` are narrower and win on their own, with nothing
+      # competing. That is the same reasoning modules/nixos/sing-box.nix already
+      # applies to LAN routes. The `ip_cidr` route rule below stays as the net
+      # for anything that does reach the tun.
+    } // (if tunRouteExcludeAddress == [ ] then { } else {
+      route_exclude_address = tunRouteExcludeAddress;
+    }) // (if tunInterfaceName == null then { } else { interface_name = tunInterfaceName; }))
   ];
 
   # `proxyOutbounds` is a marker the consumer replaces with the node array plus
