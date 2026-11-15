@@ -1,9 +1,7 @@
 # sing-box split-tunnel configs for a personal machine, generated from one source.
 #
-# The generators live in lib/sing-box: the base (personal) profile and the corp
-# overlay, which adds the FakeIP DNS server, the SOCKS outbound and the corp
-# route rule. This module only supplies the host-specific parts — where to read
-# the subscription nodes from.
+# The profiles live in lib/sing-box/profiles. This module supplies only the
+# host-specific parts — the platform and where the subscription nodes come from.
 #
 # Enabled per host (see configurations/darwin/<host>/). The homelab does not use
 # this module: it runs sing-box as a system service instead (see
@@ -11,11 +9,14 @@
 #
 # Both profiles are rendered by sops-nix at *activation* time, so no node
 # credential enters the world-readable Nix store: the nodes live in secrets.yaml
-# under `sing-box/proxy-outbounds` and are interpolated via a placeholder.
+# under `sing-box/proxy-outbounds` and are interpolated through a placeholder.
+# Refresh them with `just refresh-sing-box-subscription` — sing-box has no
+# subscription support of its own. Reasoning in
+# openspec/specs/split-tunnel-router/design-notes.md.
 #
 # The rendered files are symlinked into ~/.sing-box/{personal,corp}.json (out of
 # store) and, where `programs.singBox.server.enable` is set, served over loopback
-# (see "Why a server" below) and added to SFM as two *Remote* profiles:
+# for SFM to fetch as two *Remote* profiles:
 #
 #   http://127.0.0.1:18088/personal.json
 #   http://127.0.0.1:18088/corp.json
@@ -23,33 +24,17 @@
 # Pick `corp.json` when the reverse-SSH SOCKS bridge (127.0.0.1:1080) is up,
 # `personal.json` otherwise.
 #
-# Default traffic leaves through subscription nodes. They are baked in here
-# rather than fetched at runtime because sing-box has no subscription support.
-# That is only workable because the subscription's output is byte-stable;
-# refresh it with `just refresh-sing-box-subscription`. Full reasoning in
-# openspec/specs/split-tunnel-router/design-notes.md.
-#
-# Validated at build time against nixpkgs' sing-box via `lib/sing-box/render.nix`
-# `checkable`, which renders the same document with dummy secrets. That used to
-# be impossible for two reasons, both now gone: SFM tracked 1.14.x while nixpkgs
-# lagged on 1.13.x (both are 1.14 now), and the template is not valid JSON until
-# sops substitutes it (hence the dummy-node render).
-#
-# The server is enabled by modules/darwin/default.nix for every mac, not by a
-# platform check in here — see `programs.singBox.server.enable`.
-#
 # ## Why a server
 #
-# SFM *copies* a local profile's contents into its own store at import time. So
-# every `just a` used to leave the file on disk and the config SFM actually runs
-# silently diverged until you remembered to re-import by hand. Pointing SFM at a
-# loopback URL instead makes it re-read the rendered file, so an activation
-# propagates on the next poll (or the Update button) with no manual step.
+# SFM *copies* a local profile's contents into its own store at import time, so
+# every `just a` used to leave the file on disk while the config SFM actually ran
+# silently diverged until you re-imported by hand. A loopback URL makes SFM
+# re-read the rendered file, so an activation propagates on the next poll with no
+# manual step.
 #
 # This is not the "Remote Profile = subscription URL" idea the design notes
-# reject. That one throws away the corp/RU routing, because it hands SFM the
-# *provider's* config. Here SFM fetches the profile this module generates; the
-# routing is untouched and only the delivery path changes.
+# reject: that hands SFM the *provider's* config and throws away the routing.
+# Here SFM fetches the profile generated above; only the delivery path changes.
 #
 # Serving the symlink chain is the whole trick, and it constrains the server:
 #
@@ -58,64 +43,45 @@
 #     -> ~/.config/sops-nix/secrets/rendered/...         (per-generation symlink)
 #     -> $TMPDIR/secrets.d/<generation>/rendered/...     (the real file)
 #
-# `<generation>` increments on every activation, so the server must re-resolve
-# the chain per request rather than hold an fd or cache a path — verified
-# against darkhttpd by swapping a generation symlink under a live server and
-# watching the served bytes change. Two things follow: **never pass `--chroot`**
-# (it would cut off the escape into $TMPDIR), and do not swap in a caching
-# server without re-testing that property.
+# `<generation>` increments on every activation, so the server must re-resolve the
+# chain per request rather than cache a path. Two things follow: **never pass
+# `--chroot`** (it would cut off the escape into $TMPDIR), and do not swap in a
+# caching server without re-testing that property.
 #
-# ## What this costs
-#
-# The rendered files are mode 0400 and stay that way, but a listener widens read
-# access to anything that can reach loopback — in practice other local user
-# accounts, and sandboxed apps that have network but not filesystem access.
-# Anything already running as this user loses nothing, since it can read the
-# file directly today. Accepted on a single-user laptop.
-#
-# Closing that gap would need an unguessable path component, and the token
-# cannot come from Nix: both `home.file` paths and `inputs.secrets` values land
-# in the world-readable store, which defeats the point. It would take an
-# activation script minting the directory once — deliberately not done.
+# Cost: the rendered files are mode 0400, but a listener widens read access to
+# anything that can reach loopback — other local accounts, sandboxed apps with
+# network but no filesystem access. Anything running as this user loses nothing.
+# Accepted on a single-user laptop.
 { config, lib, pkgs, ... }:
 let
   cfg = config.programs.singBox;
 
-  # Marker, secret name and the splice itself — shared with the NixOS module,
-  # which renders the same way.
-  render = import ../../lib/sing-box/render.nix;
-
-  # The tun defaults in the generator are otherwise the macOS ones.
-  hostArgs = {
-    # SFM runs sing-box as a NetworkExtension, where `route_exclude_address`
-    # does not mean "leave this prefix alone" — macOS turns each entry into a
-    # kernel route pinned to the primary physical interface, which overwrites
-    # Tailscale's own route for the same prefix and black-holes the tailnet on
-    # every tunnel restart. Specificity already keeps the tailnet off the tun;
-    # see the long comment in lib/sing-box/default.nix.
-    tunRouteExcludeAddress = [ ];
-  };
+  singBox = import ../../lib/sing-box;
+  inherit (singBox) render;
 
   profileDir = "${config.home.homeDirectory}/.sing-box";
 
-  renderConfig = generator: render.render {
+  # Template text plus its build-time `sing-box check`, for one profile.
+  mkProfile = name: profile: render.mkProfile {
+    inherit pkgs name profile;
     placeholders = config.sops.placeholder;
-    inherit generator;
-    args = hostArgs;
+    args = {
+      inherit lib;
+      # SFM runs sing-box as a NetworkExtension, where `route_exclude_address`
+      # is a route fight with Tailscale — see the tun comment in
+      # lib/sing-box/parts.nix.
+      platform = "darwin";
+    };
   };
 
-  # Schema check against a real binary, on the dummy-secret render. `check` does
-  # not catch everything — a detour to an empty direct outbound passes here and
-  # is fatal at start — but it catches typos and shape errors before activation.
-  configCheck = name: generator: pkgs.runCommand "sing-box-check-${name}"
-    {
-      nativeBuildInputs = [ pkgs.sing-box ];
-      configJson = render.checkable { inherit generator; args = hostArgs; };
-      passAsFile = [ "configJson" ];
-    } ''
-    sing-box check -c "$configJsonPath"
-    touch $out
-  '';
+  # Every profile this host renders, keyed by the name the rest of the module
+  # derives everything else from: the sops template, the symlink SFM reads and
+  # the build-time check. Listed rather than taken wholesale from
+  # `singBox.profiles`, so adding a profile to the library does not silently
+  # start rendering it here.
+  profiles = lib.mapAttrs mkProfile {
+    inherit (singBox.profiles) personal corp;
+  };
 in
 {
   options.programs.singBox.enable = lib.mkEnableOption ''
@@ -129,9 +95,7 @@ in
     # Off by default and switched on by the platform that can actually run it:
     # modules/darwin/default.nix sets this for every Darwin host, because the
     # server is a `launchd.agents` entry and SFM — the only thing that fetches
-    # these profiles — is a mac app. A Linux host would need a systemd user unit
-    # and nothing wants one: the homelab runs sing-box as a system service off
-    # its own config (modules/nixos/sing-box.nix) and never fetches a profile.
+    # these profiles — is a mac app.
     enable = lib.mkEnableOption ''
       serving the rendered profiles over loopback so SFM can consume them as
       Remote profiles instead of needing a manual re-import after every
@@ -153,22 +117,22 @@ in
     {
       sops.secrets.${render.proxySecret} = { };
 
-      sops.templates."sing-box-personal.json".content =
-        renderConfig ../../lib/sing-box;
-      sops.templates."sing-box-corp.json".content =
-        renderConfig ../../lib/sing-box/corp.nix;
+      sops.templates = lib.mapAttrs'
+        (name: profile: lib.nameValuePair "sing-box-${name}.json" {
+          content = profile.content;
+        })
+        profiles;
 
-      home.file.".sing-box/personal.json".source =
-        config.lib.file.mkOutOfStoreSymlink config.sops.templates."sing-box-personal.json".path;
-      home.file.".sing-box/corp.json".source =
-        config.lib.file.mkOutOfStoreSymlink config.sops.templates."sing-box-corp.json".path;
+      home.file = lib.mapAttrs'
+        (name: _: lib.nameValuePair ".sing-box/${name}.json" {
+          source = config.lib.file.mkOutOfStoreSymlink
+            config.sops.templates."sing-box-${name}.json".path;
+        })
+        profiles;
 
       # Force the checks into the activation closure so a broken profile fails the
       # build rather than SFM.
-      home.extraActivationPath = [
-        (configCheck "personal" ../../lib/sing-box)
-        (configCheck "corp" ../../lib/sing-box/corp.nix)
-      ];
+      home.extraActivationPath = lib.mapAttrsToList (_: profile: profile.check) profiles;
     }
 
     # Serves exactly the two profile symlinks above, so anything else dropped in
@@ -176,17 +140,16 @@ in
     #
     # `--addr 127.0.0.1` is load-bearing: darkhttpd binds every interface by
     # default, which would put the node credentials on the LAN. No `--chroot`
-    # (it would cut off the symlink escape into $TMPDIR — see the header).
-    # `--default-mimetype` rather than a mimetype file, since the directory only
-    # ever holds JSON.
+    # (see the header). `--default-mimetype` rather than a mimetype file, since
+    # the directory only ever holds JSON.
     #
-    # sops-nix has its own RunAtLoad agent that re-renders into a fresh
-    # generation directory, and nothing orders this agent against it, so at login
-    # — and on every activation, where `setupLaunchAgents` runs before `sops-nix`
-    # — there is a window where this server is up against the previous
-    # generation. Harmless only because darkhttpd re-resolves per request;
-    # KeepAlive would not help, since the server is up and it is the files that
-    # are stale. SFM keeps its last good profile across a failed update.
+    # sops-nix has its own RunAtLoad agent that re-renders into a fresh generation
+    # directory, and nothing orders this agent against it, so at login — and on
+    # every activation, where `setupLaunchAgents` runs before `sops-nix` — there
+    # is a window where this server is up against the previous generation.
+    # Harmless only because darkhttpd re-resolves per request; KeepAlive would not
+    # help, since the server is up and it is the files that are stale. SFM keeps
+    # its last good profile across a failed update.
     (lib.mkIf cfg.server.enable {
       launchd.agents.sing-box-profiles = {
         enable = true;
