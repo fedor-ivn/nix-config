@@ -55,7 +55,7 @@ refresh-sing-box-subscription:
   nodes="$(jq -c --argjson excluded "$excluded" \
     'map(select(.tag | IN($excluded[]) | not))' <<<"$fetched")"
   [ "$(jq 'length' <<<"$nodes")" -gt 0 ] || { echo "no nodes left after exclusions; aborting" >&2; exit 1; }
-  # `direct` comes from lib/sing-box/parts.nix; tags resolve globally.
+  # `direct` comes from lib/sing-box/parts/core.nix; tags resolve globally.
   group="$(jq -c '. + [
     { type: "urltest", tag: "proxy-auto", outbounds: [ .[].tag ],
       url: "https://www.gstatic.com/generate_204", interval: "3m" },

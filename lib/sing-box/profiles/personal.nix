@@ -3,8 +3,8 @@
 # Everything that should stay outside the tunnel (RU-only sites by rule-set,
 # private IPs, the tailnet) goes `direct`; everything else leaves through
 # `route.final`, which the subscription's `proxy` selector defines. It adds
-# nothing of its own to the match-lists — it *is* the shared fallthrough — so the
-# lists below read as the shortest possible statement of that shape.
+# nothing of its own to the match-lists — it *is* core plus the tunnel egress —
+# so the lists below read as the shortest possible statement of that shape.
 #
 # Returns an attrset, rendered by ../render.nix. Design notes:
 # openspec/specs/split-tunnel-router/.
@@ -17,25 +17,25 @@
 , proxyOutbounds
 }:
 let
-  parts = import ../parts.nix { inherit lib platform; };
+  inherit (import ../parts { inherit lib platform; }) core tunnel;
 in
 {
-  inherit (parts) log experimental;
+  inherit (core) log experimental;
 
-  dns = parts.dnsDefaults // {
-    servers = parts.dnsServers;
-    rules = parts.dnsFallthrough;
+  dns = tunnel.dns // {
+    servers = tunnel.dnsServers ++ [ core.directDns ];
+    rules = tunnel.dnsRules;
   };
 
-  inbounds = [ parts.tunInbound ];
+  inbounds = [ core.tunInbound ];
 
   # `proxyOutbounds` is spliced in as-is rather than merged; the selector it
   # defines names `direct` from here, and tags resolve across the whole config.
-  outbounds = [ parts.direct proxyOutbounds ];
+  outbounds = [ core.direct proxyOutbounds ];
 
-  http_clients = parts.httpClients;
+  http_clients = tunnel.httpClients;
 
-  route = parts.routeDefaults // {
-    rules = parts.prelude ++ parts.fallthrough;
+  route = core.routeBase // tunnel.route // {
+    rules = core.prelude ++ tunnel.routeRules;
   };
 }

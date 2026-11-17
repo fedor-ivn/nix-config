@@ -69,7 +69,7 @@ let
       inherit lib;
       # SFM runs sing-box as a NetworkExtension, where `route_exclude_address`
       # is a route fight with Tailscale — see the tun comment in
-      # lib/sing-box/parts.nix.
+      # lib/sing-box/parts/core.nix.
       platform = "darwin";
     };
   };

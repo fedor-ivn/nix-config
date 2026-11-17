@@ -4,11 +4,11 @@
 #   singBox = import ../../lib/sing-box;
 #   singBox.render.mkProfile { profile = singBox.profiles.corp; ... }
 #
-# ./parts.nix holds the pieces and the ordering invariants, ./profiles/ assembles
+# ./parts/ holds the pieces and the ordering invariants, ./profiles/ assembles
 # them into whole configs, ./render.nix splices in the subscription secret and
 # schema-checks the result at build time.
 {
-  parts = import ./parts.nix;
+  parts = import ./parts;
   render = import ./render.nix;
 
   # Each takes `{ lib, platform, proxyOutbounds }` and returns a config attrset,
