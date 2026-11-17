@@ -60,7 +60,12 @@ rec {
   # -------------------------------------------------------- route rules ----
 
   # After the prelude's sniff (there is no domain to match before it).
+  #
+  # QUIC is refused ahead of the bridge rule (see `core.reject`): the bridge is
+  # `ssh -D`, which has no SOCKS5 UDP ASSOCIATE, so HTTP/3 to a corp FakeIP
+  # would otherwise go to the bridge and hang until the browser gives up on it.
   routeRules = [
+    (core.reject (core.quic // { domain_suffix = domains; }))
     {
       domain_suffix = domains;
       outbound = socksBridge.tag;

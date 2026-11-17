@@ -12,9 +12,10 @@
   render = import ./render.nix;
 
   # Each takes `{ lib, platform, proxyOutbounds }` and returns a config attrset,
-  # so the two are interchangeable at the call site.
+  # so they are interchangeable at the call site.
   profiles = {
     personal = import ./profiles/personal.nix;
     corp = import ./profiles/corp.nix;
+    corp-direct = import ./profiles/corp-direct.nix;
   };
 }

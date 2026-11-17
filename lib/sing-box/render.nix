@@ -50,18 +50,33 @@ rec {
   # `sops.templates`, and a derivation that schema-checks it so a mistake fails
   # the build instead of the running service. Delivery is the caller's problem —
   # SFM fetches a served file, NixOS reads /etc/sing-box.
+  #
+  # A profile without the marker (no subscription) is also grepped for `proxy`:
+  # that tag is defined only by the spliced-in nodes, and naming it anyway fails
+  # at service start while `check`, which does not resolve tags, passes.
   mkProfile = { pkgs, placeholders, name, profile, args }:
+    let
+      configJson = checkable { inherit profile args; };
+      splicesNodes = pkgs.lib.hasInfix "\"${marker}\""
+        (builtins.toJSON (profile (args // { proxyOutbounds = marker; })));
+    in
     {
       content = render { inherit placeholders profile args; };
 
       check = pkgs.runCommand "sing-box-check-${name}"
         {
           nativeBuildInputs = [ pkgs.sing-box ];
-          configJson = checkable { inherit profile args; };
+          inherit configJson;
           passAsFile = [ "configJson" ];
-        } ''
+        } (''
         sing-box check -c "$configJsonPath"
+      '' + pkgs.lib.optionalString (!splicesNodes) ''
+        if grep -q '"proxy"' "$configJsonPath"; then
+          echo "sing-box-${name}: names \`proxy\` without the subscription that defines it" >&2
+          exit 1
+        fi
+      '' + ''
         touch $out
-      '';
+      '');
     };
 }

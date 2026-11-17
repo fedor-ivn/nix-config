@@ -7,22 +7,24 @@
 # this module: it runs sing-box as a system service instead (see
 # modules/nixos/sing-box.nix).
 #
-# Both profiles are rendered by sops-nix at *activation* time, so no node
+# All profiles are rendered by sops-nix at *activation* time, so no node
 # credential enters the world-readable Nix store: the nodes live in secrets.yaml
 # under `sing-box/proxy-outbounds` and are interpolated through a placeholder.
 # Refresh them with `just refresh-sing-box-subscription` — sing-box has no
 # subscription support of its own. Reasoning in
 # openspec/specs/split-tunnel-router/design-notes.md.
 #
-# The rendered files are symlinked into ~/.sing-box/{personal,corp}.json (out of
+# The rendered files are symlinked into ~/.sing-box/<profile>.json (out of
 # store) and, where `programs.singBox.server.enable` is set, served over loopback
-# for SFM to fetch as two *Remote* profiles:
+# for SFM to fetch as *Remote* profiles:
 #
 #   http://127.0.0.1:18088/personal.json
 #   http://127.0.0.1:18088/corp.json
+#   http://127.0.0.1:18088/corp-direct.json
 #
 # Pick `corp.json` when the reverse-SSH SOCKS bridge (127.0.0.1:1080) is up,
-# `personal.json` otherwise.
+# `personal.json` otherwise. `corp-direct.json` is the bridge with no
+# subscription: corp domains over it, everything else direct.
 #
 # ## Why a server
 #
@@ -80,13 +82,13 @@ let
   # `singBox.profiles`, so adding a profile to the library does not silently
   # start rendering it here.
   profiles = lib.mapAttrs mkProfile {
-    inherit (singBox.profiles) personal corp;
+    inherit (singBox.profiles) personal corp corp-direct;
   };
 in
 {
   options.programs.singBox.enable = lib.mkEnableOption ''
     user-level sing-box configs for SFM (the GUI app), rendered to
-    ~/.sing-box/{personal,corp}.json and served over loopback for SFM to fetch
+    ~/.sing-box/{personal,corp,corp-direct}.json and served over loopback for SFM to fetch
     as Remote profiles. Requires `sing-box/proxy-outbounds` in secrets.yaml —
     refresh it with `just refresh-sing-box-subscription`
   '';
@@ -135,7 +137,7 @@ in
       home.extraActivationPath = lib.mapAttrsToList (_: profile: profile.check) profiles;
     }
 
-    # Serves exactly the two profile symlinks above, so anything else dropped in
+    # Serves exactly the profile symlinks above, so anything else dropped in
     # that directory would be served too — keep it to profiles.
     #
     # `--addr 127.0.0.1` is load-bearing: darkhttpd binds every interface by
