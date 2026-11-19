@@ -86,4 +86,8 @@ in
   # the nix profile would otherwise export (which lacks the corp CAs).
   nix.settings.ssl-cert-file = "/etc/nix/all-certs.pem";
   environment.variables.NIX_SSL_CERT_FILE = "/etc/nix/all-certs.pem";
+
+  # Same reasoning for node: here the keychain dump is the superset, since Jamf
+  # hands out interception CAs that no committed PEM would keep up with.
+  environment.variables.NODE_EXTRA_CA_CERTS = "/etc/nix/all-certs.pem";
 }

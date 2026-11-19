@@ -94,4 +94,10 @@
   environment.systemPackages = [ pkgs.ghostty.terminfo ];
 
   security.pki.certificateFiles = [ ../../../certs/russian-trusted-root-ca.pem ];
+
+  # node ignores the system bundle unless pointed at it; the Macs set the same
+  # variable in modules/darwin/system.nix. `certs/tinkoff-root-ca.pem` is
+  # deliberately not in the list above — this host has no reason to trust the
+  # corp CA, so pi's llm-proxy models only work from the Macs.
+  environment.variables.NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
 }
