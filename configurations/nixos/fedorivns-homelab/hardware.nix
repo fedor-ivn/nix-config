@@ -15,9 +15,6 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  # Required for tpm2-device=auto to be honoured by systemd-cryptsetup.
-  boot.initrd.systemd.enable = true;
-
   fileSystems."/" =
     {
       device = "/dev/mapper/homelab-root";

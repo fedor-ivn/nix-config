@@ -16,9 +16,9 @@
   services.avahi = {
     enable = true;
     nssmdns4 = true;
-    publish = {
-      enable = true;
-      addresses = true;
+    settings.publish = {
+      "disable-publishing" = false;
+      "publish-addresses" = true;
     };
   };
 
@@ -52,6 +52,13 @@
   # This host owns the Sync folder in the Syncthing mesh; see
   # modules/nixos/syncthing.nix and lib/syncthing.
   syncthing.enable = true;
+
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  boot.binfmt.preferStaticEmulators = true;
+
+  users.users.fedorivn.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINPTJX4+FlgbMXuPHsyR90HFYE39dsaEArTV+6PaVxo4 nix-builder@fedorivns-mbp"
+  ];
 
   home-manager.users.fedorivn.me.prompt.hostnameColor = "bold bright-red";
 
