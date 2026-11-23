@@ -17,7 +17,30 @@ let
       tunStack = "system";
       tunStrictRoute = false;
       tunInterfaceName = "sbtun0";
-      tunRouteExcludeAddress = [ "100.64.0.0/10" "fd7a:115c:a1e0::/48" ];
+      # The tailnet's range and *every* private range, because on Linux the
+      # exclusion is what keeps these prefixes out of table 2022 at all — and
+      # nothing else does. A table holding one `default` is consulted with
+      # `suppress_prefixlength 0`, which drops that route and lets the lookup
+      # fall through to `main`; excluding any prefix makes sing-box replace the
+      # default with covering prefixes (`0.0.0.0/2`, `128.0.0.0/1`, …), none of
+      # which that suppression drops. So with only the tailnet carved out, a
+      # lookup for a LAN address matched `128.0.0.0/1` and left via the tun
+      # instead of `main`, and the box answered none of its own neighbours.
+      #
+      # Keeping the full private set here also matches the profile's own
+      # `ip_is_private` rule, so the kernel and sing-box agree on where a LAN
+      # destination belongs. `fc00::/7` covers the tailnet ULA; `fe80::/10` keeps
+      # link-local on the wire. The tun's own subnets fall inside these by
+      # accident and are still reached via `main`'s kernel routes.
+      tunRouteExcludeAddress = [
+        "100.64.0.0/10"
+        "10.0.0.0/8"
+        "172.16.0.0/12"
+        "192.168.0.0/16"
+        "fc00::/7"
+        "fd7a:115c:a1e0::/48"
+        "fe80::/10"
+      ];
     };
   };
 
