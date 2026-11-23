@@ -1,9 +1,10 @@
 # Corp split-tunnel profile: the personal shape plus the corp bridge
-# (../parts/corp.nix). Only hosts that actually run that bridge use this
-# profile.
+# (../parts/corp.nix). Only hosts that run the `ssh -D` the bridge points at
+# use this profile.
 #
 # Takes the same arguments as ./personal.nix and returns the same shape, so the
-# two are interchangeable at the call site.
+# two are interchangeable at the call site; `bridge` is the only addition and
+# `personal` ignores it.
 { lib, platform, proxyOutbounds }:
 let
   inherit (import ../parts { inherit lib platform; }) core tunnel corp;

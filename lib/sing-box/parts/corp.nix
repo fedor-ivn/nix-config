@@ -1,7 +1,12 @@
-# The corp bridge: corp domains go over the reverse-SSH SOCKS bridge
-# (127.0.0.1:1080) instead of the profile's egress, and reach it by FakeIP — the
-# bridge's far side owns the routing, so the domains must be resolved *there*,
-# not locally. Only hosts that actually run that bridge use a profile with this.
+# The corp bridge: corp domains go over the SOCKS proxy at 127.0.0.1:1080
+# instead of the profile's own egress, and reach it by FakeIP — the far side
+# owns the routing, so the domains must be resolved *there*, not locally.
+#
+# Why loopback, always: the proxy is `ssh -D`, whose outbound connections are
+# made by the SSH *server* — so the SOCKS lives on the consuming host and the
+# corp laptop is the server at the other end of a `-J` hop (see the block
+# comment in `routeRules`). Nothing here needs to know the address of the
+# middle hop, and nothing outside this host can use the corp egress.
 #
 # Both rule lists go ahead of any egress rules: matched later, a corp domain
 # would hit the RU checks and resolve through the tunnel's resolver instead of
@@ -49,6 +54,12 @@ rec {
 
   # ---------------------------------------------------------- outbounds ----
 
+  # The loopback port the consumer's own `ssh -D` binds. One candidate, no
+  # group: a `urltest` here would probe through the corp laptop — the one
+  # machine whose traffic we would rather not make interesting — and it does not
+  # fail over anyway (a member that dies mid-session fails every connection
+  # until the next probe). Which middle hop got it here is the consumer's
+  # business, not this file's.
   socksBridge = {
     type = "socks";
     tag = "socks-tbank";
@@ -62,8 +73,9 @@ rec {
   # After the prelude's sniff (there is no domain to match before it).
   #
   # QUIC is refused ahead of the bridge rule (see `core.reject`): the bridge is
-  # `ssh -D`, which has no SOCKS5 UDP ASSOCIATE, so HTTP/3 to a corp FakeIP
-  # would otherwise go to the bridge and hang until the browser gives up on it.
+  # an SSH TCP forward, which has no UDP relay at all, so HTTP/3 to a corp
+  # FakeIP would otherwise go to the bridge and hang until the browser gives up
+  # on it.
   routeRules = [
     (core.reject (core.quic // { domain_suffix = domains; }))
     {

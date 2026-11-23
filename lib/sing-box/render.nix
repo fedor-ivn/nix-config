@@ -68,15 +68,16 @@ rec {
           nativeBuildInputs = [ pkgs.sing-box ];
           inherit configJson;
           passAsFile = [ "configJson" ];
-        } (''
-        sing-box check -c "$configJsonPath"
-      '' + pkgs.lib.optionalString (!splicesNodes) ''
-        if grep -q '"proxy"' "$configJsonPath"; then
-          echo "sing-box-${name}: names \`proxy\` without the subscription that defines it" >&2
-          exit 1
-        fi
-      '' + ''
-        touch $out
-      '');
+        }
+        (''
+          sing-box check -c "$configJsonPath"
+        '' + pkgs.lib.optionalString (!splicesNodes) ''
+          if grep -q '"proxy"' "$configJsonPath"; then
+            echo "sing-box-${name}: names \`proxy\` without the subscription that defines it" >&2
+            exit 1
+          fi
+        '' + ''
+          touch $out
+        '');
     };
 }

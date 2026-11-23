@@ -2,12 +2,18 @@
 
 Spec for the split-tunnel-router capability: a sing-box-based router on
 `fedorivns-mbp` and `fedorivns-homelab` that sends corp domains
-(`*.tcsbank.ru`, `*.t-tech.team`) through the corp-proxy-bridge SOCKS endpoint
-and all other traffic through subscription proxy nodes, using FakeIP and DNS
-hijacking so domain-based routing applies to all applications.
+(`*.tcsbank.ru`, `*.t-tech.team`) through the corp bridge — a SOCKS proxy whose
+egress is the corp laptop — and all other traffic through subscription proxy
+nodes, using FakeIP and DNS hijacking so domain-based routing applies to all
+applications.
 
-The corp overlay applies to `fedorivns-mbp` only; the homelab runs the base
-profile.
+The corp *overlay* applies to `fedorivns-mbp` only; the homelab runs the base
+profile. The proxy itself lives on the consuming Mac at `127.0.0.1:1080`: it is
+`ssh -D`, whose outbound connections are made by the SSH server, so the corp
+laptop must be the server — reached by a `-J` hop through the homelab, which the
+corp laptop reverse-forwards its sshd to over the LAN. The homelab is therefore
+a jump host (no listener, no firewall change), and `corp.json` does not depend
+on the consuming host sharing a LAN with the corp laptop.
 
 ## Requirements
 
@@ -43,7 +49,11 @@ traffic and SHALL remain selectable as a manual fallback.
 ### Requirement: Corp domains routed via the proxy bridge
 
 The router SHALL route connections to `*.tcsbank.ru` and `*.t-tech.team`
-through the `corp-proxy-bridge` SOCKS endpoint (`127.0.0.1:1080`).
+through the SOCKS proxy at `127.0.0.1:1080`, whose egress is the corp laptop.
+The router MUST NOT model reachability of that proxy as a preference order over
+several transports: which middle hop carried the session is the consumer's
+concern, not a routing decision, and a `urltest` over it would probe through the
+corp laptop and still not fail over mid-session.
 
 #### Scenario: Corp host is reachable through the router
 
@@ -56,6 +66,13 @@ through the `corp-proxy-bridge` SOCKS endpoint (`127.0.0.1:1080`).
 - **WHEN** a `*.tcsbank.ru` or `*.t-tech.team` connection is opened
 - **THEN** the router logs show it routed to the corp SOCKS outbound, not the
   WireGuard outbound
+
+#### Scenario: Bridge down fails fast
+
+- **WHEN** the `ssh -D` is not running (corp laptop asleep, or the jump host
+  unreachable)
+- **THEN** corp connections fail immediately and honestly rather than hanging,
+  and no corp traffic leaves through another outbound
 
 ### Requirement: FakeIP resolution for corp domains
 

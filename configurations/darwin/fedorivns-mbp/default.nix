@@ -46,6 +46,9 @@ in
 
   home-manager.users.fedorivn.programs = {
     codex.enable = true;
+    # Dials the corp laptop back through the homelab and exposes the SOCKS the
+    # `corp` profile points at (127.0.0.1:1080). See the module for why the
+    # jump host sits in the middle rather than holding the proxy.
     tunnelAgent.enable = true;
     secretTool1.enable = true;
     secretTool2.enable = true;

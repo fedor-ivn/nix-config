@@ -5,6 +5,16 @@ let
   identity = import ../../../lib/identity.nix;
   mapListToAttrs = m: f:
     lib.listToAttrs (map (name: { inherit name; value = f name; }) m);
+
+  # Extra keys every managed account accepts, from the private flake so no
+  # machine's key lands in the public repo. Currently the corp bridge's
+  # automation key: the corp Mac reverse-forwards into the homelab and the Mac
+  # dials back into the corp Mac, and both directions are unattended, so both
+  # are fail-closed on a key that cannot be in this repo.
+  #
+  # Deliberately *not* `identity.sshPublicKey` alone: that is the person's own
+  # key, present here for interactive logins and for the builder.
+  extraAuthorizedKeys = flake.inputs.secrets.values.corpBridgeKeys;
 in
 {
   options = {
@@ -23,14 +33,21 @@ in
   config = {
     # For home-manager to work.
     # https://github.com/nix-community/home-manager/issues/4026#issuecomment-1565487545
+    # `openssh.authorizedKeys` is set for both platforms: the Darwin hosts need
+    # it as much as the Linux ones — `macbook-DLQX9KQ54V` is the corp laptop
+    # whose sshd the Mac dials back into, and without a key there that dial is
+    # impossible. It used to sit inside the `isLinux` branch, which left every
+    # Darwin account authorised by hand.
     users.users = mapListToAttrs config.managedUsers (name:
-      lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin
+      {
+        openssh.authorizedKeys.keys = [ identity.sshPublicKey ] ++ extraAuthorizedKeys;
+      }
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin
         {
           home = "/Users/${name}";
         } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         isNormalUser = true;
         extraGroups = [ "wheel" "networkmanager" ];
-        openssh.authorizedKeys.keys = [ identity.sshPublicKey ];
       }
     );
 

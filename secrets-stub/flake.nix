@@ -16,6 +16,7 @@
       knownNetworkServices = [ ];
       homebrewCasks = [ ];
       corpTunnelUser = "";
+      corpBridgeKeys = [ ];
     };
 
     # The private flake also exports `homeModules`, and modules/home/secret-tools.nix
